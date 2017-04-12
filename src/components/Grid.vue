@@ -62,6 +62,8 @@
     },
     data() {
       return {
+        uid: _.uniqueId('biggrid-'),
+
         inited: false,
 
         start: 0,
@@ -176,8 +178,7 @@
 
           this.columns = [].concat(temp_cols)
         }
-      }, 60)
-    }
+      }, 80)
   }
 </script>
 

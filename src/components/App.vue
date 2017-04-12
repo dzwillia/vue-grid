@@ -24,3 +24,9 @@
     }
   }
 </script>
+
+<style>
+  #app {
+    user-select: none !important;
+  }
+</style>
