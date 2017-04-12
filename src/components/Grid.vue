@@ -1,5 +1,10 @@
 <template>
-  <div class="flex flex-column relative bg-white h-100 big-container">
+  <div
+    class="flex flex-column relative bg-white h-100 big-container"
+    @mousedown="onMousedown"
+    @mouseup="onMouseup"
+    @mousemove="onMousemove"
+  >
     <!-- grid header -->
     <div class="flex-none overflow-hidden bg-near-white big-thead">
       <div class="flex flex-row nowrap relative" ref="thead-tr">
@@ -10,7 +15,15 @@
 
         <!-- cells -->
         <div class="flex-none db overflow-hidden ba bg-near-white tc relative big-th" v-for="c in columns">
-          <div class="db lh-1 big-th-inner" style="width: 130px">{{c.name}}</div>
+          <!-- cell content -->
+          <div class="db lh-1 big-th-inner" :style="'width: '+c.pixel_width+'px'">{{c.name}}</div>
+
+          <!-- column resize handle -->
+          <div
+            class="absolute top-0 bottom-0 right-0 cursor-resize-ew"
+            style="width: 4px"
+            @mousedown="onColumnResizerMousedown(c)"
+          ></div>
         </div>
       </div>
     </div>
@@ -25,7 +38,7 @@
 
         <!-- cells -->
         <div class="flex-none db overflow-hidden ba big-td" v-for="c in columns">
-          <div class="db lh-1 big-td-inner" style="width: 130px">{{r[c.name]}}</div>
+          <div class="db lh-1 big-td-inner" :style="'width: '+c.pixel_width+'px'">{{r[c.name]}}</div>
         </div>
       </div>
     </div>
@@ -56,16 +69,26 @@
         total_row_count: 0,
 
         columns: [],
+        resize_col: null,
+
         rows: [],
 
         scroll_top: 0,
-        scroll_left: 0
+        scroll_left: 0,
+
+        mousedown_x: 0,
+        mousedown_y: 0,
+        mouse_x: 0,
+        mouse_y: 0
       }
     },
     computed: {
       fetch_url() {
         var url = this.dataUrl+'?start='+this.start+'&limit=+'+this.limit
         return this.inited ? url : url + '&metadata=true'
+      },
+      resize_delta() {
+        return this.mousedown_x == -1 ? 0 : this.mouse_x - this.mousedown_x
       }
     },
     mounted() {
@@ -97,6 +120,29 @@
         })
       },
 
+      onMousedown(evt) {
+        this.mousedown_x = evt.pageX
+        this.mousedown_y = evt.pageY
+      },
+
+      onColumnResizerMousedown(col) {
+        this.resize_col = _.cloneDeep(col)
+      },
+
+      onMouseup(evt) {
+        this.mousedown_x = -1
+        this.mousedown_y = -1
+        this.resize_col = null
+      },
+
+      onMousemove(evt) {
+        this.mouse_x = evt.pageX
+        this.mouse_y = evt.pageY
+
+        if (!_.isNil(this.resize_col))
+          this.resizeColumn()
+      },
+
       onScroll: _.throttle(function(evt) {
         // vertical scrolls
         if (this.scroll_top != this.$refs['tbody'].scrollTop)
@@ -112,7 +158,25 @@
           // sync up fixed header with content horizontal scroll offset
           this.$refs['thead-tr'].style = 'left: -'+this.scroll_left+'px'
         }
-      }, 10)
+      }, 10),
+
+      resizeColumn: _.throttle(function(evt) {
+        var lookup_col = _.find(this.columns, { name: _.get(this.resize_col, 'name') })
+        if (!_.isNil(lookup_col))
+        {
+          var temp_cols = _.map(this.columns, (col) => {
+            if (_.get(col, 'name') == _.get(lookup_col, 'name'))
+            {
+              var old_width = _.get(this.resize_col, 'pixel_width', 120)
+              return _.assign({}, lookup_col, { pixel_width: old_width + this.resize_delta })
+            }
+
+            return col
+          })
+
+          this.columns = [].concat(temp_cols)
+        }
+      }, 60)
     }
   }
 </script>
@@ -155,5 +219,9 @@
 
   .lh-1 {
     line-height: 1;
+  }
+
+  .cursor-resize-ew {
+    cursor: ew-resize;
   }
 </style>
