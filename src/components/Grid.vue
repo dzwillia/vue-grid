@@ -10,7 +10,7 @@
 
         <!-- cells -->
         <div class="flex-none db overflow-hidden ba bg-near-white tc relative big-th" v-for="c in columns">
-          <div class="db big-th-inner" style="width: 130px">{{c.name}}</div>
+          <div class="db lh-1 big-th-inner" style="width: 130px">{{c.name}}</div>
         </div>
       </div>
     </div>
@@ -25,7 +25,7 @@
 
         <!-- cells -->
         <div class="flex-none db overflow-hidden ba big-td" v-for="c in columns">
-          <div class="db big-td-inner" style="width: 130px">{{r[c.name]}}</div>
+          <div class="db lh-1 big-td-inner" style="width: 130px">{{r[c.name]}}</div>
         </div>
       </div>
     </div>
@@ -34,7 +34,6 @@
 
 <script>
   import axios from 'axios'
-  import simple_data from '../data/simple'
 
   const DEFAULT_COLUMN_INFO = {
     pixel_width: 130
@@ -54,14 +53,48 @@
 
         start: 0,
         limit: 100,
-        total_row_count: simple_data.total_count,
+        total_row_count: 0,
 
-        columns: simple_data.columns,
-        rows: simple_data.rows
+        columns: [],
+        rows: []
+      }
+    },
+    computed: {
+      fetch_url() {
+        var url = this.dataUrl+'?start='+this.start+'&limit=+'+this.limit
+        return this.inited ? url : url + '&metadata=true'
       }
     },
     mounted() {
+      this.tryFetch()
+    },
+    methods: {
+      tryFetch() {
+        axios.get(this.fetch_url).then(response => {
+          var resdata = response.data
 
+          this.total_row_count = resdata.total_count
+
+          // store our column info
+          if (!this.inited && _.isArray(resdata.columns))
+          {
+            // include default column info with each column
+            var temp_cols = _.map(resdata.columns, (col) => {
+              return _.assign({}, DEFAULT_COLUMN_INFO, col)
+            })
+
+            this.columns = [].concat(temp_cols)
+          }
+
+          // store the current set of rows
+          this.rows = [].concat(resdata.rows)
+
+          // set our init flag to true so we don't get columns after this
+          this.inited = true
+        }, response => {
+
+        })
+      }
     }
   }
 </script>
