@@ -90,7 +90,7 @@
     },
     computed: {
       fetch_url() {
-        var url = this.dataUrl+'?start='+this.start+'&limit=+'+this.limit
+        var url = this.dataUrl+'?start='+this.start+'&limit='+this.limit
         return this.inited ? url : url + '&metadata=true'
       },
       total_height() {
@@ -149,7 +149,8 @@
         axios.get(this.fetch_url).then(response => {
           var resdata = response.data
 
-          this.total_count = resdata.total_count
+          if (_.isNumber(resdata.total_count))
+            this.total_count = resdata.total_count
 
           // store our column info
           if (!this.inited && _.isArray(resdata.columns))
@@ -193,16 +194,19 @@
       },
 
       onScroll: _.throttle(function(evt) {
+        var new_scroll_top = this.$refs['tbody'].scrollTop
+        var new_scroll_left = this.$refs['tbody'].scrollLeft
+
         // vertical scrolls
-        if (this.scroll_top != this.$refs['tbody'].scrollTop)
+        if (this.scroll_top != new_scroll_top)
         {
-          this.scroll_top = this.$refs['tbody'].scrollTop
+          this.scroll_top = new_scroll_top
         }
 
         // horizontal scrolls
-        if (this.scroll_left != this.$refs['tbody'].scrollLeft)
+        if (this.scroll_left != new_scroll_left)
         {
-          this.scroll_left = this.$refs['tbody'].scrollLeft
+          this.scroll_left = new_scroll_left
 
           // sync up fixed header with content horizontal scroll offset
           this.$refs['thead-tr'].style = 'left: -'+this.scroll_left+'px'
