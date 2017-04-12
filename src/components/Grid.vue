@@ -24,7 +24,11 @@
     </div>
 
     <!-- grid body -->
-    <div class="flex-fill overflow-auto" ref="tbody" @scroll="onScroll">
+    <div class="flex-fill relative overflow-auto" ref="tbody" @scroll="onScroll">
+      <!-- yardstick -->
+      <div class="absolute top-0 left-0" :style="'width: 1px; height: '+total_height+'px'"></div>
+
+      <!-- rows -->
       <div class="flex flex-row nowrap" v-for="(r, index) in rows">
         <!-- row handle -->
         <div class="flex-none db overflow-hidden ba bgg-td">
@@ -43,6 +47,7 @@
 <script>
   import axios from 'axios'
 
+  const ROW_HEIGHT = 24
   const DEFAULT_COLUMN_INFO = {
     pixel_width: 130
   }
@@ -63,7 +68,7 @@
 
         start: 0,
         limit: 100,
-        total_row_count: 0,
+        total_count: 0,
 
         columns: [],
         resize_col: null,
@@ -84,6 +89,9 @@
       fetch_url() {
         var url = this.dataUrl+'?start='+this.start+'&limit=+'+this.limit
         return this.inited ? url : url + '&metadata=true'
+      },
+      total_height() {
+        return ROW_HEIGHT * this.total_count
       },
       resize_delta() {
         return this.mousedown_x == -1 ? 0 : this.mouse_x - this.mousedown_x
@@ -129,7 +137,7 @@
         axios.get(this.fetch_url).then(response => {
           var resdata = response.data
 
-          this.total_row_count = resdata.total_count
+          this.total_count = resdata.total_count
 
           // store our column info
           if (!this.inited && _.isArray(resdata.columns))
@@ -148,7 +156,7 @@
           // cache the current set of rows
           var start = this.start
           var limit = this.limit
-          var row_count = this.total_row_count
+          var row_count = this.total_count
           var temp_cached_rows = {}
           var idx = 0
 
