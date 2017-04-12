@@ -2,7 +2,7 @@
   <div class="flex flex-column relative bg-white h-100 big-container">
     <!-- grid header -->
     <div class="flex-none overflow-hidden bg-near-white big-thead">
-      <div class="flex flex-row nowrap relative">
+      <div class="flex flex-row nowrap relative" ref="thead-tr">
         <!-- row handle -->
         <div class="flex-none db overflow-hidden ba big-td">
           <div class="db lh-1 big-th-inner light-silver tr bg-near-white" :style="'width: 60px'"></div>
@@ -16,7 +16,7 @@
     </div>
 
     <!-- grid body -->
-    <div class="flex-fill overflow-auto">
+    <div class="flex-fill overflow-auto" ref="tbody" @scroll="onScroll">
       <div class="flex flex-row nowrap" v-for="(r, index) in rows">
         <!-- row handle -->
         <div class="flex-none db overflow-hidden ba big-td">
@@ -56,7 +56,10 @@
         total_row_count: 0,
 
         columns: [],
-        rows: []
+        rows: [],
+
+        scroll_top: 0,
+        scroll_left: 0
       }
     },
     computed: {
@@ -91,10 +94,25 @@
 
           // set our init flag to true so we don't get columns after this
           this.inited = true
-        }, response => {
-
         })
-      }
+      },
+
+      onScroll: _.throttle(function(evt) {
+        // vertical scrolls
+        if (this.scroll_top != this.$refs['tbody'].scrollTop)
+        {
+          this.scroll_top = this.$refs['tbody'].scrollTop
+        }
+
+        // horizontal scrolls
+        if (this.scroll_left != this.$refs['tbody'].scrollLeft)
+        {
+          this.scroll_left = this.$refs['tbody'].scrollLeft
+
+          // sync up fixed header with content horizontal scroll offset
+          this.$refs['thead-tr'].style = 'left: -'+this.scroll_left+'px'
+        }
+      }, 10)
     }
   }
 </script>
