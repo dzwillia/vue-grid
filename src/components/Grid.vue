@@ -69,6 +69,7 @@
         resize_col: null,
 
         rows: [],
+        cached_rows: {},
 
         scroll_top: 0,
         scroll_left: 0,
@@ -143,6 +144,22 @@
 
           // store the current set of rows
           this.rows = [].concat(resdata.rows)
+
+          // cache the current set of rows
+          var start = this.start
+          var limit = this.limit
+          var row_count = this.total_row_count
+          var temp_cached_rows = {}
+          var idx = 0
+
+          for (var r = start; r < start+limit && r < row_count; ++r)
+          {
+            temp_cached_rows[r] = this.rows[idx]
+            idx++
+          }
+
+          // add the temporary cached rows to our stored cached rows
+          this.cached_rows = _.assign({}, this.cached_rows, temp_cached_rows)
 
           // set our init flag to true so we don't get columns after this
           this.inited = true
