@@ -186,18 +186,18 @@
 
       updateStyle(id_suffix, style_str) {
         var head_el = document.head || document.getElementsByTagName('head')[0]
+        var style_el = document.getElementById(this.uid+'-'+id_suffix)
 
-        // remove style from the <head>
+        // a style with this ID already exists; remove it
+        if (style_el)
+          head_el.removeChild(style_el)
+
+        // no style string specified; we're done
         if (!_.isString(style_str) || style_str.length == 0)
-        {
-          var style_el = document.getElementById(this.uid+'-'+id_suffix)
-          if (style_el)
-            head_el.removeChild(style_el)
           return
-        }
 
         // add style to the <head>
-        var style_el = document.createElement('style')
+        style_el = document.createElement('style')
         style_el.type = 'text/css'
         style_el.id = this.uid+'-'+id_suffix
 
