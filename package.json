@@ -5,11 +5,11 @@
   "author": "David Z. Williams <dave@flex.io>",
   "main": "dist/vue-biggrid.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=debug webpack-dev-server --config webpack.config.dev.js --open --inline --hot",
-    "build": "cross-env NODE_ENV=debug webpack --config webpack.config.build.js --progress --hide-modules",
-    "build-debug": "cross-env NODE_ENV=debug webpack --config webpack.config.build.js --progress --hide-modules",
-    "build-release": "cross-env NODE_ENV=production webpack --config webpack.config.build.js --progress --hide-modules",
-    "build-production": "cross-env NODE_ENV=production webpack --config webpack.config.build.js --progress --hide-modules"
+    "dev": "cross-env NODE_ENV=debug webpack-dev-server --config ./build/webpack.dev.js --open --inline --hot",
+    "build": "cross-env NODE_ENV=debug webpack --config ./build/webpack.build.js --progress --hide-modules",
+    "build-debug": "cross-env NODE_ENV=debug webpack --config ./build/webpack.build.js --progress --hide-modules",
+    "build-release": "cross-env NODE_ENV=production webpack --config ./build/webpack.build.js --progress --hide-modules",
+    "build-production": "cross-env NODE_ENV=production webpack --config ./build/webpack.build.js --progress --hide-modules"
   },
   "repository": {
     "type": "git",
