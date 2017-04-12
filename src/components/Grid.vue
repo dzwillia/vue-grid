@@ -76,6 +76,9 @@
         rows: [],
         cached_rows: {},
 
+        client_height: 0,
+        client_width: 0,
+
         scroll_top: 0,
         scroll_left: 0,
 
@@ -93,12 +96,21 @@
       total_height() {
         return ROW_HEIGHT * this.total_count
       },
+      first_visible_row() {
+        return Math.floor(this.scroll_top/ROW_HEIGHT)
+      },
+      last_visible_row() {
+        return Math.ceil((this.scroll_top+this.client_height)/ROW_HEIGHT)
+      },
       resize_delta() {
         return this.mousedown_x == -1 ? 0 : this.mouse_x - this.mousedown_x
       }
     },
     mounted() {
       this.tryFetch()
+
+      this.client_height = this.$el.clientHeight
+      this.client_width = this.$el.clientWidth
 
       this.onDocumentMousedown = (evt) => {
         this.mousedown_x = evt.pageX
