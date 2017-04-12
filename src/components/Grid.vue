@@ -129,12 +129,16 @@
 
       onColumnResizerMousedown(col) {
         this.resize_col = _.cloneDeep(col)
+        this.updateStyle('cursor', 'html { cursor: ew-resize !important; }')
+        this.updateStyle('noselect', 'html { user-select: none !important; }')
       },
 
       onMouseup(evt) {
         this.mousedown_x = -1
         this.mousedown_y = -1
         this.resize_col = null
+        this.updateStyle('cursor', '')
+        this.updateStyle('noselect', '')
       },
 
       onMousemove(evt) {
@@ -178,7 +182,33 @@
 
           this.columns = [].concat(temp_cols)
         }
-      }, 80)
+      }, 80),
+
+      updateStyle(id_suffix, style_str) {
+        var head_el = document.head || document.getElementsByTagName('head')[0]
+
+        // remove style from the <head>
+        if (!_.isString(style_str) || style_str.length == 0)
+        {
+          var style_el = document.getElementById(this.uid+'-'+id_suffix)
+          if (style_el)
+            head_el.removeChild(style_el)
+          return
+        }
+
+        // add style to the <head>
+        var style_el = document.createElement('style')
+        style_el.type = 'text/css'
+        style_el.id = this.uid+'-'+id_suffix
+
+        if (style_el.styleSheet)
+          style_el.styleSheet.cssText = style_str
+           else
+          style_el.appendChild(document.createTextNode(style_str))
+
+        head_el.appendChild(style_el)
+      }
+    }
   }
 </script>
 
