@@ -23,6 +23,7 @@
     "ui"
   ],
   "dependencies": {
+    "axios": "^0.16.1",
     "lodash": "^4.17.4",
     "tachyons": "^4.6.1",
     "vue": "^2.2.6"
