@@ -1,10 +1,5 @@
 <template>
-  <div
-    class="flex flex-column relative bg-white h-100 big-container"
-    @mousedown="onMousedown"
-    @mouseup="onMouseup"
-    @mousemove="onMousemove"
-  >
+  <div class="flex flex-column relative bg-white h-100 big-container">
     <!-- grid header -->
     <div class="flex-none overflow-hidden bg-near-white big-thead">
       <div class="flex flex-row nowrap relative" ref="thead-tr">
@@ -95,6 +90,38 @@
     },
     mounted() {
       this.tryFetch()
+
+      this.onDocumentMousedown = (evt) => {
+        this.mousedown_x = evt.pageX
+        this.mousedown_y = evt.pageY
+      }
+
+      this.onDocumentMouseup = (evt) => {
+        this.mousedown_x = -1
+        this.mousedown_y = -1
+        this.resize_col = null
+        this.updateStyle('cursor', '')
+        this.updateStyle('noselect', '')
+      }
+
+      this.onDocumentMousemove = (evt) => {
+        this.mouse_x = evt.pageX
+        this.mouse_y = evt.pageY
+
+        if (!_.isNil(this.resize_col))
+          this.resizeColumn()
+      }
+
+      // create document-level event handlers
+      document.addEventListener('mousedown', this.onDocumentMousedown)
+      document.addEventListener('mouseup', this.onDocumentMouseup)
+      document.addEventListener('mousemove', this.onDocumentMousemove)
+    },
+    beforeDestroy() {
+      // destroy document-level event handlers
+      document.removeEventListener('mousedown', this.onDocumentMousedown)
+      document.removeEventListener('mouseup', this.onDocumentMouseup)
+      document.removeEventListener('mousemove', this.onDocumentMousemove)
     },
     methods: {
       tryFetch() {
@@ -122,31 +149,10 @@
         })
       },
 
-      onMousedown(evt) {
-        this.mousedown_x = evt.pageX
-        this.mousedown_y = evt.pageY
-      },
-
       onColumnResizerMousedown(col) {
         this.resize_col = _.cloneDeep(col)
         this.updateStyle('cursor', 'html { cursor: ew-resize !important; }')
         this.updateStyle('noselect', 'html { user-select: none !important; }')
-      },
-
-      onMouseup(evt) {
-        this.mousedown_x = -1
-        this.mousedown_y = -1
-        this.resize_col = null
-        this.updateStyle('cursor', '')
-        this.updateStyle('noselect', '')
-      },
-
-      onMousemove(evt) {
-        this.mouse_x = evt.pageX
-        this.mouse_y = evt.pageY
-
-        if (!_.isNil(this.resize_col))
-          this.resizeColumn()
       },
 
       onScroll: _.throttle(function(evt) {
