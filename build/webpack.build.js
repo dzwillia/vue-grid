@@ -1,40 +1,20 @@
 var path = require('path')
 var webpack = require('webpack')
 var WebpackMd5Hash = require('webpack-md5-hash')
-var AssetsPlugin = require('assets-webpack-plugin')
-var HtmlWebpackPlugin = require('html-webpack-plugin')
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
-var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
-
-// debug vs. production constants
-var IS_DEBUG = (process.env.NODE_ENV === 'production') ? false : true
-var OUTPUT_FILENAME = IS_DEBUG ? '[name].js' : '[name]-[chunkhash].js'
-var EXTRACT_TEXT_FILENAME = IS_DEBUG ? 'css/style.css' : 'css/style-[contenthash].css'
-var SHOW_BUNDLE_ANALYZER = false
 
 module.exports = {
   entry: {
     vendor: [
       'lodash',
-      'vue',
-      'vuex',
-      'vue-resource',
-      'vue-router',
-      'vee-validate',
-      'keen-ui',
-      'filesize',
-      'clipboard',
-      'moment',
-      'jquery',
-      'tinycolor2',
-      'codemirror'
+      'vue'
     ],
-    app: './src/main.js'
+    app: './src/index.js'
   },
   output: {
     path: path.resolve(__dirname, './dist'),
     publicPath: '/dist/',
-    filename: OUTPUT_FILENAME
+    filename: '[name].js'
   },
   module: {
     rules: [
@@ -97,8 +77,7 @@ module.exports = {
   },
   resolve: {
     alias: {
-      'vue$': 'vue/dist/vue',
-      'jquery': 'jquery/src/jquery'
+      'vue$': 'vue/dist/vue'
     }
   },
   devtool: '#source-map'
@@ -114,15 +93,7 @@ module.exports.plugins = (module.exports.plugins || []).concat([
     }
   }),
   new webpack.ProvidePlugin({
-    _: 'lodash',
-    $: 'jquery',
-    jQuery: 'jquery',
-    Clipboard: 'clipboard',
-    tinycolor: 'tinycolor2'
-  }),
-  new webpack.optimize.CommonsChunkPlugin({
-    name: 'vendor',
-    minChunks: Infinity
+    _: 'lodash'
   }),
   new WebpackMd5Hash(), // use standard md5 hash when using [chunkfile]
   new webpack.optimize.UglifyJsPlugin({
@@ -131,38 +102,10 @@ module.exports.plugins = (module.exports.plugins || []).concat([
       warnings: false
     }
   }),
-  new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/), // TODO: find out if there's a no-locale moment.js NPM repo
   new webpack.LoaderOptionsPlugin({
     minimize: true
   }),
-  new AssetsPlugin({
-    filename: './src/build/assets.json',
-    prettyPrint: true
-  }),
   new ExtractTextPlugin({
-    filename: EXTRACT_TEXT_FILENAME
-  }),
-  new HtmlWebpackPlugin({
-    template: path.resolve(__dirname, './src/index-template.ejs'), // load a custom template (ejs by default see the FAQ for details)
-    filename: path.resolve(__dirname, './src/build/index-template.html')
-  }),
-  new HtmlWebpackPlugin({
-    template: path.resolve(__dirname, './src/index-template.ejs'), // load a custom template (ejs by default see the FAQ for details)
-    filename: path.resolve(__dirname, '../application/views/layout.phtml')
+    filename: './dist/vue-biggrid.css'
   })
 ])
-
-if (IS_DEBUG)
-{
-  /* debug-only plugins */
-  if (SHOW_BUNDLE_ANALYZER)
-  {
-    module.exports.plugins = module.exports.plugins.concat([
-      new BundleAnalyzerPlugin()
-    ])
-  }
-}
- else
-{
-  /* production-only plugins */
-}

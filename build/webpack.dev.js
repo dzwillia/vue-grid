@@ -5,20 +5,9 @@ module.exports = {
   entry: {
     vendor: [
       'lodash',
-      'vue',
-      'vuex',
-      'vue-resource',
-      'vue-router',
-      'vee-validate',
-      'keen-ui',
-      'filesize',
-      'clipboard',
-      'moment',
-      'jquery',
-      'tinycolor2',
-      'codemirror'
+      'vue'
     ],
-    app: './src/main.js'
+    app: './src/index.js'
   },
   output: {
     path: path.resolve(__dirname, './dist'),
@@ -80,8 +69,7 @@ module.exports = {
   },
   resolve: {
     alias: {
-      'vue$': 'vue/dist/vue',
-      'jquery': 'jquery/src/jquery'
+      'vue$': 'vue/dist/vue'
     }
   },
   devServer: {
@@ -98,10 +86,6 @@ module.exports = {
 // http://vue-loader.vuejs.org/en/workflow/production.html
 module.exports.plugins = (module.exports.plugins || []).concat([
   new webpack.ProvidePlugin({
-    _: 'lodash',
-    $: 'jquery',
-    jQuery: 'jquery',
-    Clipboard: 'clipboard',
-    tinycolor: 'tinycolor2'
+    _: 'lodash'
   })
 ])
