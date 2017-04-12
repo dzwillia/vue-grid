@@ -1,17 +1,17 @@
 <template>
-  <div class="flex flex-column relative bg-white h-100 big-container">
+  <div class="flex flex-column relative bg-white h-100 bgg-container">
     <!-- grid header -->
-    <div class="flex-none overflow-hidden bg-near-white big-thead">
+    <div class="flex-none overflow-hidden bg-near-white bgg-thead">
       <div class="flex flex-row nowrap relative" ref="thead-tr">
         <!-- row handle -->
-        <div class="flex-none db overflow-hidden ba big-td">
-          <div class="db lh-1 big-th-inner light-silver tr bg-near-white" :style="'width: 60px'"></div>
+        <div class="flex-none db overflow-hidden ba bgg-td">
+          <div class="db lh-1 bgg-th-inner light-silver tr bg-near-white" :style="'width: 60px'"></div>
         </div>
 
         <!-- cells -->
-        <div class="flex-none db overflow-hidden ba bg-near-white tc relative big-th" v-for="c in columns">
+        <div class="flex-none db overflow-hidden ba bg-near-white tc relative bgg-th" v-for="c in columns">
           <!-- cell content -->
-          <div class="db lh-1 big-th-inner" :style="'width: '+c.pixel_width+'px'">{{c.name}}</div>
+          <div class="db lh-1 bgg-th-inner" :style="'width: '+c.pixel_width+'px'">{{c.name}}</div>
 
           <!-- column resize handle -->
           <div
@@ -27,13 +27,13 @@
     <div class="flex-fill overflow-auto" ref="tbody" @scroll="onScroll">
       <div class="flex flex-row nowrap" v-for="(r, index) in rows">
         <!-- row handle -->
-        <div class="flex-none db overflow-hidden ba big-td">
-          <div class="db lh-1 big-td-inner light-silver tr bg-near-white" :style="'width: 60px'">{{start+index+1}}</div>
+        <div class="flex-none db overflow-hidden ba bgg-td">
+          <div class="db lh-1 bgg-td-inner light-silver tr bg-near-white" :style="'width: 60px'">{{start+index+1}}</div>
         </div>
 
         <!-- cells -->
-        <div class="flex-none db overflow-hidden ba big-td" v-for="c in columns">
-          <div class="db lh-1 big-td-inner" :style="'width: '+c.pixel_width+'px'">{{r[c.name]}}</div>
+        <div class="flex-none db overflow-hidden ba bgg-td" v-for="c in columns">
+          <div class="db lh-1 bgg-td-inner" :style="'width: '+c.pixel_width+'px'">{{r[c.name]}}</div>
         </div>
       </div>
     </div>
@@ -221,26 +221,26 @@
 <style lang="less">
   @border-color: #ddd;
 
-  .big-container {
+  .bgg-container {
     font-family: Arial, sans-serif;
     font-size: 13px;
     color: #333;
   }
 
-  .big-thead {
+  .bgg-thead {
     box-shadow: inset 0 -1px 0 @border-color;
   }
 
-  .big-th,
-  .big-td {
+  .bgg-th,
+  .bgg-td {
     height: 24px;
     margin-top: -1px;
     margin-left: -1px;
     border-color: @border-color;
   }
 
-  .big-th-inner,
-  .big-td-inner {
+  .bgg-th-inner,
+  .bgg-td-inner {
     min-width: 30px;
     max-width: 1200px;
     padding: 5px 5px 4px;
