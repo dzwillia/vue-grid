@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-column relative h-100 big-container">
+  <div class="flex flex-column relative bg-white h-100 big-container">
     <!-- grid header -->
     <div class="flex-none overflow-hidden bg-near-white big-thead">
       <div class="flex flex-row nowrap relative">
@@ -44,7 +44,8 @@
     name: 'biggrid',
     props: {
       'data-url': {
-        default: null
+        default: '',
+        type: String
       }
     },
     data() {

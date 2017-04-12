@@ -1,6 +1,14 @@
 <template>
   <div id="app" class="flex flex-column fixed absolute--fill overflow-hidden">
-    <biggrid></biggrid>
+    <div class="flex-none ml3 mr3 mt3">
+      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quam ratione alias totam maiores sapiente quisquam repudiandae, obcaecati laboriosam rerum cum enim repellat dolorem nisi in cumque, quo eligendi explicabo corporis!
+    </div>
+    <div class="flex-fill ma3" style="border: 1px solid #ddd">
+      <biggrid></biggrid>
+    </div>
+    <div class="flex-none ml3 mr3 mb3">
+      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quam ratione alias totam maiores sapiente quisquam repudiandae, obcaecati laboriosam rerum cum enim repellat dolorem nisi in cumque, quo eligendi explicabo corporis!
+    </div>
   </div>
 </template>
 
