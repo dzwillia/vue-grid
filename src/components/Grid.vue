@@ -1,14 +1,29 @@
 <template>
   <div class="flex flex-column relative h-100 big-container">
+    <!-- grid header -->
     <div class="flex-none overflow-hidden bg-near-white big-thead">
       <div class="flex flex-row nowrap relative">
+        <!-- row handle -->
+        <div class="flex-none db overflow-hidden ba big-td">
+          <div class="db lh-1 big-th-inner light-silver tr bg-near-white" :style="'width: 60px'"></div>
+        </div>
+
+        <!-- cells -->
         <div class="flex-none db overflow-hidden ba bg-near-white tc relative big-th" v-for="c in columns">
           <div class="db big-th-inner" style="width: 130px">{{c.name}}</div>
         </div>
       </div>
     </div>
+
+    <!-- grid body -->
     <div class="flex-fill overflow-auto">
       <div class="flex flex-row nowrap" v-for="(r, index) in rows">
+        <!-- row handle -->
+        <div class="flex-none db overflow-hidden ba big-td">
+          <div class="db lh-1 big-td-inner light-silver tr bg-near-white" :style="'width: 60px'">{{start+index+1}}</div>
+        </div>
+
+        <!-- cells -->
         <div class="flex-none db overflow-hidden ba big-td" v-for="c in columns">
           <div class="db big-td-inner" style="width: 130px">{{r[c.name]}}</div>
         </div>
@@ -111,6 +126,9 @@
       return {
         columns: TEST_DATA.columns,
         rows: TEST_DATA.rows,
+
+        start: 0,
+        limit: 100,
         total_row_count: TEST_DATA.total_count
       }
     }
@@ -143,5 +161,17 @@
     min-width: 30px;
     max-width: 1200px;
     padding: 5px 5px 4px;
+  }
+
+  /* misc */
+
+  .flex-fill {
+    flex: 1 1;
+    min-width: 0; /* 1 */
+    min-height: 0; /* 1 */
+  }
+
+  .lh-1 {
+    line-height: 1;
   }
 </style>
