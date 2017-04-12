@@ -106,6 +106,6 @@ module.exports.plugins = (module.exports.plugins || []).concat([
     minimize: true
   }),
   new ExtractTextPlugin({
-    filename: './dist/vue-biggrid.css'
+    filename: './dist/vue-grid.css'
   })
 ])

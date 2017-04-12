@@ -4,9 +4,9 @@
       Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quam ratione alias totam maiores sapiente quisquam repudiandae, obcaecati laboriosam rerum cum enim repellat dolorem nisi in cumque, quo eligendi explicabo corporis!
     </div>
     <div class="flex-fill ma3" style="border: 1px solid #ddd">
-      <biggrid
+      <grid
         data-url="https://localhost/api/v1/streams/kxj9tvrgdq2r/content"
-      ></biggrid>
+      ></grid>
     </div>
     <div class="flex-none ml3 mr3 mb3">
       Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quam ratione alias totam maiores sapiente quisquam repudiandae, obcaecati laboriosam rerum cum enim repellat dolorem nisi in cumque, quo eligendi explicabo corporis!
@@ -15,12 +15,12 @@
 </template>
 
 <script>
-  import Biggrid from './Grid.vue'
+  import Grid from './Grid.vue'
 
   export default {
     name: 'app',
     components: {
-      Biggrid
+      Grid
     }
   }
 </script>

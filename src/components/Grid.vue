@@ -53,7 +53,7 @@
   }
 
   export default {
-    name: 'biggrid',
+    name: 'vue-grid',
     props: {
       'data-url': {
         default: '',
@@ -62,7 +62,7 @@
     },
     data() {
       return {
-        uid: _.uniqueId('biggrid-'),
+        uid: _.uniqueId('vue-grid-'),
 
         inited: false,
 
