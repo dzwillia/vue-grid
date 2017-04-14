@@ -6,8 +6,9 @@
         @metrics-change="onGridMetricsChange"
       ></grid>
     </div>
-    <div class="flex-none">
-      <grid-metrics class="h-100" style="min-width: 240px" :metrics="grid_metrics"></grid-metrics>
+    <div class="flex-none overflow-auto" style="min-width: 240px">
+      <grid-metrics class="w-100" :metrics="grid_metrics"></grid-metrics>
+      <grid-events class="w-100 bt b--light-gray" v-if="false"></grid-events>
     </div>
   </div>
 </template>
@@ -15,12 +16,14 @@
 <script>
   import Grid from './Grid.vue'
   import GridMetrics from './GridMetrics.vue'
+  import GridEvents from './GridEvents.vue'
 
   export default {
     name: 'app',
     components: {
       Grid,
-      GridMetrics
+      GridMetrics,
+      GridEvents
     },
     data() {
       return {

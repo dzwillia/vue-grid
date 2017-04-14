@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div class="f5 pa2 mb1 mid-gray bg-near-white bb b--black-10">Grid Metrics</div>
-    <table class="w-100 ph2 f6 dark-gray">
+    <div class="f5 pa2 mid-gray bg-near-white bb b--light-gray">Metrics</div>
+    <table class="w-100 pv1 ph2 f6 dark-gray">
       <tr>
         <td class="pv1 pr2">Scroll top:</td>
         <td class="pv1 pl2 tr">{{metrics.scroll_top}}</td>
