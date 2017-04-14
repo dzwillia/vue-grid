@@ -1,8 +1,8 @@
 <template>
   <div class="absolute" :style="row_style">
     <!-- row handle -->
-    <div class="overflow-hidden ba absolute z-1 vg-td" :style="'height: '+(rowHeight+1)+'px'">
-      <div class="h-100 lh-1 light-silver tr bg-near-white vg-td-inner" :style="row_handle_style">{{rowIndex+1}}</div>
+    <div class="overflow-hidden ba absolute z-1 vg-td" :style="row_handle_style">
+      <div class="h-100 lh-1 light-silver tr bg-near-white vg-td-inner" :style="inner_row_handle_style">{{rowIndex+1}}</div>
     </div>
 
     <!-- cells -->
@@ -35,6 +35,10 @@
       'columns': {
         type: Array,
         required: true
+      },
+      'scroll-left': {
+        type: Number,
+        default: 0
       }
     },
     data() {
@@ -47,6 +51,9 @@
         return 'top: '+(this.rowIndex*this.rowHeight)+'px'
       },
       row_handle_style() {
+        return 'left: '+this.scrollLeft+'px; height: '+(this.rowHeight+1)+'px'
+      },
+      inner_row_handle_style() {
         return 'width: '+this.row_handle_width+'px'
       }
     }

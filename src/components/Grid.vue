@@ -4,7 +4,7 @@
     <div class="flex-none overflow-hidden bg-near-white vg-thead">
       <grid-header
         :columns="columns"
-        :style="'left: -'+scroll_left+'px'"
+        :scroll-left="scroll_left"
         @start-column-resize="onStartColumnResize"
       >
       </grid-header>
@@ -22,6 +22,7 @@
         :row-index="start+index"
         :row-height="row_height"
         :columns="columns"
+        :scroll-left="scroll_left"
       >
       </grid-row>
     </div>

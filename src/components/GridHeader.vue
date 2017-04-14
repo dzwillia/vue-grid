@@ -1,8 +1,8 @@
 <template>
-  <div class="relative">
+  <div class="relative" :style="header_style">
     <!-- row handle -->
-    <div class="overflow-hidden ba absolute z-1 vg-th" :style="'height: '+(rowHeight+1)+'px'">
-      <div class="h-100 lh-1 light-silver tr bg-near-white vg-th-inner" :style="row_handle_style"></div>
+    <div class="overflow-hidden ba absolute z-1 vg-th" :style="row_handle_style">
+      <div class="h-100 lh-1 light-silver tr bg-near-white vg-th-inner" :style="inner_row_handle_style"></div>
     </div>
 
     <!-- cells -->
@@ -36,6 +36,10 @@
       'columns': {
         type: Array,
         required: true
+      },
+      'scroll-left': {
+        type: Number,
+        default: 0
       }
     },
     data() {
@@ -45,7 +49,13 @@
       }
     },
     computed: {
+      header_style() {
+        return 'left: -'+this.scrollLeft+'px'
+      },
       row_handle_style() {
+        return 'left: '+this.scrollLeft+'px; height: '+(this.rowHeight+1)+'px'
+      },
+      inner_row_handle_style() {
         return 'width: '+(this.row_handle_width)+'px'
       }
     },
