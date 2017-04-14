@@ -29,7 +29,7 @@
       <div class="absolute top-0 left-0" :style="'width: 1px; height: '+total_height+'px'"></div>
 
       <!-- rows -->
-      <div class="flex flex-row nowrap" v-for="(r, index) in rows">
+      <div class="flex flex-row nowrap relative" :style="'top: '+row_container_pixel_start+'px'" v-for="(r, index) in rows">
         <!-- row handle -->
         <div class="flex-none db overflow-hidden ba bgg-td">
           <div class="db lh-1 bgg-td-inner light-silver tr bg-near-white" :style="'width: 60px'">{{start+index+1}}</div>
@@ -60,15 +60,41 @@
         type: String
       }
     },
+    watch: {
+      total_height(val, old_val) {
+        this.$emit('total-height-change', val, old_val)
+      },
+      rendered_row_count(val, old_val) {
+        this.$emit('rendered-row-count-change', val, old_val)
+      },
+      cached_row_count(val, old_val) {
+        this.$emit('cached-row-count-change', val, old_val)
+      },
+      first_visible_row(val, old_val) {
+        this.$emit('first-visible-row-change', val, old_val)
+      },
+      last_visible_row(val, old_val) {
+        this.$emit('last-visible-row-change', val, old_val)
+      },
+      visible_row_count(val, old_val) {
+        this.$emit('visible-row-count-change', val, old_val)
+      },
+      row_container_pixel_start(val, old_val) {
+        this.$emit('row-container-pixel-start-change', val, old_val)
+      },
+      row_container_pixel_end(val, old_val) {
+        this.$emit('row-container-pixel-end-change', val, old_val)
+      },
+    },
     data() {
       return {
         uid: _.uniqueId('vue-grid-'),
 
         inited: false,
 
-        start: 0,
-        limit: 100,
-        total_count: 0,
+        start: 0, // initial start
+        limit: 100, // initial limit
+        total_count: 0, // returned by query
 
         columns: [],
         resize_col: null,
@@ -96,11 +122,26 @@
       total_height() {
         return ROW_HEIGHT * this.total_count
       },
+      rendered_row_count() {
+        return _.size(this.rows)
+      },
+      cached_row_count() {
+        return _.size(this.cached_rows)
+      },
       first_visible_row() {
         return Math.floor(this.scroll_top/ROW_HEIGHT)
       },
       last_visible_row() {
         return Math.ceil((this.scroll_top+this.client_height)/ROW_HEIGHT)
+      },
+      visible_row_count() {
+        return this.last_visible_row-this.first_visible_row
+      },
+      row_container_pixel_start() {
+        return this.start*ROW_HEIGHT
+      },
+      row_container_pixel_end() {
+        return this.row_container_pixel_start + (this.rendered_row_count*ROW_HEIGHT)
       },
       resize_delta() {
         return this.mousedown_x == -1 ? 0 : this.mouse_x - this.mousedown_x
@@ -201,6 +242,20 @@
         if (this.scroll_top != new_scroll_top)
         {
           this.scroll_top = new_scroll_top
+
+          // scrolling down
+          if (this.last_visible_row >= this.start+this.rendered_row_count)
+          {
+            this.start = this.first_visible_row
+            this.tryFetch()
+          }
+
+          // scrolling up
+          if (this.first_visible_row < this.start)
+          {
+            this.start = this.last_visible_row-100
+            this.tryFetch()
+          }
         }
 
         // horizontal scrolls
