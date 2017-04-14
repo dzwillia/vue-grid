@@ -179,28 +179,23 @@
         return rows
       },
       metrics() {
-        var computed_data = _
-          .chain(this._computedWatchers)
-          .omit(['metrics'])
-          .mapValues((k, v) => { return this[v] })
-          .value()
+        var computed_data = this._computedWatchers
+        computed_data = _.omit(computed_data, ['metrics'])
+        computed_data = _.mapValues(computed_data, (k, v) => { return this[v] })
 
-        var filtered_data = _
-          .chain(this.$data)
-          .pick([
-            'start',
-            'limit',
-            'total_row_count',
-            'columns',
-            'rows',
-            'cached_rows',
-            'row_height',
-            'client_height',
-            'client_width',
-            'scroll_top',
-            'scroll_left'
-          ])
-          .value()
+        var filtered_data = _.pick(this.$data, [
+          'start',
+          'limit',
+          'total_row_count',
+          'columns',
+          'rows',
+          'cached_rows',
+          'row_height',
+          'client_height',
+          'client_width',
+          'scroll_top',
+          'scroll_left'
+        ])
 
         return _.assign({}, filtered_data, computed_data)
       }
