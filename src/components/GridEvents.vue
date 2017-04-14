@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="f5 pa2 mid-gray bg-near-white bb b--light-gray">Events</div>
-    <table class="w-100 pv1 ph2 f6 dark-gray">
+    <table class="w-100 pv1 ph2 f6 dark-gray h3">
     </table>
   </div>
 </template>

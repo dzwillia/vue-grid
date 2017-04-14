@@ -3,13 +3,19 @@
     <div class="flex-fill br b--black-20">
       <grid
         data-url="https://localhost/api/v1/streams/kxj9tvrgdq2r/content"
+        :live-scroll="live_scroll"
         @metrics-change="onGridMetricsChange"
       ></grid>
     </div>
     <div class="flex-none overflow-auto" style="min-width: 240px">
-      <grid-metrics class="w-100" :metrics="grid_metrics"></grid-metrics>
+      <grid-metrics class="w-100" :metrics="metrics"></grid-metrics>
       <grid-events class="w-100 bt b--light-gray"></grid-events>
-      <grid-options class="w-100 bt b--light-gray"></grid-options>
+      <grid-options
+        class="w-100 bt b--light-gray"
+        :live-scroll="live_scroll"
+        @option-change="onGridOptionChange"
+      >
+      </grid-options>
     </div>
   </div>
 </template>
@@ -30,12 +36,16 @@
     },
     data() {
       return {
-        grid_metrics: {}
+        metrics: {},
+        live_scroll: false
       }
     },
     methods: {
       onGridMetricsChange(val, old_val) {
-        this.grid_metrics = _.assign({}, val)
+        this.metrics = _.assign({}, val)
+      },
+      onGridOptionChange(option_name, val) {
+        this.live_scroll = val
       }
     }
   }
