@@ -8,8 +8,6 @@
         @first-visible-row-change="firstVisibleRowChange"
         @last-visible-row-change="lastVisibleRowChange"
         @visible-row-count-change="visibleRowCountChange"
-        @row-container-pixel-start-change="rowContainerPixelStartChange"
-        @row-container-pixel-end-change="rowContainerPixelEndChange"
       ></grid>
     </div>
     <div class="flex-none mt3 mr3 mb3 w5">
@@ -35,14 +33,6 @@
           <td class="pv1">Visible row count</td>
           <td class="pv1 tr">{{vrc}}</td>
         </tr>
-        <tr>
-          <td class="pv1">Row container pixel start</td>
-          <td class="pv1 tr">{{rcps}}</td>
-        </tr>
-        <tr>
-          <td class="pv1">Row container pixel end</td>
-          <td class="pv1 tr">{{rcpe}}</td>
-        </tr>
       </table>
     </div>
   </div>
@@ -62,9 +52,7 @@
         crc: 0,
         fvr: 0,
         lvr: 0,
-        vrc: 0,
-        rcps: 0,
-        rcpe: 0
+        vrc: 0
       }
     },
     methods: {
@@ -72,9 +60,7 @@
       cachedRowCountChange(val)         { this.crc = val  },
       firstVisibleRowChange(val)        { this.fvr = val  },
       lastVisibleRowChange(val)         { this.lvr = val  },
-      visibleRowCountChange(val)        { this.vrc = val  },
-      rowContainerPixelStartChange(val) { this.rcps = val },
-      rowContainerPixelEndChange(val)   { this.rcpe = val }
+      visibleRowCountChange(val)        { this.vrc = val  }
     }
   }
 </script>

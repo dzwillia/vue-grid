@@ -4,7 +4,7 @@
     <div class="flex-none overflow-hidden bg-near-white bgg-thead">
       <div class="flex flex-row nowrap relative" ref="thead-tr">
         <!-- row handle -->
-        <div class="flex-none db overflow-hidden ba bgg-td">
+        <div class="flex-none db overflow-hidden ba bgg-th">
           <div class="db lh-1 bgg-th-inner light-silver tr bg-near-white" :style="'width: 60px'"></div>
         </div>
 
@@ -24,32 +24,33 @@
     </div>
 
     <!-- grid body -->
-    <div class="flex-fill relative overflow-auto" ref="tbody" @scroll="onScroll">
+    <div class="flex-fill relative overflow-auto bgg-tbody" ref="tbody" @scroll="onScroll">
       <!-- yardstick -->
       <div class="absolute top-0 left-0" :style="'width: 1px; height: '+total_height+'px'"></div>
 
       <!-- rows -->
-      <div class="flex flex-row nowrap relative" :style="'top: '+row_container_pixel_start+'px'" v-for="(r, index) in rows">
-        <!-- row handle -->
-        <div class="flex-none db overflow-hidden ba bgg-td">
-          <div class="db lh-1 bgg-td-inner light-silver tr bg-near-white" :style="'width: 60px'">{{start+index+1}}</div>
-        </div>
-
-        <!-- cells -->
-        <div class="flex-none db overflow-hidden ba bgg-td" v-for="c in columns">
-          <div class="db lh-1 bgg-td-inner" :style="'width: '+c.pixel_width+'px'">{{r[c.name]}}</div>
-        </div>
-      </div>
+      <grid-row
+        v-for="(row, index) in rows"
+        :row="row"
+        :row-index="start+index"
+        :row-height="row_height"
+        :columns="columns"
+      >
+      </grid-row>
     </div>
   </div>
 </template>
 
 <script>
   import axios from 'axios'
+  import GridRow from './GridRow.vue'
 
-  const ROW_HEIGHT = 24
+  const DEFAULT_START = 0
+  const DEFAULT_LIMIT = 40
+  const DEFAULT_ROW_HEIGHT = 24
+  const DEFAULT_COLUMN_WIDTH = 130
   const DEFAULT_COLUMN_INFO = {
-    pixel_width: 130
+    pixel_width: DEFAULT_COLUMN_WIDTH
   }
 
   export default {
@@ -59,6 +60,9 @@
         default: '',
         type: String
       }
+    },
+    components: {
+      GridRow
     },
     watch: {
       total_height(val, old_val) {
@@ -78,13 +82,7 @@
       },
       visible_row_count(val, old_val) {
         this.$emit('visible-row-count-change', val, old_val)
-      },
-      row_container_pixel_start(val, old_val) {
-        this.$emit('row-container-pixel-start-change', val, old_val)
-      },
-      row_container_pixel_end(val, old_val) {
-        this.$emit('row-container-pixel-end-change', val, old_val)
-      },
+      }
     },
     data() {
       return {
@@ -92,8 +90,8 @@
 
         inited: false,
 
-        start: 0, // initial start
-        limit: 100, // initial limit
+        start: DEFAULT_START, // initial start
+        limit: DEFAULT_LIMIT, // initial limit
         total_count: 0, // returned by query
 
         columns: [],
@@ -101,6 +99,7 @@
 
         rows: [],
         cached_rows: {},
+        row_height: DEFAULT_ROW_HEIGHT,
 
         client_height: 0,
         client_width: 0,
@@ -120,7 +119,7 @@
         return this.inited ? url : url + '&metadata=true'
       },
       total_height() {
-        return ROW_HEIGHT * this.total_count
+        return this.row_height * this.total_count
       },
       rendered_row_count() {
         return _.size(this.rows)
@@ -129,19 +128,13 @@
         return _.size(this.cached_rows)
       },
       first_visible_row() {
-        return Math.floor(this.scroll_top/ROW_HEIGHT)
+        return Math.floor(this.scroll_top/this.row_height)
       },
       last_visible_row() {
-        return Math.ceil((this.scroll_top+this.client_height)/ROW_HEIGHT)
+        return Math.ceil((this.scroll_top+this.client_height)/this.row_height)
       },
       visible_row_count() {
         return this.last_visible_row-this.first_visible_row
-      },
-      row_container_pixel_start() {
-        return this.start*ROW_HEIGHT
-      },
-      row_container_pixel_end() {
-        return this.row_container_pixel_start + (this.rendered_row_count*ROW_HEIGHT)
       },
       resize_delta() {
         return this.mousedown_x == -1 ? 0 : this.mouse_x - this.mousedown_x
@@ -275,7 +268,7 @@
           var temp_cols = _.map(this.columns, (col) => {
             if (_.get(col, 'name') == _.get(lookup_col, 'name'))
             {
-              var old_width = _.get(this.resize_col, 'pixel_width', 120)
+              var old_width = _.get(this.resize_col, 'pixel_width', DEFAULT_COLUMN_WIDTH)
               return _.assign({}, lookup_col, { pixel_width: old_width + this.resize_delta })
             }
 
@@ -284,7 +277,7 @@
 
           this.columns = [].concat(temp_cols)
         }
-      }, 80),
+      }, 50),
 
       updateStyle(id_suffix, style_str) {
         var head_el = document.head || document.getElementsByTagName('head')[0]
@@ -329,7 +322,6 @@
 
   .bgg-th,
   .bgg-td {
-    height: 24px;
     margin-top: -1px;
     margin-left: -1px;
     border-color: @border-color;
