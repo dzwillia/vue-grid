@@ -1,7 +1,7 @@
 <template>
   <div class="relative">
     <!-- row handle -->
-    <div class="overflow-hidden ba absolute vg-th" :style="'height: '+(rowHeight+1)+'px'">
+    <div class="overflow-hidden ba absolute z-1 vg-th" :style="'height: '+(rowHeight+1)+'px'">
       <div class="h-100 lh-1 light-silver tr bg-near-white vg-th-inner" :style="row_handle_style"></div>
     </div>
 

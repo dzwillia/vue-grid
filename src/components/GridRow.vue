@@ -1,7 +1,7 @@
 <template>
   <div class="absolute" :style="row_style">
     <!-- row handle -->
-    <div class="overflow-hidden ba absolute vg-td" :style="'height: '+(rowHeight+1)+'px'">
+    <div class="overflow-hidden ba absolute z-1 vg-td" :style="'height: '+(rowHeight+1)+'px'">
       <div class="h-100 lh-1 light-silver tr bg-near-white vg-td-inner" :style="row_handle_style">{{rowIndex+1}}</div>
     </div>
 
