@@ -35,7 +35,7 @@
   import GridRow from './GridRow.vue'
 
   const DEFAULT_START = 0
-  const DEFAULT_LIMIT = 40
+  const DEFAULT_LIMIT = 50
   const DEFAULT_ROW_HEIGHT = 23
   const DEFAULT_COLUMN_WIDTH = 130
   const DEFAULT_COLUMN_INFO = {
