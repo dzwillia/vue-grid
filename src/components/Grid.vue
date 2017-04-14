@@ -149,6 +149,23 @@
       resize_delta() {
         return this.mousedown_x == -1 ? 0 : this.mouse_x - this.mousedown_x
       },
+      rows_in_cache() {
+        var missing_rows = false
+
+        if (this.cached_row_count == 0)
+          return false
+
+        for (var i = this.start; i < this.start+this.limit; ++i)
+        {
+          if (i < this.total_row_count && !this.cached_rows[i])
+          {
+            missing_rows = true
+            break
+          }
+        }
+
+        return missing_rows ? false : true
+      },
       render_rows() {
         if (this.liveScroll)
           return this.rows
@@ -237,6 +254,10 @@
           active_xhr = null
           cancel = null
         }
+
+        // if all of the rows exist in our row cache, we're done
+        if (this.rows_in_cache)
+          return
 
         active_xhr = axios.get(this.fetch_url, {
           cancelToken: new CancelToken(function executor(c) {
