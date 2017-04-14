@@ -85,6 +85,9 @@
       },
       visible_row_count(val, old_val) {
         this.$emit('visible-row-count-change', val, old_val)
+      },
+      metrics(val, old_val) {
+        this.$emit('metrics-change', val, old_val)
       }
     },
     data() {
@@ -141,6 +144,32 @@
       },
       resize_delta() {
         return this.mousedown_x == -1 ? 0 : this.mouse_x - this.mousedown_x
+      },
+      metrics() {
+        var computed_data = _
+          .chain(this._computedWatchers)
+          .omit(['metrics'])
+          .mapValues((k, v) => { return this[v] })
+          .value()
+
+        var filtered_data = _
+          .chain(this.$data)
+          .pick([
+            'start',
+            'limit',
+            'total_row_count',
+            'columns',
+            'rows',
+            'cached_rows',
+            'row_height',
+            'client_height',
+            'client_width',
+            'scroll_top',
+            'scroll_left'
+          ])
+          .value()
+
+        return _.assign({}, filtered_data, computed_data)
       }
     },
     mounted() {

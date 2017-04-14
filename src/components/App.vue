@@ -3,85 +3,34 @@
     <div class="flex-fill ma3" style="border: 1px solid #ddd">
       <grid
         data-url="https://localhost/api/v1/streams/kxj9tvrgdq2r/content"
-        @scroll-top-change="scrollTopChange"
-        @scroll-left-change="scrollLeftChange"
-        @rendered-row-count-change="renderedRowCountChange"
-        @cached-row-count-change="cachedRowCountChange"
-        @total-row-count-change="totalRowCountChange"
-        @first-visible-row-change="firstVisibleRowChange"
-        @last-visible-row-change="lastVisibleRowChange"
-        @visible-row-count-change="visibleRowCountChange"
+        @metrics-change="onGridMetricsChange"
       ></grid>
     </div>
     <div class="flex-none mt3 mr3 mb3 w5">
-      <div class="f5 fw6 pb1 mb2 mid-gray bb b--black-10">Metrics</div>
-      <table class="w-100 f6 dark-gray">
-        <tr>
-          <td class="pv1">Scroll top</td>
-          <td class="pv1 tr">{{stc}}</td>
-        </tr>
-        <tr>
-          <td class="pv1">Scroll left</td>
-          <td class="pv1 tr">{{slc}}</td>
-        </tr>
-        <tr>
-          <td class="pv1">Rendered row count</td>
-          <td class="pv1 tr">{{rrc}}</td>
-        </tr>
-        <tr>
-          <td class="pv1">Cached row count</td>
-          <td class="pv1 tr">{{crc}}</td>
-        </tr>
-        <tr>
-          <td class="pv1">Total row count</td>
-          <td class="pv1 tr">{{trc}}</td>
-        </tr>
-        <tr>
-          <td class="pv1">First visible row</td>
-          <td class="pv1 tr">{{fvr}}</td>
-        </tr>
-        <tr>
-          <td class="pv1">Last visible row</td>
-          <td class="pv1 tr">{{lvr}}</td>
-        </tr>
-        <tr>
-          <td class="pv1">Visible row count</td>
-          <td class="pv1 tr">{{vrc}}</td>
-        </tr>
-      </table>
+      <grid-metrics :metrics="grid_metrics"></grid-metrics>
     </div>
   </div>
 </template>
 
 <script>
   import Grid from './Grid.vue'
+  import GridMetrics from './GridMetrics.vue'
 
   export default {
     name: 'app',
     components: {
-      Grid
+      Grid,
+      GridMetrics
     },
     data() {
       return {
-        stc: 0,
-        slc: 0,
-        rrc: 0,
-        crc: 0,
-        trc: 0,
-        fvr: 0,
-        lvr: 0,
-        vrc: 0
+        grid_metrics: {}
       }
     },
     methods: {
-      scrollTopChange(val)        { this.stc = val  },
-      scrollLeftChange(val)       { this.slc = val  },
-      renderedRowCountChange(val) { this.rrc = val  },
-      cachedRowCountChange(val)   { this.crc = val  },
-      totalRowCountChange(val)    { this.trc = val  },
-      firstVisibleRowChange(val)  { this.fvr = val  },
-      lastVisibleRowChange(val)   { this.lvr = val  },
-      visibleRowCountChange(val)  { this.vrc = val  }
+      onGridMetricsChange(val, old_val) {
+        this.grid_metrics = _.assign({}, val)
+      }
     }
   }
 </script>
