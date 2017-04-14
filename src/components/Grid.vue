@@ -69,6 +69,9 @@
       cached_row_count(val, old_val) {
         this.$emit('cached-row-count-change', val, old_val)
       },
+      total_row_count(val, old_val) {
+        this.$emit('total-row-count-change', val, old_val)
+      },
       first_visible_row(val, old_val) {
         this.$emit('first-visible-row-change', val, old_val)
       },
@@ -87,7 +90,7 @@
 
         start: DEFAULT_START, // initial start
         limit: DEFAULT_LIMIT, // initial limit
-        total_count: 0, // returned by query
+        total_row_count: 0, // returned by query
 
         columns: [],
         resize_col: null,
@@ -114,7 +117,7 @@
         return this.inited ? url : url + '&metadata=true'
       },
       total_height() {
-        return this.row_height * this.total_count
+        return this.row_height * this.total_row_count
       },
       rendered_row_count() {
         return _.size(this.rows)
@@ -179,7 +182,7 @@
           var resdata = response.data
 
           if (_.isNumber(resdata.total_count))
-            this.total_count = resdata.total_count
+            this.total_row_count = resdata.total_count
 
           // store our column info
           if (!this.inited && _.isArray(resdata.columns))
@@ -198,7 +201,7 @@
           // cache the current set of rows
           var start = this.start
           var limit = this.limit
-          var row_count = this.total_count
+          var row_count = this.total_row_count
           var temp_cached_rows = {}
           var idx = 0
 
@@ -314,8 +317,8 @@
 
   .vg-th,
   .vg-td {
-    margin-top: -1px;
-    margin-left: -1px;
+    margin-top: 0;
+    margin-left: 0;
     border-color: @border-color;
   }
 

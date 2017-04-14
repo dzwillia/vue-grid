@@ -42,7 +42,7 @@
     },
     computed: {
       row_style() {
-        return 'top: '+(this.rowIndex*(this.rowHeight-1))+'px'
+        return 'top: '+(this.rowIndex*(this.rowHeight))+'px'
       },
       row_handle_style() {
         return 'width: '+this.row_handle_width+'px'

@@ -7,6 +7,7 @@
         @scroll-left-change="scrollLeftChange"
         @rendered-row-count-change="renderedRowCountChange"
         @cached-row-count-change="cachedRowCountChange"
+        @total-row-count-change="totalRowCountChange"
         @first-visible-row-change="firstVisibleRowChange"
         @last-visible-row-change="lastVisibleRowChange"
         @visible-row-count-change="visibleRowCountChange"
@@ -30,6 +31,10 @@
         <tr>
           <td class="pv1">Cached row count</td>
           <td class="pv1 tr">{{crc}}</td>
+        </tr>
+        <tr>
+          <td class="pv1">Total row count</td>
+          <td class="pv1 tr">{{trc}}</td>
         </tr>
         <tr>
           <td class="pv1">First visible row</td>
@@ -62,6 +67,7 @@
         slc: 0,
         rrc: 0,
         crc: 0,
+        trc: 0,
         fvr: 0,
         lvr: 0,
         vrc: 0
@@ -72,6 +78,7 @@
       scrollLeftChange(val)       { this.slc = val  },
       renderedRowCountChange(val) { this.rrc = val  },
       cachedRowCountChange(val)   { this.crc = val  },
+      totalRowCountChange(val)    { this.trc = val  },
       firstVisibleRowChange(val)  { this.fvr = val  },
       lastVisibleRowChange(val)   { this.lvr = val  },
       visibleRowCountChange(val)  { this.vrc = val  }
