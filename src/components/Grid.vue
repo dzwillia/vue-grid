@@ -43,8 +43,8 @@
   }
 
   var active_xhr = null
-  var cancel = null
   var CancelToken = axios.CancelToken
+  var cancelXhr = null
 
   export default {
     name: 'vue-grid',
@@ -246,13 +246,13 @@
     methods: {
       tryFetch: _.debounce(function() {
         // if the last XHR is still active, kill it now
-        if (!_.isNil(active_xhr) && !_.isNil(cancel))
+        if (!_.isNil(active_xhr) && !_.isNil(cancelXhr))
         {
-          cancel()
+          cancelXhr()
 
           // reset XHR variables
           active_xhr = null
-          cancel = null
+          cancelXhr = null
         }
 
         // if all of the rows exist in our row cache, we're done
@@ -262,7 +262,7 @@
         active_xhr = axios.get(this.fetch_url, {
           cancelToken: new CancelToken(function executor(c) {
             // an executor function receives a cancel function as a parameter
-            cancel = c
+            cancelXhr = c
           })
         }).then(response => {
           var resdata = response.data
