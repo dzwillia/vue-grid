@@ -244,7 +244,7 @@
           // scrolling up
           if (this.first_visible_row < this.start)
           {
-            this.start = this.last_visible_row-100
+            this.start = this.first_visible_row
             this.tryFetch()
           }
         }
