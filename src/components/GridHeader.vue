@@ -2,13 +2,13 @@
   <div class="flex flex-row nowrap relative">
     <!-- row handle -->
     <div class="flex-none db overflow-hidden ba vg-th">
-      <div class="db lh-1 vg-th-inner light-silver tr bg-near-white" :style="row_handle_style"></div>
+      <div class="db h-100 lh-1 vg-th-inner light-silver tr bg-near-white" :style="row_handle_style"></div>
     </div>
 
     <!-- cells -->
     <div class="flex-none db overflow-hidden ba bg-near-white tc relative vg-th" :style="'height: '+rowHeight+'px'" v-for="col in columns">
       <!-- cell content -->
-      <div class="db lh-1 vg-th-inner" :style="'width: '+col.pixel_width+'px'">{{col.name}}</div>
+      <div class="db h-100 lh-1 vg-th-inner" :style="'width: '+col.pixel_width+'px'">{{col.name}}</div>
 
       <!-- column resize handle -->
       <div
