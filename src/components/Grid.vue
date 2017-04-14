@@ -256,7 +256,7 @@
         }
       }, 10),
 
-      resizeColumn: _.throttle(function(evt) {
+      resizeColumn: _.debounce(function(evt) {
         var lookup_col = _.find(this.columns, { name: _.get(this.resize_col, 'name') })
         if (!_.isNil(lookup_col))
         {
@@ -272,7 +272,7 @@
 
           this.columns = [].concat(temp_cols)
         }
-      }, 150),
+      }, 5),
 
       updateStyle(id_suffix, style_str) {
         var head_el = document.head || document.getElementsByTagName('head')[0]
