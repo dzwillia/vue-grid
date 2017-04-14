@@ -2,25 +2,11 @@
   <div class="flex flex-column relative bg-white h-100 bgg-container">
     <!-- grid header -->
     <div class="flex-none overflow-hidden bg-near-white bgg-thead">
-      <div class="flex flex-row nowrap relative" ref="thead-tr">
-        <!-- row handle -->
-        <div class="flex-none db overflow-hidden ba bgg-th">
-          <div class="db lh-1 bgg-th-inner light-silver tr bg-near-white" :style="'width: 60px'"></div>
-        </div>
-
-        <!-- cells -->
-        <div class="flex-none db overflow-hidden ba bg-near-white tc relative bgg-th" v-for="c in columns">
-          <!-- cell content -->
-          <div class="db lh-1 bgg-th-inner" :style="'width: '+c.pixel_width+'px'">{{c.name}}</div>
-
-          <!-- column resize handle -->
-          <div
-            class="absolute top-0 bottom-0 right-0 cursor-resize-ew"
-            style="width: 4px"
-            @mousedown="onColumnResizerMousedown(c)"
-          ></div>
-        </div>
-      </div>
+      <grid-header
+        :columns="columns"
+        @start-column-resize="onStartColumnResize"
+      >
+      </grid-header>
     </div>
 
     <!-- grid body -->
@@ -43,6 +29,7 @@
 
 <script>
   import axios from 'axios'
+  import GridHeader from './GridHeader.vue'
   import GridRow from './GridRow.vue'
 
   const DEFAULT_START = 0
@@ -62,6 +49,7 @@
       }
     },
     components: {
+      GridHeader,
       GridRow
     },
     watch: {
@@ -221,7 +209,7 @@
         })
       },
 
-      onColumnResizerMousedown(col) {
+      onStartColumnResize(col) {
         this.resize_col = _.cloneDeep(col)
         this.updateStyle('cursor', 'html { cursor: ew-resize !important; }')
         this.updateStyle('noselect', 'html { user-select: none !important; }')
@@ -277,7 +265,7 @@
 
           this.columns = [].concat(temp_cols)
         }
-      }, 50),
+      }, 100),
 
       updateStyle(id_suffix, style_str) {
         var head_el = document.head || document.getElementsByTagName('head')[0]
