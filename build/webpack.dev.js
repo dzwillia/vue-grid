@@ -2,15 +2,9 @@ var path = require('path')
 var webpack = require('webpack')
 
 module.exports = {
-  entry: {
-    vendor: [
-      'lodash',
-      'vue'
-    ],
-    app: './src/index.js'
-  },
+  entry: './src/index.js',
   output: {
-    path: path.resolve(__dirname, './dist'),
+    path: path.resolve(__dirname, '../dist'),
     publicPath: '/dist/',
     filename: '[name].js'
   },
@@ -29,7 +23,11 @@ module.exports = {
       {
         test: /\.js$/,
         loader: 'babel-loader',
-        exclude: /node_modules/
+        exclude: /node_modules/,
+        query: {
+          plugins: ['lodash'],
+          presets: [['env', { 'targets': { 'node': 4 } }]]
+        }
       },
       // extract css files
       {
@@ -84,8 +82,4 @@ module.exports = {
 /* dev plugins */
 
 // http://vue-loader.vuejs.org/en/workflow/production.html
-module.exports.plugins = (module.exports.plugins || []).concat([
-  new webpack.ProvidePlugin({
-    _: 'lodash'
-  })
-])
+module.exports.plugins = (module.exports.plugins || []).concat([])

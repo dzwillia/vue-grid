@@ -4,17 +4,13 @@ var WebpackMd5Hash = require('webpack-md5-hash')
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
 
 module.exports = {
-  entry: {
-    vendor: [
-      'lodash',
-      'vue'
-    ],
-    app: './src/index.js'
-  },
+  entry: './src/index.js',
   output: {
-    path: path.resolve(__dirname, './dist'),
+    path: path.resolve(__dirname, '../dist'),
     publicPath: '/dist/',
-    filename: '[name].js'
+    filename: 'vue-grid.min.js',
+    library: 'vue-grid',
+    libraryTarget: 'umd'
   },
   module: {
     rules: [
