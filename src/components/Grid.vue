@@ -305,7 +305,7 @@
 
           // reset XHR variables
           active_xhr = null
-          cancel = null
+          cancelXhr = null
         })
       }, 80),
 
