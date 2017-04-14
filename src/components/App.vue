@@ -8,7 +8,8 @@
     </div>
     <div class="flex-none overflow-auto" style="min-width: 240px">
       <grid-metrics class="w-100" :metrics="grid_metrics"></grid-metrics>
-      <grid-events class="w-100 bt b--light-gray" v-if="false"></grid-events>
+      <grid-options class="w-100 bt b--light-gray"></grid-options>
+      <grid-events class="w-100 bt b--light-gray"></grid-events>
     </div>
   </div>
 </template>
@@ -16,6 +17,7 @@
 <script>
   import Grid from './Grid.vue'
   import GridMetrics from './GridMetrics.vue'
+  import GridOptions from './GridOptions.vue'
   import GridEvents from './GridEvents.vue'
 
   export default {
@@ -23,6 +25,7 @@
     components: {
       Grid,
       GridMetrics,
+      GridOptions,
       GridEvents
     },
     data() {
