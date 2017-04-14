@@ -1,13 +1,13 @@
 <template>
   <div class="flex flex-row nowrap absolute" :style="row_style">
     <!-- row handle -->
-    <div class="flex-none db overflow-hidden ba bgg-td" :style="'height: '+rowHeight+'px'">
-      <div class="db h-100 lh-1 bgg-td-inner light-silver tr bg-near-white" :style="row_handle_style">{{rowIndex+1}}</div>
+    <div class="flex-none db overflow-hidden ba vg-td" :style="'height: '+rowHeight+'px'">
+      <div class="db h-100 lh-1 vg-td-inner light-silver tr bg-near-white" :style="row_handle_style">{{rowIndex+1}}</div>
     </div>
 
     <!-- cells -->
-    <div class="flex-none db overflow-hidden ba bgg-td" :style="'height: '+rowHeight+'px'" v-for="col in columns">
-      <div class="db h-100 lh-1 bgg-td-inner" :style="'width: '+col.pixel_width+'px'">{{row[col.name]}}</div>
+    <div class="flex-none db overflow-hidden ba vg-td" :style="'height: '+rowHeight+'px'" v-for="col in columns">
+      <div class="db h-100 lh-1 vg-td-inner" :style="'width: '+col.pixel_width+'px'">{{row[col.name]}}</div>
     </div>
   </div>
 </template>

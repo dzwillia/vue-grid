@@ -1,7 +1,7 @@
 <template>
-  <div class="flex flex-column relative bg-white h-100 bgg-container">
+  <div class="flex flex-column relative bg-white h-100 vg-container">
     <!-- grid header -->
-    <div class="flex-none overflow-hidden bg-near-white bgg-thead">
+    <div class="flex-none overflow-hidden bg-near-white vg-thead">
       <grid-header
         :columns="columns"
         @start-column-resize="onStartColumnResize"
@@ -10,7 +10,7 @@
     </div>
 
     <!-- grid body -->
-    <div class="flex-fill relative overflow-auto bgg-tbody" ref="tbody" @scroll="onScroll">
+    <div class="flex-fill relative overflow-auto vg-tbody" ref="tbody" @scroll="onScroll">
       <!-- yardstick -->
       <div class="absolute top-0 left-0" :style="'width: 1px; height: '+total_height+'px'"></div>
 
@@ -265,7 +265,7 @@
 
           this.columns = [].concat(temp_cols)
         }
-      }, 100),
+      }, 140),
 
       updateStyle(id_suffix, style_str) {
         var head_el = document.head || document.getElementsByTagName('head')[0]
@@ -298,25 +298,25 @@
 <style lang="less">
   @border-color: #ddd;
 
-  .bgg-container {
+  .vg-container {
     font-family: Arial, sans-serif;
     font-size: 13px;
     color: #333;
   }
 
-  .bgg-thead {
+  .vg-thead {
     box-shadow: inset 0 -1px 0 @border-color;
   }
 
-  .bgg-th,
-  .bgg-td {
+  .vg-th,
+  .vg-td {
     margin-top: -1px;
     margin-left: -1px;
     border-color: @border-color;
   }
 
-  .bgg-th-inner,
-  .bgg-td-inner {
+  .vg-th-inner,
+  .vg-td-inner {
     min-width: 30px;
     max-width: 1200px;
     padding: 5px 5px 4px;
