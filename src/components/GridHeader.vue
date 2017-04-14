@@ -1,21 +1,23 @@
 <template>
-  <div class="flex flex-row nowrap relative">
+  <div class="relative">
     <!-- row handle -->
-    <div class="flex-none db overflow-hidden ba vg-th">
-      <div class="db h-100 lh-1 vg-th-inner light-silver tr bg-near-white" :style="row_handle_style"></div>
+    <div class="overflow-hidden ba absolute vg-th" :style="'height: '+(rowHeight+1)+'px'">
+      <div class="h-100 lh-1 light-silver tr bg-near-white vg-th-inner" :style="row_handle_style"></div>
     </div>
 
     <!-- cells -->
-    <div class="flex-none db overflow-hidden ba bg-near-white tc relative vg-th" :style="'height: '+rowHeight+'px'" v-for="col in columns">
-      <!-- cell content -->
-      <div class="db h-100 lh-1 vg-th-inner" :style="'width: '+col.pixel_width+'px'">{{col.name}}</div>
+    <div class="flex flex-row nowrap" :style="'padding-left: '+row_handle_width+'px'">
+      <div class="flex-none overflow-hidden ba bg-near-white tc relative vg-th" :style="'height: '+(rowHeight+1)+'px'" v-for="col in columns">
+        <!-- cell content -->
+        <div class="h-100 lh-1 vg-th-inner" :style="'width: '+col.pixel_width+'px'">{{col.name}}</div>
 
-      <!-- column resize handle -->
-      <div
-        class="absolute top-0 bottom-0 right-0 cursor-resize-ew"
-        :style="'width: '+column_resize_handle_width+'px'"
-        @mousedown="onColumnResizerMousedown(col)"
-      ></div>
+        <!-- column resize handle -->
+        <div
+          class="absolute top-0 bottom-0 right-0 cursor-resize-ew"
+          :style="'width: '+column_resize_handle_width+'px'"
+          @mousedown="onColumnResizerMousedown(col)"
+        ></div>
+      </div>
     </div>
   </div>
 </template>
@@ -44,7 +46,7 @@
     },
     computed: {
       row_handle_style() {
-        return 'width: '+this.row_handle_width+'px'
+        return 'width: '+(this.row_handle_width)+'px'
       }
     },
     methods: {

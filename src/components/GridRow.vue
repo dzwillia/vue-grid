@@ -1,13 +1,15 @@
 <template>
-  <div class="flex flex-row nowrap absolute" :style="row_style">
+  <div class="absolute" :style="row_style">
     <!-- row handle -->
-    <div class="flex-none db overflow-hidden ba vg-td" :style="'height: '+(rowHeight+1)+'px'">
-      <div class="db h-100 lh-1 vg-td-inner light-silver tr bg-near-white" :style="row_handle_style">{{rowIndex+1}}</div>
+    <div class="overflow-hidden ba absolute vg-td" :style="'height: '+(rowHeight+1)+'px'">
+      <div class="h-100 lh-1 light-silver tr bg-near-white vg-td-inner" :style="row_handle_style">{{rowIndex+1}}</div>
     </div>
 
     <!-- cells -->
-    <div class="flex-none db overflow-hidden ba vg-td" :style="'height: '+(rowHeight+1)+'px'" v-for="col in columns">
-      <div class="db h-100 lh-1 vg-td-inner" :style="'width: '+col.pixel_width+'px'">{{row[col.name]}}</div>
+    <div class="flex flex-row nowrap" :style="'padding-left: '+row_handle_width+'px'">
+      <div class="flex-none overflow-hidden ba vg-td" :style="'height: '+(rowHeight+1)+'px'" v-for="col in columns">
+        <div class="h-100 lh-1 vg-td-inner" :style="'width: '+col.pixel_width+'px'">{{row[col.name]}}</div>
+      </div>
     </div>
   </div>
 </template>
@@ -42,7 +44,7 @@
     },
     computed: {
       row_style() {
-        return 'top: '+(this.rowIndex*(this.rowHeight))+'px'
+        return 'top: '+(this.rowIndex*this.rowHeight)+'px'
       },
       row_handle_style() {
         return 'width: '+this.row_handle_width+'px'

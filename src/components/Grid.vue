@@ -129,7 +129,7 @@
         return Math.floor(this.scroll_top/this.row_height)
       },
       last_visible_row() {
-        return Math.ceil((this.scroll_top+this.client_height)/this.row_height)
+        return Math.min(Math.ceil((this.scroll_top+this.client_height)/this.row_height), this.total_row_count)
       },
       visible_row_count() {
         return this.last_visible_row-this.first_visible_row
