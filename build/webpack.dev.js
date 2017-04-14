@@ -6,7 +6,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, '../dist'),
     publicPath: '/dist/',
-    filename: '[name].js'
+    filename: 'demo.js'
   },
   module: {
     rules: [
@@ -82,4 +82,8 @@ module.exports = {
 /* dev plugins */
 
 // http://vue-loader.vuejs.org/en/workflow/production.html
-module.exports.plugins = (module.exports.plugins || []).concat([])
+module.exports.plugins = (module.exports.plugins || []).concat([
+  new webpack.ProvidePlugin({
+    _: 'lodash'
+  })
+])
