@@ -244,7 +244,7 @@
       document.removeEventListener('mousemove', this.onDocumentMousemove)
     },
     methods: {
-      tryFetch() {
+      tryFetch: _.debounce(function() {
         // if the last XHR is still active, kill it now
         if (!_.isNil(active_xhr) && !_.isNil(cancel))
         {
@@ -307,7 +307,7 @@
           active_xhr = null
           cancel = null
         })
-      },
+      }, 80),
 
       onStartColumnResize(col) {
         this.resize_col = _.cloneDeep(col)
@@ -344,7 +344,7 @@
           this.start = this.first_visible_row
           this.tryFetch()
         }
-      }, 40),
+      }, 10),
 
       onHorizontalScroll: _.throttle(function(val, old_val) {
         this.scroll_left = val
