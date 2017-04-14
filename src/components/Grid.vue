@@ -294,36 +294,40 @@
         this.updateStyle('noselect', 'html { user-select: none !important; }')
       },
 
-      onScroll: _.throttle(function(evt) {
+      onScroll() {
         var new_scroll_top = this.$refs['tbody'].scrollTop
         var new_scroll_left = this.$refs['tbody'].scrollLeft
 
         // vertical scrolls
         if (this.scroll_top != new_scroll_top)
-        {
-          this.scroll_top = new_scroll_top
-
-          // scrolling down
-          if (this.last_visible_row >= this.start+this.rendered_row_count)
-          {
-            this.start = this.first_visible_row
-            this.tryFetch()
-          }
-
-          // scrolling up
-          if (this.first_visible_row < this.start)
-          {
-            this.start = this.first_visible_row
-            this.tryFetch()
-          }
-        }
+          return this.onVerticalScroll(new_scroll_top, this.scroll_top)
 
         // horizontal scrolls
         if (this.scroll_left != new_scroll_left)
+          return this.onHorizontalScroll(new_scroll_left, this.scroll_left)
+      },
+
+      onVerticalScroll: _.throttle(function(val, old_val) {
+        this.scroll_top = val
+
+        // scrolling down
+        if (this.last_visible_row >= this.start+this.rendered_row_count)
         {
-          this.scroll_left = new_scroll_left
+          this.start = this.first_visible_row
+          this.tryFetch()
+        }
+
+        // scrolling up
+        if (this.first_visible_row < this.start)
+        {
+          this.start = this.first_visible_row
+          this.tryFetch()
         }
       }, 40),
+
+      onHorizontalScroll: _.throttle(function(val, old_val) {
+        this.scroll_left = val
+      }, 10),
 
       resizeColumn: _.debounce(function(evt) {
         var lookup_col = _.find(this.columns, { name: _.get(this.resize_col, 'name') })
