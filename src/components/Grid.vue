@@ -17,7 +17,7 @@
 
       <!-- rows -->
       <grid-row
-        v-for="(row, index) in rows"
+        v-for="(row, index) in render_rows"
         :row="row"
         :row-index="start+index"
         :row-height="row_height"
@@ -50,8 +50,12 @@
     name: 'vue-grid',
     props: {
       'data-url': {
-        default: '',
-        type: String
+        type: String,
+        default: ''
+      },
+      'live-scroll': {
+        type: Boolean,
+        default: false
       }
     },
     components: {
@@ -144,6 +148,18 @@
       },
       resize_delta() {
         return this.mousedown_x == -1 ? 0 : this.mouse_x - this.mousedown_x
+      },
+      render_rows() {
+        if (this.liveScroll)
+          return this.rows
+
+        var rows = []
+        for (var i = this.start; i < this.start+this.limit; ++i)
+        {
+          if (i < this.total_row_count)
+            rows.push(this.cached_rows[i] || {})
+        }
+        return rows
       },
       metrics() {
         var computed_data = _
@@ -307,7 +323,7 @@
         {
           this.scroll_left = new_scroll_left
         }
-      }, 10),
+      }, 40),
 
       resizeColumn: _.debounce(function(evt) {
         var lookup_col = _.find(this.columns, { name: _.get(this.resize_col, 'name') })
