@@ -2,7 +2,7 @@
   <div id="app" class="flex flex-row fixed absolute--fill overflow-hidden">
     <div class="flex-fill br b--black-20">
       <grid
-        data-url="https://localhost/api/v1/streams/kxj9tvrgdq2r/content"
+        data-url="https://test.flex.io/api/v1/streams/f7bmlcz26w1z/content"
         :live-scroll="live_scroll"
         @metrics-change="onGridMetricsChange"
       ></grid>
