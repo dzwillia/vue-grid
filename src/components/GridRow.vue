@@ -1,20 +1,20 @@
 <template>
   <div class="flex flex-row nowrap absolute" :style="row_style">
     <!-- row handle -->
-    <div class="flex-none db overflow-hidden ba vg-td" :style="'height: '+rowHeight+'px'">
+    <div class="flex-none db overflow-hidden ba vg-td" :style="'height: '+(rowHeight+1)+'px'">
       <div class="db h-100 lh-1 vg-td-inner light-silver tr bg-near-white" :style="row_handle_style">{{rowIndex+1}}</div>
     </div>
 
     <!-- cells -->
-    <div class="flex-none db overflow-hidden ba vg-td" :style="'height: '+rowHeight+'px'" v-for="col in columns">
+    <div class="flex-none db overflow-hidden ba vg-td" :style="'height: '+(rowHeight+1)+'px'" v-for="col in columns">
       <div class="db h-100 lh-1 vg-td-inner" :style="'width: '+col.pixel_width+'px'">{{row[col.name]}}</div>
     </div>
   </div>
 </template>
 
 <script>
-  const DEFAULT_ROW_HEIGHT = 24
-  const DEFAULT_ROW_HANDLE_WIDTH = 60
+  const DEFAULT_ROW_HEIGHT = 23
+  const DEFAULT_ROW_HANDLE_WIDTH = 70
 
   export default {
     props: {

@@ -35,7 +35,7 @@
 
   const DEFAULT_START = 0
   const DEFAULT_LIMIT = 40
-  const DEFAULT_ROW_HEIGHT = 24
+  const DEFAULT_ROW_HEIGHT = 23
   const DEFAULT_COLUMN_WIDTH = 130
   const DEFAULT_COLUMN_INFO = {
     pixel_width: DEFAULT_COLUMN_WIDTH
@@ -317,8 +317,8 @@
 
   .vg-th,
   .vg-td {
-    margin-top: 0;
-    margin-left: 0;
+    margin-top: -1px;
+    margin-left: -1px;
     border-color: @border-color;
   }
 

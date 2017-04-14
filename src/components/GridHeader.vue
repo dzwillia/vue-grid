@@ -21,8 +21,8 @@
 </template>
 
 <script>
-  const DEFAULT_ROW_HEIGHT = 24
-  const DEFAULT_ROW_HANDLE_WIDTH = 60
+  const DEFAULT_ROW_HEIGHT = 23
+  const DEFAULT_ROW_HANDLE_WIDTH = 70
   const DEFAULT_COLUMN_RESIZE_HANDLE_WIDTH = 4
 
   export default {
