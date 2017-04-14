@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-row nowrap relative" ref="thead-tr">
+  <div class="flex flex-row nowrap relative">
     <!-- row handle -->
     <div class="flex-none db overflow-hidden ba vg-th">
       <div class="db lh-1 vg-th-inner light-silver tr bg-near-white" :style="row_handle_style"></div>

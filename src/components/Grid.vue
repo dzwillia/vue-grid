@@ -4,6 +4,7 @@
     <div class="flex-none overflow-hidden bg-near-white vg-thead">
       <grid-header
         :columns="columns"
+        :style="'left: -'+scroll_left+'px'"
         @start-column-resize="onStartColumnResize"
       >
       </grid-header>
@@ -53,6 +54,12 @@
       GridRow
     },
     watch: {
+      scroll_top(val, old_val) {
+        this.$emit('scroll-top-change', val, old_val)
+      },
+      scroll_left(val, old_val) {
+        this.$emit('scroll-left-change', val, old_val)
+      },
       total_height(val, old_val) {
         this.$emit('total-height-change', val, old_val)
       },
@@ -243,9 +250,6 @@
         if (this.scroll_left != new_scroll_left)
         {
           this.scroll_left = new_scroll_left
-
-          // sync up fixed header with content horizontal scroll offset
-          this.$refs['thead-tr'].style = 'left: -'+this.scroll_left+'px'
         }
       }, 10),
 
@@ -265,7 +269,7 @@
 
           this.columns = [].concat(temp_cols)
         }
-      }, 140),
+      }, 150),
 
       updateStyle(id_suffix, style_str) {
         var head_el = document.head || document.getElementsByTagName('head')[0]

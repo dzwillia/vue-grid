@@ -7,7 +7,7 @@
 
     <!-- cells -->
     <div class="flex-none db overflow-hidden ba vg-td" :style="'height: '+rowHeight+'px'" v-for="col in columns">
-      <div class="db h-100 lh-1 vg-td-inner" :style="'width: '+col.pixel_width+'px'">{{row[col.name]}}</div>
+      <div class="db h-100 lh-1 vg-td-inner" :style="'width: '+col.pixel_width+'px'"><span v-if="false">{{rowIndex+1}}</span> <span v-if="true">{{row[col.name]}}</span></div>
     </div>
   </div>
 </template>

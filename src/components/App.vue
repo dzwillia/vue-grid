@@ -3,6 +3,8 @@
     <div class="flex-fill ma3" style="border: 1px solid #ddd">
       <grid
         data-url="https://localhost/api/v1/streams/kxj9tvrgdq2r/content"
+        @scroll-top-change="scrollTopChange"
+        @scroll-left-change="scrollLeftChange"
         @rendered-row-count-change="renderedRowCountChange"
         @cached-row-count-change="cachedRowCountChange"
         @first-visible-row-change="firstVisibleRowChange"
@@ -13,6 +15,14 @@
     <div class="flex-none mt3 mr3 mb3 w5">
       <div class="f5 fw6 pb1 mb2 mid-gray bb b--black-10">Metrics</div>
       <table class="w-100 f6 dark-gray">
+        <tr>
+          <td class="pv1">Scroll top</td>
+          <td class="pv1 tr">{{stc}}</td>
+        </tr>
+        <tr>
+          <td class="pv1">Scroll left</td>
+          <td class="pv1 tr">{{slc}}</td>
+        </tr>
         <tr>
           <td class="pv1">Rendered row count</td>
           <td class="pv1 tr">{{rrc}}</td>
@@ -48,6 +58,8 @@
     },
     data() {
       return {
+        stc: 0,
+        slc: 0,
         rrc: 0,
         crc: 0,
         fvr: 0,
@@ -56,11 +68,13 @@
       }
     },
     methods: {
-      renderedRowCountChange(val)       { this.rrc = val  },
-      cachedRowCountChange(val)         { this.crc = val  },
-      firstVisibleRowChange(val)        { this.fvr = val  },
-      lastVisibleRowChange(val)         { this.lvr = val  },
-      visibleRowCountChange(val)        { this.vrc = val  }
+      scrollTopChange(val)        { this.stc = val  },
+      scrollLeftChange(val)       { this.slc = val  },
+      renderedRowCountChange(val) { this.rrc = val  },
+      cachedRowCountChange(val)   { this.crc = val  },
+      firstVisibleRowChange(val)  { this.fvr = val  },
+      lastVisibleRowChange(val)   { this.lvr = val  },
+      visibleRowCountChange(val)  { this.vrc = val  }
     }
   }
 </script>
