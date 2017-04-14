@@ -42,6 +42,10 @@
     pixel_width: DEFAULT_COLUMN_WIDTH
   }
 
+  var active_xhr = null
+  var cancel = null
+  var CancelToken = axios.CancelToken
+
   export default {
     name: 'vue-grid',
     props: {
@@ -179,7 +183,22 @@
     },
     methods: {
       tryFetch() {
-        axios.get(this.fetch_url).then(response => {
+        // if the last XHR is still active, kill it now
+        if (!_.isNil(active_xhr) && !_.isNil(cancel))
+        {
+          cancel()
+
+          // reset XHR variables
+          active_xhr = null
+          cancel = null
+        }
+
+        active_xhr = axios.get(this.fetch_url, {
+          cancelToken: new CancelToken(function executor(c) {
+            // an executor function receives a cancel function as a parameter
+            cancel = c
+          })
+        }).then(response => {
           var resdata = response.data
 
           if (_.isNumber(resdata.total_count))
@@ -217,6 +236,10 @@
 
           // set our init flag to true so we don't get columns after this
           this.inited = true
+
+          // reset XHR variables
+          active_xhr = null
+          cancel = null
         })
       },
 
