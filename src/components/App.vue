@@ -1,13 +1,13 @@
 <template>
   <div id="app" class="flex flex-row fixed absolute--fill overflow-hidden">
-    <div class="flex-fill ma3" style="border: 1px solid #ddd">
+    <div class="flex-fill br b--black-20">
       <grid
         data-url="https://localhost/api/v1/streams/kxj9tvrgdq2r/content"
         @metrics-change="onGridMetricsChange"
       ></grid>
     </div>
-    <div class="flex-none mt3 mr3 mb3 w5">
-      <grid-metrics :metrics="grid_metrics"></grid-metrics>
+    <div class="flex-none">
+      <grid-metrics class="h-100" style="min-width: 240px" :metrics="grid_metrics"></grid-metrics>
     </div>
   </div>
 </template>
