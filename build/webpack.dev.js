@@ -1,89 +1,33 @@
-var path = require('path')
-var webpack = require('webpack')
+'use strict'
 
-module.exports = {
-  entry: './src/index.js',
+const merge = require('deep-assign')
+
+const options = require('./options')
+const base = require('./webpack.base.js')
+
+const config = merge(base, {
+  watch: true,
+  devtool: '#eval-source-map',
+
+  entry: options.paths.resolve('examples-src/index.js'),
+
   output: {
-    path: path.resolve(__dirname, '../dist'),
-    publicPath: '/dist/',
-    filename: 'demo.js'
+    filename: 'examples.bundle.js',
+    path: options.paths.output.examples
   },
-  module: {
-    rules: [
-      // allow support for .vue file syntax:
-      // ref. https://vue-loader.vuejs.org/en/start/spec.html
-      {
-        test: /\.vue$/,
-        loader: 'vue-loader',
-        options: {
-          // vue-loader options go here
-        }
-      },
-      // allow support for ECMAScript 6
-      {
-        test: /\.js$/,
-        loader: 'babel-loader',
-        exclude: /node_modules/,
-        query: {
-          plugins: ['lodash'],
-          presets: [['env', { 'targets': { 'node': 4 } }]]
-        }
-      },
-      // extract css files
-      {
-        test: /\.css$/,
-        loader: 'style-loader!css-loader!autoprefixer-loader'
-      },
-      // extract less files
-      {
-        test: /\.less$/,
-        loader: 'style-loader!css-loader!autoprefixer-loader!less-loader'
-      },
-      // compress images before outputting them
-      {
-        test: /\.(jpe?g|png|gif|svg)$/,
-        loaders: [
-          {
-            loader: 'file-loader',
-            options: {
-              name: 'assets/[name]-[hash].[ext]'
-            }
-          },
-          {
-            loader: 'image-webpack-loader',
-            query: {
-              progressive: true,
-              optimizationLevel: 7,
-              interlaced: false,
-              pngquant: {
-                quality: '65-90',
-                speed: 4
-              }
-            }
-          }
-        ]
-      }
-    ]
-  },
-  resolve: {
-    alias: {
-      'vue$': 'vue/dist/vue'
-    }
-  },
+
   devServer: {
-    historyApiFallback: {
-      index: './src/index-dev.html'
-    },
+    contentBase: options.paths.output.examples,
+    host: '0.0.0.0',
+    port: 9000,
+    historyApiFallback: true,
     noInfo: true
-  },
-  devtool: '#eval-source-map'
+  }
+})
+
+// First item in module.rules array is Vue
+config.module.rules[0].options.loaders = {
+  scss: 'vue-style-loader!css-loader!sass-loader'
 }
 
-/* dev plugins */
-
-// http://vue-loader.vuejs.org/en/workflow/production.html
-module.exports.plugins = (module.exports.plugins || []).concat([
-  new webpack.ProvidePlugin({
-    _: 'lodash'
-  })
-])
+module.exports = config

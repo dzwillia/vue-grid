@@ -5,25 +5,29 @@
   "author": "David Z. Williams <dave@flex.io>",
   "main": "dist/vue-grid.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=debug webpack-dev-server --config ./build/webpack.dev.js --open --inline --hot",
-    "build": "cross-env NODE_ENV=debug webpack --config ./build/webpack.build.js --progress --hide-modules",
-    "build-debug": "cross-env NODE_ENV=debug webpack --config ./build/webpack.build.js --progress --hide-modules",
-    "build-release": "cross-env NODE_ENV=production webpack --config ./build/webpack.build.js --progress --hide-modules",
-    "build-production": "cross-env NODE_ENV=production webpack --config ./build/webpack.build.js --progress --hide-modules"
+    "dev": "cross-env NODE_ENV=development webpack-dev-server --config ./build/webpack.dev.js --open --inline --hot",
+    "build": "webpack --config build/webpack.dist.js",
+    "build:docs": "webpack --config build/webpack.docs.js",
+    "build:examples": "webpack --config build/webpack.examples.js",
+    "build:all": "npm run build && npm run build:docs && npm run build:examples",
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/dzwillia/vue-grid.git"
+    "url": "git+https://github.com/dzwillia/vue-grid.git"
   },
   "keywords": [
     "vue",
     "vuejs",
-    "vue.js",
     "components",
     "table",
     "grid",
     "ui"
   ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dzwillia/vue-grid/issues"
+  },
+  "homepage": "https://github.com/dzwillia/vue-grid/",
   "dependencies": {
     "axios": "^0.16.1",
     "lodash": "^4.17.4",
