@@ -1,5 +1,5 @@
 /*!
- * vue-grid v1.0.2 (https://github.com/dzwillia/vue-grid)
+ * vue-grid v1.0.3 (https://github.com/dzwillia/vue-grid)
  * (c) 2017 David Z. Williams
  * Released under the MIT License.
  */
@@ -1922,10 +1922,6 @@ var DEFAULT_LIMIT = 50;
 var DEFAULT_ROW_HEIGHT = 23;
 var DEFAULT_COLUMN_WIDTH = 130;
 
-var active_xhr = null;
-var CancelToken = _axios2.default.CancelToken;
-var cancelXhr = null;
-
 exports.default = {
   name: 'vue-grid',
   props: {
@@ -2070,6 +2066,11 @@ exports.default = {
   mounted: function mounted() {
     var _this2 = this;
 
+    this.active_xhr = null;
+    this.cancelXhr = null;
+
+    this.tryFetchDebounced = _.debounce(this.tryFetch, 80);
+
     this.tryFetch();
 
     this.client_height = this.$el.clientHeight;
@@ -2106,21 +2107,24 @@ exports.default = {
   },
 
   methods: {
-    tryFetch: _.debounce(function () {
+    tryFetch: function tryFetch() {
       var _this3 = this;
 
-      if (!_.isNil(active_xhr) && !_.isNil(cancelXhr)) {
-        cancelXhr();
+      var me = this;
 
-        active_xhr = null;
-        cancelXhr = null;
+      if (!_.isNil(this.active_xhr) && !_.isNil(this.cancelXhr)) {
+        this.cancelXhr();
+
+        this.active_xhr = null;
+        this.cancelXhr = null;
       }
 
       if (this.rows_in_cache) return;
 
-      active_xhr = _axios2.default.get(this.fetch_url, {
+      var CancelToken = _axios2.default.CancelToken;
+      this.active_xhr = _axios2.default.get(this.fetch_url, {
         cancelToken: new CancelToken(function executor(c) {
-          cancelXhr = c;
+          me.cancelXhr = c;
         })
       }).then(function (response) {
         var resdata = response.data;
@@ -2152,11 +2156,10 @@ exports.default = {
 
         _this3.inited = true;
 
-        active_xhr = null;
-        cancelXhr = null;
+        _this3.active_xhr = null;
+        _this3.cancelXhr = null;
       });
-    }, 80),
-
+    },
     onStartColumnResize: function onStartColumnResize(col) {
       this.resize_col = _.cloneDeep(col);
       this.updateStyle('cursor', 'html { cursor: ew-resize !important; }');
@@ -2177,12 +2180,12 @@ exports.default = {
 
       if (this.last_visible_row >= this.start + this.rendered_row_count) {
         this.start = this.first_visible_row;
-        this.tryFetch();
+        this.tryFetchDebounced();
       }
 
       if (this.first_visible_row < this.start) {
         this.start = this.first_visible_row;
-        this.tryFetch();
+        this.tryFetchDebounced();
       }
     }, 10),
 
