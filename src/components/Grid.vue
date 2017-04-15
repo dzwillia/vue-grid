@@ -90,6 +90,15 @@
       visible_row_count(val, old_val) {
         this.$emit('visible-row-count-change', val, old_val)
       },
+      first_visible_column(val, old_val) {
+        this.$emit('first-visible-column-change', val, old_val)
+      },
+      last_visible_column(val, old_val) {
+        this.$emit('last-visible-column-change', val, old_val)
+      },
+      visible_column_count(val, old_val) {
+        this.$emit('visible-column-count-change', val, old_val)
+      },
       metrics(val, old_val) {
         this.$emit('metrics-change', val, old_val)
       }
@@ -149,9 +158,6 @@
       visible_row_count() {
         return this.last_visible_row-this.first_visible_row
       },
-      resize_delta() {
-        return this.mousedown_x == -1 ? 0 : this.mouse_x - this.mousedown_x
-      },
       rows_in_cache() {
         var missing_rows = false
 
@@ -188,6 +194,18 @@
           left += c.pixel_width
           return is_visible
         })
+      },
+      first_visible_column() {
+        return _.first(this.render_cols)
+      },
+      last_visible_column() {
+        return _.last(this.render_cols)
+      },
+      visible_column_count() {
+        return _.size(this.render_cols)
+      },
+      resize_delta() {
+        return this.mousedown_x == -1 ? 0 : this.mouse_x - this.mousedown_x
       },
       metrics() {
         var computed_data = this._computedWatchers
