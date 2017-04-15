@@ -15,10 +15,10 @@
     <!-- grid body -->
     <div class="flex-fill relative overflow-auto vg-tbody" ref="tbody" @scroll="onScroll" v-resize="onResize">
       <!-- vertical yardstick -->
-      <div class="absolute top-0 left-0" :style="'width: 1px; height: '+total_height+'px'"></div>
+      <div class="absolute top-0 left-0" :style="'z-index: -1; width: 1px; height: '+total_height+'px'"></div>
 
       <!-- horizontal yardstick -->
-      <div class="absolute top-0 left-0" :style="'height: 1px; width: '+total_width+'px'"></div>
+      <div class="absolute top-0 left-0" :style="'z-index: -1; height: 1px; width: '+total_width+'px'"></div>
 
       <!-- rows -->
       <grid-row
