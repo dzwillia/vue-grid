@@ -39,10 +39,6 @@
   const DEFAULT_ROW_HEIGHT = 23
   const DEFAULT_COLUMN_WIDTH = 130
 
-  var active_xhr = null
-  var CancelToken = axios.CancelToken
-  var cancelXhr = null
-
   export default {
     name: 'vue-grid',
     props: {
@@ -198,16 +194,26 @@
       }
     },
     mounted() {
+      this.active_xhr = null
+      this.cancelXhr = null
+
+      // establish our debounced fetch (for vertical scrolling)
+      this.tryFetchDebounced = _.debounce(this.tryFetch, 80)
+
+      // do our initial fetch
       this.tryFetch()
 
+      // initialize the client dimensions
       this.client_height = this.$el.clientHeight
       this.client_width = this.$el.clientWidth
 
+      // document-level mouse down
       this.onDocumentMousedown = (evt) => {
         this.mousedown_x = evt.pageX
         this.mousedown_y = evt.pageY
       }
 
+      // document-level mouse up
       this.onDocumentMouseup = (evt) => {
         this.mousedown_x = -1
         this.mousedown_y = -1
@@ -216,6 +222,7 @@
         this.updateStyle('noselect', '')
       }
 
+      // document-level mouse move
       this.onDocumentMousemove = (evt) => {
         this.mouse_x = evt.pageX
         this.mouse_y = evt.pageY
@@ -236,25 +243,28 @@
       document.removeEventListener('mousemove', this.onDocumentMousemove)
     },
     methods: {
-      tryFetch: _.debounce(function() {
+      tryFetch() {
+        var me = this
+
         // if the last XHR is still active, kill it now
-        if (!_.isNil(active_xhr) && !_.isNil(cancelXhr))
+        if (!_.isNil(this.active_xhr) && !_.isNil(this.cancelXhr))
         {
-          cancelXhr()
+          this.cancelXhr()
 
           // reset XHR variables
-          active_xhr = null
-          cancelXhr = null
+          this.active_xhr = null
+          this.cancelXhr = null
         }
 
         // if all of the rows exist in our row cache, we're done
         if (this.rows_in_cache)
           return
 
-        active_xhr = axios.get(this.fetch_url, {
+        var CancelToken = axios.CancelToken
+        this.active_xhr = axios.get(this.fetch_url, {
           cancelToken: new CancelToken(function executor(c) {
             // an executor function receives a cancel function as a parameter
-            cancelXhr = c
+            me.cancelXhr = c
           })
         }).then(response => {
           var resdata = response.data
@@ -296,10 +306,10 @@
           this.inited = true
 
           // reset XHR variables
-          active_xhr = null
-          cancelXhr = null
+          this.active_xhr = null
+          this.cancelXhr = null
         })
-      }, 80),
+      },
 
       onStartColumnResize(col) {
         this.resize_col = _.cloneDeep(col)
@@ -327,14 +337,14 @@
         if (this.last_visible_row >= this.start+this.rendered_row_count)
         {
           this.start = this.first_visible_row
-          this.tryFetch()
+          this.tryFetchDebounced()
         }
 
         // scrolling up
         if (this.first_visible_row < this.start)
         {
           this.start = this.first_visible_row
-          this.tryFetch()
+          this.tryFetchDebounced()
         }
       }, 10),
 
