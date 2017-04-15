@@ -6,6 +6,7 @@
         :row-handle-width="row_handle_width"
         :columns="render_cols"
         :scroll-left="scroll_left"
+        @start-row-handle-resize="onStartRowHandleResize"
         @start-column-resize="onStartColumnResize"
       >
       </grid-header>
@@ -119,6 +120,7 @@
 
         columns: [],
         resize_col: null,
+        resize_row_handle: null,
 
         rows: [],
         cached_rows: {},
@@ -259,6 +261,7 @@
         this.mousedown_x = -1
         this.mousedown_y = -1
         this.resize_col = null
+        this.resize_row_handle = null
         this.updateStyle('cursor', '')
         this.updateStyle('noselect', '')
       }
@@ -267,6 +270,9 @@
       this.onDocumentMousemove = (evt) => {
         this.mouse_x = evt.pageX
         this.mouse_y = evt.pageY
+
+        if (!_.isNil(this.resize_row_handle))
+          this.resizeRowHandle()
 
         if (!_.isNil(this.resize_col))
           this.resizeColumn()
@@ -352,6 +358,12 @@
         })
       },
 
+      onStartRowHandleResize(col) {
+        this.resize_row_handle = { old_width: this.row_handle_width }
+        this.updateStyle('cursor', 'html { cursor: ew-resize !important; }')
+        this.updateStyle('noselect', 'html { user-select: none !important; }')
+      },
+
       onStartColumnResize(col) {
         this.resize_col = _.cloneDeep(col)
         this.updateStyle('cursor', 'html { cursor: ew-resize !important; }')
@@ -397,6 +409,12 @@
       onHorizontalScroll: _.throttle(function(val, old_val) {
         this.scroll_left = val
       }, 10),
+
+      resizeRowHandle: _.debounce(function(evt) {
+        var old_width = this.resize_row_handle.old_width
+        this.row_handle_width = old_width + this.resize_delta
+        console.log(this.row_handle_width)
+      }, 5),
 
       resizeColumn: _.debounce(function(evt) {
         var lookup_col = _.find(this.columns, { name: _.get(this.resize_col, 'name') })

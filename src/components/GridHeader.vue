@@ -3,6 +3,13 @@
     <!-- row handle -->
     <div class="overflow-hidden ba absolute z-1 vg-th" :style="row_handle_style">
       <div class="h-100 lh-1 light-silver tr bg-near-white vg-th-inner" :style="inner_row_handle_style"></div>
+
+      <!-- row handle resize handle -->
+      <div
+        class="absolute top-0 bottom-0 right-0 cursor-resize-ew"
+        :style="'width: '+column_resize_handle_width+'px'"
+        @mousedown="onRowHandleResizerMousedown"
+      ></div>
     </div>
 
     <!-- cells -->
@@ -48,6 +55,11 @@
         default: 0
       }
     },
+    watch: {
+      rowHandleWidth(val, old_val) {
+        this.row_handle_width = val
+      }
+    },
     data() {
       return {
         row_handle_width: this.rowHandleWidth,
@@ -68,6 +80,9 @@
     methods: {
       getColumnName(col) {
         return _.get(col, 'name', '')
+      },
+      onRowHandleResizerMousedown(col) {
+        this.$emit('start-row-handle-resize', col)
       },
       onColumnResizerMousedown(col) {
         this.$emit('start-column-resize', col)

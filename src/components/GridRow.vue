@@ -47,6 +47,11 @@
         default: 0
       }
     },
+    watch: {
+      rowHandleWidth(val, old_val) {
+        this.row_handle_width = val
+      }
+    },
     data() {
       return {
         row_handle_width: this.rowHandleWidth
