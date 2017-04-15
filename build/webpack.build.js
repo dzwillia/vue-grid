@@ -2,6 +2,9 @@ var path = require('path')
 var webpack = require('webpack')
 var WebpackMd5Hash = require('webpack-md5-hash')
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
+var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+
+var SHOW_BUNDLE_ANALYZER = false
 
 module.exports = {
   entry: './src/index.js',
@@ -105,3 +108,10 @@ module.exports.plugins = (module.exports.plugins || []).concat([
     filename: './dist/vue-grid.css'
   })
 ])
+
+if (SHOW_BUNDLE_ANALYZER)
+{
+  module.exports.plugins = module.exports.plugins.concat([
+    new BundleAnalyzerPlugin()
+  ])
+}
