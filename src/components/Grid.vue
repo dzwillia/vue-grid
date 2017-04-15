@@ -178,7 +178,7 @@
         return rows
       },
       render_cols() {
-        var left = 0
+        var left = -1 * this.scroll_left
         return _.filter(this.columns, (c) => {
           var is_visible = left < this.client_width
           left += c.pixel_width
