@@ -9,7 +9,7 @@
     "build": "webpack --config build/webpack.dist.js",
     "build:docs": "webpack --config build/webpack.docs.js",
     "build:examples": "webpack --config build/webpack.examples.js",
-    "build:all": "npm run build && npm run build:docs && npm run build:examples",
+    "build:all": "npm run build && npm run build:docs && npm run build:examples"
   },
   "repository": {
     "type": "git",
