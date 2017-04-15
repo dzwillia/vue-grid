@@ -42,8 +42,8 @@
               <table class="w-100 collapse" style="font-size: 11px">
                 <tbody>
                   <tr v-for="(v, k) in first_visible_column">
-                    <td class="pa1 ba bb b--light-silver pr3 w1">{{k}}</td>
-                    <td class="pa1 ba bb b--light-silver tr">{{v}}</td>
+                    <td class="pa1 ba bb b--light-moon-gray pr3 w1">{{k}}</td>
+                    <td class="pa1 ba bb b--light-moon-gray tr">{{v}}</td>
                   </tr>
                 </tbody>
               </table>
@@ -57,8 +57,8 @@
               <table class="w-100 collapse" style="font-size: 11px">
                 <tbody>
                   <tr v-for="(v, k) in last_visible_column">
-                    <td class="pa1 ba bb b--light-silver pr3 w1">{{k}}</td>
-                    <td class="pa1 ba bb b--light-silver tr">{{v}}</td>
+                    <td class="pa1 ba bb b--light-moon-gray pr3 w1">{{k}}</td>
+                    <td class="pa1 ba bb b--light-moon-gray tr">{{v}}</td>
                   </tr>
                 </tbody>
               </table>

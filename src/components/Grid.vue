@@ -474,6 +474,10 @@
     min-height: 0; /* 1 */
   }
 
+  .b--light-moon-gray {
+    border-color: $border-color;
+  }
+
   .lh-1 {
     line-height: 1;
   }
