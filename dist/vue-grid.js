@@ -2110,7 +2110,7 @@ exports.default = {
 
   methods: {
     tryFetch: _.debounce(function () {
-      var _this3 = this;
+      var me = this;
 
       if (!_.isNil(active_xhr) && !_.isNil(cancelXhr)) {
         cancelXhr();
@@ -2128,32 +2128,32 @@ exports.default = {
       }).then(function (response) {
         var resdata = response.data;
 
-        if (_.isNumber(resdata.total_count)) _this3.total_row_count = resdata.total_count;
+        if (_.isNumber(resdata.total_count)) me.total_row_count = resdata.total_count;
 
-        if (!_this3.inited && _.isArray(resdata.columns)) {
+        if (!me.inited && _.isArray(resdata.columns)) {
           var temp_cols = _.map(resdata.columns, function (col) {
             return _.assign({}, DEFAULT_COLUMN_INFO, col);
           });
 
-          _this3.columns = [].concat(temp_cols);
+          me.columns = [].concat(temp_cols);
         }
 
-        _this3.rows = [].concat(resdata.rows);
+        me.rows = [].concat(resdata.rows);
 
-        var start = _this3.start;
-        var limit = _this3.limit;
-        var row_count = _this3.total_row_count;
+        var start = me.start;
+        var limit = me.limit;
+        var row_count = me.total_row_count;
         var temp_cached_rows = {};
         var idx = 0;
 
         for (var r = start; r < start + limit && r < row_count; ++r) {
-          temp_cached_rows[r] = _this3.rows[idx];
+          temp_cached_rows[r] = me.rows[idx];
           idx++;
         }
 
-        _this3.cached_rows = _.assign({}, _this3.cached_rows, temp_cached_rows);
+        me.cached_rows = _.assign({}, me.cached_rows, temp_cached_rows);
 
-        _this3.inited = true;
+        me.inited = true;
 
         active_xhr = null;
         cancelXhr = null;
@@ -2194,14 +2194,14 @@ exports.default = {
     }, 10),
 
     resizeColumn: _.debounce(function (evt) {
-      var _this4 = this;
+      var _this3 = this;
 
       var lookup_col = _.find(this.columns, { name: _.get(this.resize_col, 'name') });
       if (!_.isNil(lookup_col)) {
         var temp_cols = _.map(this.columns, function (col) {
           if (_.get(col, 'name') == _.get(lookup_col, 'name')) {
-            var old_width = _.get(_this4.resize_col, 'pixel_width', DEFAULT_COLUMN_WIDTH);
-            return _.assign({}, lookup_col, { pixel_width: old_width + _this4.resize_delta });
+            var old_width = _.get(_this3.resize_col, 'pixel_width', DEFAULT_COLUMN_WIDTH);
+            return _.assign({}, lookup_col, { pixel_width: old_width + _this3.resize_delta });
           }
 
           return col;
