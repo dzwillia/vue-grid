@@ -1,0 +1,42 @@
+/*!
+ * vue-grid v1.0.0 (https://github.com/dzwillia/vue-grid)
+ * (c) 2017 David Z. Williams
+ * Released under the MIT License.
+ */
+
+.vg-container {
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  color: #333;
+}
+.vg-thead {
+  box-shadow: inset 0 -1px 0 #ddd;
+}
+.vg-th,
+.vg-td {
+  margin-top: -1px;
+  margin-left: -1px;
+  border-color: #ddd;
+}
+.vg-th-inner,
+.vg-td-inner {
+  min-width: 30px;
+  max-width: 1200px;
+  padding: 5px 5px 4px;
+}
+
+/* misc */
+.flex-fill {
+  -ms-flex: 1 1;
+      flex: 1 1;
+  min-width: 0;
+  /* 1 */
+  min-height: 0;
+  /* 1 */
+}
+.lh-1 {
+  line-height: 1;
+}
+.cursor-resize-ew {
+  cursor: ew-resize;
+}
