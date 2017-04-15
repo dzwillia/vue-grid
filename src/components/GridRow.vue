@@ -8,7 +8,7 @@
     <!-- cells -->
     <div class="flex flex-row nowrap" :style="'padding-left: '+row_handle_width+'px'">
       <div class="flex-none overflow-hidden ba vg-td" :style="'height: '+(rowHeight+1)+'px'" v-for="col in columns">
-        <div class="h-100 lh-1 vg-td-inner" :style="'width: '+col.pixel_width+'px'">{{row[col.name]}}</div>
+        <div class="h-100 lh-1 vg-td-inner" :style="'width: '+col.pixel_width+'px'">{{row[getColumnName(col)]}}</div>
       </div>
     </div>
   </div>
@@ -55,6 +55,11 @@
       },
       inner_row_handle_style() {
         return 'width: '+this.row_handle_width+'px'
+      }
+    },
+    methods: {
+      getColumnName(col) {
+        return _.get(col, 'name', '')
       }
     }
   }

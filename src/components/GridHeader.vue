@@ -9,7 +9,7 @@
     <div class="flex flex-row nowrap" :style="'padding-left: '+row_handle_width+'px'">
       <div class="flex-none overflow-hidden ba bg-near-white tc relative vg-th" :style="'height: '+(rowHeight+1)+'px'" v-for="col in columns">
         <!-- cell content -->
-        <div class="h-100 lh-1 vg-th-inner" :style="'width: '+col.pixel_width+'px'">{{col.name}}</div>
+        <div class="h-100 lh-1 vg-th-inner" :style="'width: '+col.pixel_width+'px'">{{getColumnName(col)}}</div>
 
         <!-- column resize handle -->
         <div
@@ -60,6 +60,9 @@
       }
     },
     methods: {
+      getColumnName(col) {
+        return _.get(col, 'name', '')
+      },
       onColumnResizerMousedown(col) {
         this.$emit('start-column-resize', col)
       }

@@ -38,9 +38,6 @@
   const DEFAULT_LIMIT = 50
   const DEFAULT_ROW_HEIGHT = 23
   const DEFAULT_COLUMN_WIDTH = 130
-  const DEFAULT_COLUMN_INFO = {
-    pixel_width: DEFAULT_COLUMN_WIDTH
-  }
 
   var active_xhr = null
   var CancelToken = axios.CancelToken
@@ -240,8 +237,6 @@
     },
     methods: {
       tryFetch: _.debounce(function() {
-        var me = this
-
         // if the last XHR is still active, kill it now
         if (!_.isNil(active_xhr) && !_.isNil(cancelXhr))
         {
@@ -265,40 +260,40 @@
           var resdata = response.data
 
           if (_.isNumber(resdata.total_count))
-            me.total_row_count = resdata.total_count
+            this.total_row_count = resdata.total_count
 
           // store our column info
-          if (!me.inited && _.isArray(resdata.columns))
+          if (!this.inited && _.isArray(resdata.columns))
           {
             // include default column info with each column
             var temp_cols = _.map(resdata.columns, (col) => {
-              return _.assign({}, DEFAULT_COLUMN_INFO, col)
+              return _.assign({ pixel_width: DEFAULT_COLUMN_WIDTH }, col)
             })
 
-            me.columns = [].concat(temp_cols)
+            this.columns = [].concat(temp_cols)
           }
 
           // store the current set of rows
-          me.rows = [].concat(resdata.rows)
+          this.rows = [].concat(resdata.rows)
 
           // cache the current set of rows
-          var start = me.start
-          var limit = me.limit
-          var row_count = me.total_row_count
+          var start = this.start
+          var limit = this.limit
+          var row_count = this.total_row_count
           var temp_cached_rows = {}
           var idx = 0
 
           for (var r = start; r < start+limit && r < row_count; ++r)
           {
-            temp_cached_rows[r] = me.rows[idx]
+            temp_cached_rows[r] = this.rows[idx]
             idx++
           }
 
           // add the temporary cached rows to our stored cached rows
-          me.cached_rows = _.assign({}, me.cached_rows, temp_cached_rows)
+          this.cached_rows = _.assign({}, this.cached_rows, temp_cached_rows)
 
           // set our init flag to true so we don't get columns after this
-          me.inited = true
+          this.inited = true
 
           // reset XHR variables
           active_xhr = null
