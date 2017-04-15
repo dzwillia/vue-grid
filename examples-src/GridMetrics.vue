@@ -24,16 +24,16 @@
           <td class="pv1a pl2 fw6 tr">{{metrics.cached_row_count}}</td>
         </tr>
         <tr>
-          <td class="pv1a pr2">Total row count:</td>
-          <td class="pv1a pl2 fw6 tr">{{metrics.total_row_count}}</td>
-        </tr>
-        <tr>
           <td class="pv1a pr2">First visible row:</td>
           <td class="pv1a pl2 fw6 tr">{{metrics.first_visible_row}}</td>
         </tr>
         <tr>
           <td class="pv1a pr2">Last visible row:</td>
           <td class="pv1a pl2 fw6 tr">{{metrics.last_visible_row}}</td>
+        </tr>
+        <tr>
+          <td class="pv1a pr2">Total row count:</td>
+          <td class="pv1a pl2 fw6 tr">{{metrics.total_row_count}}</td>
         </tr>
         <tr>
           <td class="pv1a pr2">Visible row count:</td>
