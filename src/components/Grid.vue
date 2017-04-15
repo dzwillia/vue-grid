@@ -41,7 +41,11 @@
     DEFAULT_LIMIT,
     DEFAULT_ROW_HEIGHT,
     DEFAULT_ROW_HANDLE_WIDTH,
-    DEFAULT_COLUMN_WIDTH
+    ROW_HANDLE_MIN_WIDTH,
+    ROW_HANDLE_MAX_WIDTH,
+    DEFAULT_COLUMN_WIDTH,
+    COLUMN_MIN_WIDTH,
+    COLUMN_MAX_WIDTH
   } from '../constants'
   import axios from 'axios'
   import resize from 'vue-resize-directive'
@@ -412,8 +416,10 @@
 
       resizeRowHandle: _.debounce(function(evt) {
         var old_width = this.resize_row_handle.old_width
-        this.row_handle_width = old_width + this.resize_delta
-        console.log(this.row_handle_width)
+        var new_width = old_width + this.resize_delta
+        new_width = Math.max(ROW_HANDLE_MIN_WIDTH, new_width)
+        new_width = Math.min(ROW_HANDLE_MAX_WIDTH, new_width)
+        this.row_handle_width = new_width
       }, 5),
 
       resizeColumn: _.debounce(function(evt) {
@@ -424,7 +430,10 @@
             if (_.get(col, 'name') == _.get(lookup_col, 'name'))
             {
               var old_width = _.get(this.resize_col, 'pixel_width', DEFAULT_COLUMN_WIDTH)
-              return _.assign({}, lookup_col, { pixel_width: old_width + this.resize_delta })
+              var new_width = old_width + this.resize_delta
+              new_width = Math.max(COLUMN_MIN_WIDTH, new_width)
+              new_width = Math.min(COLUMN_MAX_WIDTH, new_width)
+              return _.assign({}, lookup_col, { pixel_width: new_width })
             }
 
             return col
@@ -484,8 +493,6 @@
 
   .vg-th-inner,
   .vg-td-inner {
-    min-width: 30px;
-    max-width: 1200px;
     padding: 5px 5px 4px;
   }
 

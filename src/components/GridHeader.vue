@@ -33,7 +33,7 @@
   import {
     DEFAULT_ROW_HEIGHT,
     DEFAULT_ROW_HANDLE_WIDTH,
-    DEFAULT_COLUMN_RESIZE_HANDLE_WIDTH
+    COLUMN_RESIZE_HANDLE_WIDTH
   } from '../constants'
 
   export default {
@@ -63,7 +63,7 @@
     data() {
       return {
         row_handle_width: this.rowHandleWidth,
-        column_resize_handle_width: DEFAULT_COLUMN_RESIZE_HANDLE_WIDTH
+        column_resize_handle_width: COLUMN_RESIZE_HANDLE_WIDTH
       }
     },
     computed: {
