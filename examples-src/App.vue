@@ -21,7 +21,7 @@
 </template>
 
 <script>
-  import Grid from './Grid.vue'
+  import Grid from '../src/components/Grid.vue'
   import GridMetrics from './GridMetrics.vue'
   import GridEvents from './GridEvents.vue'
   import GridOptions from './GridOptions.vue'
@@ -51,9 +51,7 @@
   }
 </script>
 
-<style lang="less">
-  /* core */
-
+<style lang="scss">
   html, body {
     font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 100%;

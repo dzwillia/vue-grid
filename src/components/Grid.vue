@@ -391,8 +391,8 @@
   }
 </script>
 
-<style lang="less">
-  @border-color: #ddd;
+<style lang="scss">
+  $border-color: #ddd;
 
   .vg-container {
     font-family: Arial, sans-serif;
@@ -401,14 +401,14 @@
   }
 
   .vg-thead {
-    box-shadow: inset 0 -1px 0 @border-color;
+    box-shadow: inset 0 -1px 0 $border-color;
   }
 
   .vg-th,
   .vg-td {
     margin-top: -1px;
     margin-left: -1px;
-    border-color: @border-color;
+    border-color: $border-color;
   }
 
   .vg-th-inner,
