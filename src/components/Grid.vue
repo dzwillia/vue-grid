@@ -231,6 +231,7 @@
           'rows',
           'cached_rows',
           'row_height',
+          'row_handle_width',
           'client_height',
           'client_width',
           'scroll_top',

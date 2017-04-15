@@ -12,6 +12,10 @@
           <td class="pv1a pl2 fw6 tr">{{metrics.scroll_left}}</td>
         </tr>
         <tr>
+          <td class="pv1a pr2">Row handle width:</td>
+          <td class="pv1a pl2 fw6 tr">{{metrics.row_handle_width}}</td>
+        </tr>
+        <tr>
           <td class="pv1a pr2">Rendered row count:</td>
           <td class="pv1a pl2 fw6 tr">{{metrics.rendered_row_count}}</td>
         </tr>
