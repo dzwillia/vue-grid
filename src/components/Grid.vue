@@ -3,7 +3,7 @@
     <!-- grid header -->
     <div class="flex-none overflow-hidden bg-near-white vg-thead">
       <grid-header
-        :columns="columns"
+        :columns="render_cols"
         :scroll-left="scroll_left"
         @start-column-resize="onStartColumnResize"
       >
@@ -12,8 +12,11 @@
 
     <!-- grid body -->
     <div class="flex-fill relative overflow-auto vg-tbody" ref="tbody" @scroll="onScroll">
-      <!-- yardstick -->
+      <!-- vertical yardstick -->
       <div class="absolute top-0 left-0" :style="'width: 1px; height: '+total_height+'px'"></div>
+
+      <!-- horizontal yardstick -->
+      <div class="absolute top-0 left-0" :style="'height: 1px; width: '+total_width+'px'"></div>
 
       <!-- rows -->
       <grid-row
@@ -21,7 +24,7 @@
         :row="row"
         :row-index="start+index"
         :row-height="row_height"
-        :columns="columns"
+        :columns="render_cols"
         :scroll-left="scroll_left"
       >
       </grid-row>
@@ -124,6 +127,9 @@
       total_height() {
         return this.row_height * this.total_row_count
       },
+      total_width() {
+        return _.sum(_.map(this.columns, 'pixel_width'))
+      },
       rendered_row_count() {
         return _.size(this.rows)
       },
@@ -170,6 +176,14 @@
             rows.push(this.cached_rows[i] || {})
         }
         return rows
+      },
+      render_cols() {
+        var left = 0
+        return _.filter(this.columns, (c) => {
+          var is_visible = left < this.client_width
+          left += c.pixel_width
+          return is_visible
+        })
       },
       metrics() {
         var computed_data = this._computedWatchers
