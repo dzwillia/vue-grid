@@ -3,6 +3,7 @@
     <!-- grid header -->
     <div class="flex-none overflow-hidden bg-near-white vg-thead">
       <grid-header
+        :row-handle-width="row_handle_width"
         :columns="render_cols"
         :scroll-left="scroll_left"
         @start-column-resize="onStartColumnResize"
@@ -24,6 +25,7 @@
         :row="row"
         :row-index="start+index"
         :row-height="row_height"
+        :row-handle-width="row_handle_width"
         :columns="render_cols"
         :scroll-left="scroll_left"
       >
@@ -33,15 +35,17 @@
 </template>
 
 <script>
+  import {
+    DEFAULT_START,
+    DEFAULT_LIMIT,
+    DEFAULT_ROW_HEIGHT,
+    DEFAULT_ROW_HANDLE_WIDTH,
+    DEFAULT_COLUMN_WIDTH
+  } from '../constants'
   import axios from 'axios'
   import resize from 'vue-resize-directive'
   import GridHeader from './GridHeader.vue'
   import GridRow from './GridRow.vue'
-
-  const DEFAULT_START = 0
-  const DEFAULT_LIMIT = 50
-  const DEFAULT_ROW_HEIGHT = 23
-  const DEFAULT_COLUMN_WIDTH = 130
 
   export default {
     name: 'vue-grid',
@@ -119,6 +123,7 @@
         rows: [],
         cached_rows: {},
         row_height: DEFAULT_ROW_HEIGHT,
+        row_handle_width: DEFAULT_ROW_HANDLE_WIDTH,
 
         client_height: 0,
         client_width: 0,

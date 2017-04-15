@@ -15,8 +15,10 @@
 </template>
 
 <script>
-  const DEFAULT_ROW_HEIGHT = 23
-  const DEFAULT_ROW_HANDLE_WIDTH = 70
+  import {
+    DEFAULT_ROW_HEIGHT,
+    DEFAULT_ROW_HANDLE_WIDTH
+  } from '../constants'
 
   export default {
     props: {
@@ -32,6 +34,10 @@
         type: Number,
         default: DEFAULT_ROW_HEIGHT
       },
+      'row-handle-width': {
+        type: Number,
+        default: DEFAULT_ROW_HANDLE_WIDTH
+      },
       'columns': {
         type: Array,
         required: true
@@ -43,7 +49,7 @@
     },
     data() {
       return {
-        row_handle_width: DEFAULT_ROW_HANDLE_WIDTH
+        row_handle_width: this.rowHandleWidth
       }
     },
     computed: {
