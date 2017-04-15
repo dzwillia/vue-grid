@@ -11,27 +11,27 @@ const banner =
   ' */'
 
 module.exports = {
-    banner,
+  banner,
 
-    isProduction: process.env.NODE_ENV === 'production',
+  isProduction: process.env.NODE_ENV === 'production',
 
-    paths: {
-        root: path.join(__dirname, '..'),
+  paths: {
+    root: path.join(__dirname, '..'),
 
-        src: {
-          main: path.join(__dirname, '..', 'src'),
-          docs: path.join(__dirname, '..', 'docs-src'),
-          examples: path.join(__dirname, '..', 'examples-src')
-        },
+    src: {
+      main: path.join(__dirname, '..', 'src'),
+      docs: path.join(__dirname, '..', 'docs-src'),
+      examples: path.join(__dirname, '..', 'examples-src')
+    },
 
-        output: {
-          main: path.join(__dirname, '..', 'dist'),
-          docs: path.join(__dirname, '..', 'docs'),
-          examples: path.join(__dirname, '..', 'examples')
-        },
+    output: {
+      main: path.join(__dirname, '..', 'dist'),
+      docs: path.join(__dirname, '..', 'docs'),
+      examples: path.join(__dirname, '..', 'examples')
+    },
 
-        resolve(location) {
-          return path.join(__dirname, '..', location)
-        }
+    resolve(location) {
+      return path.join(__dirname, '..', location)
     }
+  }
 }
