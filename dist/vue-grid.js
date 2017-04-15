@@ -1,5 +1,5 @@
 /*!
- * vue-grid v1.0.0 (https://github.com/dzwillia/vue-grid)
+ * vue-grid v1.0.1 (https://github.com/dzwillia/vue-grid)
  * (c) 2017 David Z. Williams
  * Released under the MIT License.
  */
@@ -1921,9 +1921,6 @@ var DEFAULT_START = 0;
 var DEFAULT_LIMIT = 50;
 var DEFAULT_ROW_HEIGHT = 23;
 var DEFAULT_COLUMN_WIDTH = 130;
-var DEFAULT_COLUMN_INFO = {
-  pixel_width: DEFAULT_COLUMN_WIDTH
-};
 
 var active_xhr = null;
 var CancelToken = _axios2.default.CancelToken;
@@ -2110,7 +2107,7 @@ exports.default = {
 
   methods: {
     tryFetch: _.debounce(function () {
-      var me = this;
+      var _this3 = this;
 
       if (!_.isNil(active_xhr) && !_.isNil(cancelXhr)) {
         cancelXhr();
@@ -2128,32 +2125,32 @@ exports.default = {
       }).then(function (response) {
         var resdata = response.data;
 
-        if (_.isNumber(resdata.total_count)) me.total_row_count = resdata.total_count;
+        if (_.isNumber(resdata.total_count)) _this3.total_row_count = resdata.total_count;
 
-        if (!me.inited && _.isArray(resdata.columns)) {
+        if (!_this3.inited && _.isArray(resdata.columns)) {
           var temp_cols = _.map(resdata.columns, function (col) {
-            return _.assign({}, DEFAULT_COLUMN_INFO, col);
+            return _.assign({ pixel_width: DEFAULT_COLUMN_WIDTH }, col);
           });
 
-          me.columns = [].concat(temp_cols);
+          _this3.columns = [].concat(temp_cols);
         }
 
-        me.rows = [].concat(resdata.rows);
+        _this3.rows = [].concat(resdata.rows);
 
-        var start = me.start;
-        var limit = me.limit;
-        var row_count = me.total_row_count;
+        var start = _this3.start;
+        var limit = _this3.limit;
+        var row_count = _this3.total_row_count;
         var temp_cached_rows = {};
         var idx = 0;
 
         for (var r = start; r < start + limit && r < row_count; ++r) {
-          temp_cached_rows[r] = me.rows[idx];
+          temp_cached_rows[r] = _this3.rows[idx];
           idx++;
         }
 
-        me.cached_rows = _.assign({}, me.cached_rows, temp_cached_rows);
+        _this3.cached_rows = _.assign({}, _this3.cached_rows, temp_cached_rows);
 
-        me.inited = true;
+        _this3.inited = true;
 
         active_xhr = null;
         cancelXhr = null;
@@ -2194,14 +2191,14 @@ exports.default = {
     }, 10),
 
     resizeColumn: _.debounce(function (evt) {
-      var _this3 = this;
+      var _this4 = this;
 
       var lookup_col = _.find(this.columns, { name: _.get(this.resize_col, 'name') });
       if (!_.isNil(lookup_col)) {
         var temp_cols = _.map(this.columns, function (col) {
           if (_.get(col, 'name') == _.get(lookup_col, 'name')) {
-            var old_width = _.get(_this3.resize_col, 'pixel_width', DEFAULT_COLUMN_WIDTH);
-            return _.assign({}, lookup_col, { pixel_width: old_width + _this3.resize_delta });
+            var old_width = _.get(_this4.resize_col, 'pixel_width', DEFAULT_COLUMN_WIDTH);
+            return _.assign({}, lookup_col, { pixel_width: old_width + _this4.resize_delta });
           }
 
           return col;
@@ -2280,6 +2277,9 @@ exports.default = {
     }
   },
   methods: {
+    getColumnName: function getColumnName(col) {
+      return _.get(col, 'name', '');
+    },
     onColumnResizerMousedown: function onColumnResizerMousedown(col) {
       this.$emit('start-column-resize', col);
     }
@@ -2339,6 +2339,11 @@ exports.default = {
     },
     inner_row_handle_style: function inner_row_handle_style() {
       return 'width: ' + this.row_handle_width + 'px';
+    }
+  },
+  methods: {
+    getColumnName: function getColumnName(col) {
+      return _.get(col, 'name', '');
     }
   }
 };
@@ -4527,7 +4532,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }, [_c('div', {
       staticClass: "h-100 lh-1 vg-th-inner",
       style: ('width: ' + col.pixel_width + 'px')
-    }, [_vm._v(_vm._s(col.name))]), _vm._v(" "), _c('div', {
+    }, [_vm._v(_vm._s(_vm.getColumnName(col)))]), _vm._v(" "), _c('div', {
       staticClass: "absolute top-0 bottom-0 right-0 cursor-resize-ew",
       style: ('width: ' + _vm.column_resize_handle_width + 'px'),
       on: {
@@ -4570,7 +4575,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }, [_c('div', {
       staticClass: "h-100 lh-1 vg-td-inner",
       style: ('width: ' + col.pixel_width + 'px')
-    }, [_vm._v(_vm._s(_vm.row[col.name]))])])
+    }, [_vm._v(_vm._s(_vm.row[_vm.getColumnName(col)]))])])
   }))])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
