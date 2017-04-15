@@ -1,6 +1,7 @@
 'use strict'
 
 const merge = require('deep-assign')
+const webpack = require('webpack')
 
 const options = require('./options')
 const base = require('./webpack.base.js')
@@ -16,10 +17,11 @@ const config = merge(base, {
     path: options.paths.output.examples
   },
 
+  plugins: [],
+
   devServer: {
     contentBase: options.paths.output.examples,
     host: 'localhost',
-    port: 9000,
     historyApiFallback: true,
     noInfo: true
   }
@@ -29,5 +31,12 @@ const config = merge(base, {
 config.module.rules[0].options.loaders = {
   scss: 'vue-style-loader!css-loader!sass-loader'
 }
+
+config.plugins = config.plugins.concat([
+  // TODO: Figure out how to do singleton includes of Lodash functions
+  new webpack.ProvidePlugin({
+    _: 'lodash'
+  })
+])
 
 module.exports = config

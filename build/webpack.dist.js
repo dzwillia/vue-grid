@@ -51,6 +51,11 @@ if (options.isProduction) {
       }
     }),
 
+    // TODO: Figure out how to do singleton includes of Lodash functions
+    new webpack.ProvidePlugin({
+      _: 'lodash'
+    }),
+
     // Minify with dead-code elimination
     new webpack.optimize.UglifyJsPlugin({
       compress: {
