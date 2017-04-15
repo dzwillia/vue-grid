@@ -199,9 +199,10 @@
         return rows
       },
       render_cols() {
-        var left = -1 * this.scroll_left
+        var left = (-1 * this.scroll_left)
+        var cell_padding = 11 // horizontal cell padding + left border
         return _.filter(this.columns, (c) => {
-          var is_visible = left < this.client_width
+          var is_visible = left+cell_padding < this.client_width - this.row_handle_width
           left += c.pixel_width
           return is_visible
         })
