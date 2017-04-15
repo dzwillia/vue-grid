@@ -32,7 +32,8 @@
   "dependencies": {
     "axios": "^0.16.1",
     "lodash": "^4.17.4",
-    "tachyons": "^4.6.1"
+    "tachyons": "^4.6.1",
+    "vue-resize-directive": "^1.0.0"
   },
   "devDependencies": {
     "autoprefixer": "^6.7.7",

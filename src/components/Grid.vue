@@ -11,7 +11,7 @@
     </div>
 
     <!-- grid body -->
-    <div class="flex-fill relative overflow-auto vg-tbody" ref="tbody" @scroll="onScroll">
+    <div class="flex-fill relative overflow-auto vg-tbody" ref="tbody" @scroll="onScroll" v-resize="onResize">
       <!-- vertical yardstick -->
       <div class="absolute top-0 left-0" :style="'width: 1px; height: '+total_height+'px'"></div>
 
@@ -34,6 +34,7 @@
 
 <script>
   import axios from 'axios'
+  import resize from 'vue-resize-directive'
   import GridHeader from './GridHeader.vue'
   import GridRow from './GridRow.vue'
 
@@ -57,6 +58,9 @@
     components: {
       GridHeader,
       GridRow
+    },
+    directives: {
+      resize
     },
     watch: {
       scroll_top(val, old_val) {
@@ -329,6 +333,11 @@
         this.resize_col = _.cloneDeep(col)
         this.updateStyle('cursor', 'html { cursor: ew-resize !important; }')
         this.updateStyle('noselect', 'html { user-select: none !important; }')
+      },
+
+      onResize(resize_el) {
+        this.client_width = resize_el.clientWidth
+        this.client_height = resize_el.clientHeight
       },
 
       onScroll() {
