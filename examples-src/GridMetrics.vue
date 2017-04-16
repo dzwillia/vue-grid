@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="f5 pa2 mid-gray bg-near-white bb b--light-gray">Metrics</div>
+    <div class="f6 b pv2 ph2 ttu mid-gray bg-near-white bt bb b--black-10" style="font-size: 11px">Metrics</div>
     <table class="w-100 pv1 ph2 f6 dark-gray">
       <tbody>
         <tr>
@@ -32,12 +32,12 @@
           <td class="pv1a pl2 fw6 tr">{{metrics.last_visible_row}}</td>
         </tr>
         <tr>
-          <td class="pv1a pr2">Total row count:</td>
-          <td class="pv1a pl2 fw6 tr">{{metrics.total_row_count}}</td>
-        </tr>
-        <tr>
           <td class="pv1a pr2">Visible row count:</td>
           <td class="pv1a pl2 fw6 tr">{{metrics.visible_row_count}}</td>
+        </tr>
+        <tr>
+          <td class="pv1a pr2">Total row count:</td>
+          <td class="pv1a pl2 fw6 tr">{{metrics.total_row_count}}</td>
         </tr>
         <tr>
           <td class="pv1a" colspan="2">
@@ -85,8 +85,11 @@
           <td class="pv1a pr2">Visible column count:</td>
           <td class="pv1a pl2 fw6 tr">{{metrics.visible_column_count}}</td>
         </tr>
+        <tr>
+          <td class="pv1a pr2">Total column count:</td>
+          <td class="pv1a pl2 fw6 tr">{{metrics.total_column_count}}</td>
+        </tr>
       </tbody>
-
     </table>
   </div>
 </template>

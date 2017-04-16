@@ -7,11 +7,11 @@
         @metrics-change="onGridMetricsChange"
       ></grid>
     </div>
-    <div class="flex-none overflow-auto" style="min-width: 240px">
+    <div class="flex-none overflow-auto" style="min-width: 240px; margin-top: -1px">
       <grid-metrics class="w-100" :metrics="metrics"></grid-metrics>
-      <grid-events class="w-100 bt b--light-gray"></grid-events>
+      <grid-events class="w-100"></grid-events>
       <grid-options
-        class="w-100 bt b--light-gray"
+        class="w-100"
         :live-scroll="live_scroll"
         @option-change="onGridOptionChange"
       >

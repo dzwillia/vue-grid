@@ -216,6 +216,9 @@
       visible_column_count() {
         return _.size(this.render_cols)
       },
+      total_column_count() {
+        return _.size(this.columns)
+      },
       resize_delta() {
         return this.mousedown_x == -1 ? 0 : this.mouse_x - this.mousedown_x
       },
@@ -227,9 +230,10 @@
         var filtered_data = _.pick(this.$data, [
           'start',
           'limit',
+          'rows',
           'total_row_count',
           'columns',
-          'rows',
+          'total_column_count',
           'cached_rows',
           'row_height',
           'row_handle_width',
