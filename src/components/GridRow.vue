@@ -1,8 +1,8 @@
 <template>
   <div class="absolute" :style="row_style">
     <!-- row handle -->
-    <div class="overflow-hidden ba absolute z-1 vg-td" :style="row_handle_style">
-      <div class="h-100 lh-1 light-silver tr bg-near-white vg-td-inner" :style="inner_row_handle_style">{{rowIndex+1}}</div>
+    <div class="overflow-hidden ba absolute z-1 bg-near-white vg-td" :style="row_handle_style">
+      <div class="h-100 lh-1 light-silver tr vg-td-inner" :style="inner_row_handle_style">{{rowIndex+1}}</div>
     </div>
 
     <!-- cells -->

@@ -494,12 +494,13 @@
   .vg-td {
     margin-top: -1px;
     margin-left: -1px;
+    padding-top: 1px;
     border-color: $border-color;
   }
 
   .vg-th-inner,
   .vg-td-inner {
-    padding: 5px 5px 4px;
+    padding: 4px 5px 4px;
   }
 
   /* misc */
