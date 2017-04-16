@@ -1,8 +1,9 @@
 <template>
   <div id="app" class="flex flex-row fixed absolute--fill overflow-hidden">
+    <div id="old-data-url" v-if="false">data-url="https://test.flex.io/api/v1/streams/f7bmlcz26w1z/content"</div>
     <div class="flex-fill br b--black-20">
       <grid
-        data-url="https://test.flex.io/api/v1/streams/f7bmlcz26w1z/content"
+        data-url="https://test.flex.io/api/v1/streams/llj1p7qd77vp/content"
         :live-scroll="live_scroll"
         @metrics-change="onGridMetricsChange"
       ></grid>

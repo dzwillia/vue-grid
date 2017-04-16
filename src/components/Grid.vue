@@ -119,6 +119,7 @@
         uid: _.uniqueId('vue-grid-'),
 
         inited: false,
+        col_widths_inited: false,
 
         start: DEFAULT_START, // initial start
         limit: DEFAULT_LIMIT, // initial limit
@@ -201,6 +202,12 @@
         return rows
       },
       render_cols() {
+        // if we haven't yet initialized our column widths,
+        // we need to return all columns so that the cells
+        // are renderend and the cell contents can be measured
+        if (!this.col_widths_inited)
+          return this.columns
+
         var left = (-1 * this.scroll_left)
         var cell_padding = 11 // horizontal cell padding + left border
         return _.filter(this.columns, (c) => {
@@ -454,7 +461,7 @@
 
       initializeColumnWidths(width, col, row_index) {
         // once we've initialized our column widths, we're done
-        if (this.default_col_widths == 'done')
+        if (this.col_widths_inited)
           return
 
         var min_width = _.defaultTo(this.default_col_widths[col.name], COLUMN_MIN_WIDTH)
@@ -470,7 +477,7 @@
           })
 
           this.columns = [].concat(temp_cols)
-          this.$nextTick(() => { this.default_col_widths = 'done' })
+          this.$nextTick(() => { this.col_widths_inited = true })
         }
       },
 
