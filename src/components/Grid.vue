@@ -29,6 +29,7 @@
         :row-handle-width="row_handle_width"
         :columns="render_cols"
         :scroll-left="scroll_left"
+        @cell-initialize-content-width="onRowCellInitializeContentWidth"
       >
       </grid-row>
     </div>
@@ -249,6 +250,7 @@
     mounted() {
       this.active_xhr = null
       this.cancelXhr = null
+      this.default_col_widths = {}
 
       // establish our debounced fetch (for vertical scrolling)
       this.tryFetchDebounced = _.debounce(this.tryFetch, 80)
@@ -366,6 +368,23 @@
           this.active_xhr = null
           this.cancelXhr = null
         })
+      },
+
+      // initial auto column resize
+      onRowCellInitializeContentWidth(width, col, row_index) {
+        var min_width = _.defaultTo(this.default_col_widths[col.name], COLUMN_MIN_WIDTH)
+        var new_width = Math.max(min_width, width+20) // make columns a little wider than they need to be
+        new_width = Math.min(new_width, COLUMN_MAX_WIDTH)
+        this.default_col_widths[col.name] = new_width
+
+        if (row_index == this.rendered_row_count-1)
+        {
+          var temp_cols = _.map(this.columns, (col) => {
+            return _.assign({}, col, { pixel_width: this.default_col_widths[col.name] })
+          })
+
+          this.columns = [].concat(temp_cols)
+        }
       },
 
       onStartRowHandleResize(col) {

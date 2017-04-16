@@ -7,15 +7,16 @@
 
     <!-- cells -->
     <div class="flex flex-row nowrap" :style="'padding-left: '+row_handle_width+'px'">
-      <div
+      <grid-cell
         class="flex-none overflow-hidden ba vg-td"
+        v-for="(col, index) in columns"
+        :col="col"
+        :value="row[getColumnName(col)]"
+        :width="col.pixel_width || 0"
         :style="'height: '+(rowHeight+1)+'px'"
-        v-for="col in columns"
+        @initialize-content-width="onCellInitializeContentWidth"
       >
-        <div class="h-100 lh-1 vg-td-inner" :style="'width: '+col.pixel_width+'px'">
-          <div>{{row[getColumnName(col)]}}</div>
-        </div>
-      </div>
+      </grid-cell>
     </div>
   </div>
 </template>
@@ -25,6 +26,7 @@
     DEFAULT_ROW_HEIGHT,
     DEFAULT_ROW_HANDLE_WIDTH
   } from '../constants'
+  import GridCell from './GridCell.vue'
 
   export default {
     props: {
@@ -53,6 +55,9 @@
         default: 0
       }
     },
+    components: {
+      GridCell
+    },
     watch: {
       rowHandleWidth(val, old_val) {
         this.row_handle_width = val
@@ -77,6 +82,9 @@
     methods: {
       getColumnName(col) {
         return _.get(col, 'name', '')
+      },
+      onCellInitializeContentWidth(width, col) {
+        this.$emit('cell-initialize-content-width', width, col, this.rowIndex)
       }
     }
   }
