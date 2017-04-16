@@ -46,14 +46,14 @@
               <table class="w-100 collapse" style="font-size: 11px">
                 <thead>
                   <tr>
-                    <th class="pa1 bg-near-white ba b--light-moon-gray fw6 pr3 w1 tl">Attribute</th>
-                    <th class="pa1 bg-near-white ba b--light-moon-gray fw6 w1 tr">Value</th>
+                    <th class="pv1a ph1 bg-near-white ba b--light-moon-gray fw6 pr3 w1 tl">Attribute</th>
+                    <th class="pv1a ph1 bg-near-white ba b--light-moon-gray fw6 w1 tr">Value</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="(v, k) in first_visible_column">
-                    <td class="pa1 ba b--light-moon-gray pr3 w1">{{k}}</td>
-                    <td class="pa1 ba b--light-moon-gray fw6 tr"><grid-metrics-value :val="v"></grid-metrics-value></td>
+                    <td class="pv1a ph1 ba b--light-moon-gray pr3 w1">{{k}}</td>
+                    <td class="pv1a ph1 ba b--light-moon-gray tr"><grid-metrics-value :val="v"></grid-metrics-value></td>
                   </tr>
                 </tbody>
               </table>
@@ -67,14 +67,14 @@
               <table class="w-100 collapse" style="font-size: 11px">
                 <thead>
                   <tr>
-                    <th class="pa1 bg-near-white ba b--light-moon-gray fw6 pr3 w1 tl">Attribute</th>
-                    <th class="pa1 bg-near-white ba b--light-moon-gray fw6 w1 tr">Value</th>
+                    <th class="pv1a ph1 bg-near-white ba b--light-moon-gray fw6 pr3 w1 tl">Attribute</th>
+                    <th class="pv1a ph1 bg-near-white ba b--light-moon-gray fw6 w1 tr">Value</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="(v, k) in last_visible_column">
-                    <td class="pa1 ba b--light-moon-gray pr3 w1">{{k}}</td>
-                    <td class="pa1 ba b--light-moon-gray fw6 tr"><grid-metrics-value :val="v"></grid-metrics-value></td>
+                    <td  class="pv1a ph1 ba b--light-moon-gray pr3 w1">{{k}}</td>
+                    <td  class="pv1a ph1 ba b--light-moon-gray tr"><grid-metrics-value :val="v"></grid-metrics-value></td>
                   </tr>
                 </tbody>
               </table>
