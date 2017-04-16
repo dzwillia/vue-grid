@@ -372,6 +372,10 @@
 
       // initial auto column resize
       onRowCellInitializeContentWidth(width, col, row_index) {
+        // once we've initialized our column widths, we're done
+        if (this.default_col_widths == 'done')
+          return
+
         var min_width = _.defaultTo(this.default_col_widths[col.name], COLUMN_MIN_WIDTH)
         var new_width = Math.max(min_width, width+20) // make columns a little wider than they need to be
         new_width = Math.min(new_width, COLUMN_MAX_WIDTH)
@@ -384,6 +388,7 @@
           })
 
           this.columns = [].concat(temp_cols)
+          this.default_col_widths = 'done'
         }
       },
 
