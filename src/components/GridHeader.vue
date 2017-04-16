@@ -22,7 +22,7 @@
         :width="col.pixel_width || 0"
         :style="'height: '+(rowHeight+1)+'px'"
         @column-resizer-mousedown="onColumnResizerMousedown"
-        @initialize-content-width="onHeaderCellInitializeContentWidth"
+        @determine-auto-width="onHeaderCellDetermineWidth"
       >
       </grid-header-cell>
     </div>
@@ -91,8 +91,8 @@
       onColumnResizerMousedown(col) {
         this.$emit('start-column-resize', col)
       },
-      onHeaderCellInitializeContentWidth(width, col) {
-        this.$emit('header-cell-initialize-content-width', width, col, 'header')
+      onHeaderCellDetermineWidth(width, col) {
+        this.$emit('determine-cell-auto-width', width, col, 'header')
       }
     }
   }

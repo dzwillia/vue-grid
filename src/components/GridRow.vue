@@ -14,7 +14,7 @@
         :value="row[getColumnName(col)]"
         :width="col.pixel_width || 0"
         :style="'height: '+(rowHeight+1)+'px'"
-        @initialize-content-width="onCellInitializeContentWidth"
+        @determine-auto-width="onCellDetermineWidth"
       >
       </grid-cell>
     </div>
@@ -83,8 +83,8 @@
       getColumnName(col) {
         return _.get(col, 'name', '')
       },
-      onCellInitializeContentWidth(width, col) {
-        this.$emit('cell-initialize-content-width', width, col, this.rowIndex)
+      onCellDetermineWidth(width, col) {
+        this.$emit('determine-cell-auto-width', width, col, this.rowIndex)
       }
     }
   }

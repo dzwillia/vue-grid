@@ -8,7 +8,7 @@
         :scroll-left="scroll_left"
         @start-row-handle-resize="onStartRowHandleResize"
         @start-column-resize="onStartColumnResize"
-        @header-cell-initialize-content-width="initializeColumnWidths"
+        @determine-cell-auto-width="initializeColumnWidths"
       >
       </grid-header>
     </div>
@@ -30,7 +30,7 @@
         :row-handle-width="row_handle_width"
         :columns="render_cols"
         :scroll-left="scroll_left"
-        @cell-initialize-content-width="initializeColumnWidths"
+        @determine-cell-auto-width="initializeColumnWidths"
       >
       </grid-row>
     </div>

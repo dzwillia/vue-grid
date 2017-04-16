@@ -29,7 +29,7 @@
     mounted() {
       var el = this.$refs['content']
       this.content_width = el ? el.offsetWidth : 0
-      this.$emit('initialize-content-width', this.content_width, this.col)
+      this.$emit('determine-auto-width', this.content_width, this.col)
     }
   }
 </script>
