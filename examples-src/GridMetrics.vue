@@ -5,39 +5,39 @@
       <tbody>
         <tr>
           <td class="pv1a pr2">Scroll top:</td>
-          <td class="pv1a pl2 fw6 tr">{{metrics.scroll_top}}</td>
+          <td class="pv1a pl2 tr"><grid-metrics-value :val="metrics.scroll_top"></grid-metrics-value></td>
         </tr>
         <tr>
           <td class="pv1a pr2">Scroll left:</td>
-          <td class="pv1a pl2 fw6 tr">{{metrics.scroll_left}}</td>
+          <td class="pv1a pl2 tr"><grid-metrics-value :val="metrics.scroll_left"></grid-metrics-value></td>
         </tr>
         <tr>
           <td class="pv1a pr2">Row handle width:</td>
-          <td class="pv1a pl2 fw6 tr">{{metrics.row_handle_width}}</td>
+          <td class="pv1a pl2 tr"><grid-metrics-value :val="metrics.row_handle_width"></grid-metrics-value></td>
         </tr>
         <tr>
           <td class="pv1a pr2">Rendered row count:</td>
-          <td class="pv1a pl2 fw6 tr">{{metrics.rendered_row_count}}</td>
+          <td class="pv1a pl2 tr"><grid-metrics-value :val="metrics.rendered_row_count"></grid-metrics-value></td>
         </tr>
         <tr>
           <td class="pv1a pr2">Cached row count:</td>
-          <td class="pv1a pl2 fw6 tr">{{metrics.cached_row_count}}</td>
+          <td class="pv1a pl2 tr"><grid-metrics-value :val="metrics.cached_row_count"></grid-metrics-value></td>
         </tr>
         <tr>
           <td class="pv1a pr2">First visible row:</td>
-          <td class="pv1a pl2 fw6 tr">{{metrics.first_visible_row}}</td>
+          <td class="pv1a pl2 tr"><grid-metrics-value :val="metrics.first_visible_row"></grid-metrics-value></td>
         </tr>
         <tr>
           <td class="pv1a pr2">Last visible row:</td>
-          <td class="pv1a pl2 fw6 tr">{{metrics.last_visible_row}}</td>
+          <td class="pv1a pl2 tr"><grid-metrics-value :val="metrics.last_visible_row"></grid-metrics-value></td>
         </tr>
         <tr>
           <td class="pv1a pr2">Visible row count:</td>
-          <td class="pv1a pl2 fw6 tr">{{metrics.visible_row_count}}</td>
+          <td class="pv1a pl2 tr"><grid-metrics-value :val="metrics.visible_row_count"></grid-metrics-value></td>
         </tr>
         <tr>
           <td class="pv1a pr2">Total row count:</td>
-          <td class="pv1a pl2 fw6 tr">{{metrics.total_row_count}}</td>
+          <td class="pv1a pl2 tr"><grid-metrics-value :val="metrics.total_row_count"></grid-metrics-value></td>
         </tr>
         <tr>
           <td class="pv1a" colspan="2">
@@ -53,7 +53,7 @@
                 <tbody>
                   <tr v-for="(v, k) in first_visible_column">
                     <td class="pa1 ba b--light-moon-gray pr3 w1">{{k}}</td>
-                    <td class="pa1 ba b--light-moon-gray fw6 tr">{{v}}</td>
+                    <td class="pa1 ba b--light-moon-gray fw6 tr"><grid-metrics-value :val="v"></grid-metrics-value></td>
                   </tr>
                 </tbody>
               </table>
@@ -74,7 +74,7 @@
                 <tbody>
                   <tr v-for="(v, k) in last_visible_column">
                     <td class="pa1 ba b--light-moon-gray pr3 w1">{{k}}</td>
-                    <td class="pa1 ba b--light-moon-gray fw6 tr">{{v}}</td>
+                    <td class="pa1 ba b--light-moon-gray fw6 tr"><grid-metrics-value :val="v"></grid-metrics-value></td>
                   </tr>
                 </tbody>
               </table>
@@ -83,11 +83,11 @@
         </tr>
         <tr>
           <td class="pv1a pr2">Visible column count:</td>
-          <td class="pv1a pl2 fw6 tr">{{metrics.visible_column_count}}</td>
+          <td class="pv1a pl2 tr"><grid-metrics-value :val="metrics.visible_column_count"></grid-metrics-value></td>
         </tr>
         <tr>
           <td class="pv1a pr2">Total column count:</td>
-          <td class="pv1a pl2 fw6 tr">{{metrics.total_column_count}}</td>
+          <td class="pv1a pl2 tr"><grid-metrics-value :val="metrics.total_column_count"></grid-metrics-value></td>
         </tr>
       </tbody>
     </table>
@@ -95,12 +95,17 @@
 </template>
 
 <script>
+  import GridMetricsValue from './GridMetricsValue.vue'
+
   export default {
     props: {
       'metrics': {
         type: Object,
         default: () => { return {} }
       }
+    },
+    components: {
+      GridMetricsValue
     },
     computed: {
       first_visible_column() {
