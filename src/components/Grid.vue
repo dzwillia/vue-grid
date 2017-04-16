@@ -443,7 +443,7 @@
 
       onHorizontalScroll: _.throttle(function(val, old_val) {
         this.scroll_left = val
-      }, 10),
+      }, 15),
 
       resizeRowHandle: _.debounce(function(evt) {
         var old_width = this.resize_row_handle.old_width
