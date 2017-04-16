@@ -1,5 +1,5 @@
 /*!
- * vue-grid v1.0.3 (https://github.com/dzwillia/vue-grid)
+ * vue-grid v1.0.4 (https://github.com/dzwillia/vue-grid)
  * (c) 2017 David Z. Williams
  * Released under the MIT License.
  */
@@ -78,7 +78,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 31);
+/******/ 	return __webpack_require__(__webpack_require__.s = 35);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -88,7 +88,7 @@ return /******/ (function(modules) { // webpackBootstrap
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
 
-var bind = __webpack_require__(7);
+var bind = __webpack_require__(8);
 
 /*global toString:true*/
 
@@ -399,17 +399,106 @@ module.exports = {
   trim: trim
 };
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(33).Buffer))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(37).Buffer))
 
 /***/ }),
 /* 1 */
+/***/ (function(module, exports) {
+
+// this module is a runtime utility for cleaner component module output and will
+// be included in the final webpack user bundle
+
+module.exports = function normalizeComponent (
+  rawScriptExports,
+  compiledTemplate,
+  scopeId,
+  cssModules
+) {
+  var esModule
+  var scriptExports = rawScriptExports = rawScriptExports || {}
+
+  // ES6 modules interop
+  var type = typeof rawScriptExports.default
+  if (type === 'object' || type === 'function') {
+    esModule = rawScriptExports
+    scriptExports = rawScriptExports.default
+  }
+
+  // Vue.extend constructor export interop
+  var options = typeof scriptExports === 'function'
+    ? scriptExports.options
+    : scriptExports
+
+  // render functions
+  if (compiledTemplate) {
+    options.render = compiledTemplate.render
+    options.staticRenderFns = compiledTemplate.staticRenderFns
+  }
+
+  // scopedId
+  if (scopeId) {
+    options._scopeId = scopeId
+  }
+
+  // inject cssModules
+  if (cssModules) {
+    var computed = Object.create(options.computed || null)
+    Object.keys(cssModules).forEach(function (key) {
+      var module = cssModules[key]
+      computed[key] = function () { return module }
+    })
+    options.computed = computed
+  }
+
+  return {
+    esModule: esModule,
+    exports: scriptExports,
+    options: options
+  }
+}
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var DEFAULT_START = 0;
+var DEFAULT_LIMIT = 50;
+var DEFAULT_ROW_HEIGHT = 23;
+var DEFAULT_ROW_HANDLE_WIDTH = 70;
+var ROW_HANDLE_MIN_WIDTH = 30;
+var ROW_HANDLE_MAX_WIDTH = 200;
+var DEFAULT_COLUMN_WIDTH = 130;
+var COLUMN_MIN_WIDTH = 30;
+var COLUMN_MAX_WIDTH = 1200;
+var COLUMN_RESIZE_HANDLE_WIDTH = 4;
+
+exports.DEFAULT_START = DEFAULT_START;
+exports.DEFAULT_LIMIT = DEFAULT_LIMIT;
+exports.DEFAULT_ROW_HEIGHT = DEFAULT_ROW_HEIGHT;
+exports.DEFAULT_ROW_HANDLE_WIDTH = DEFAULT_ROW_HANDLE_WIDTH;
+exports.ROW_HANDLE_MIN_WIDTH = ROW_HANDLE_MIN_WIDTH;
+exports.ROW_HANDLE_MAX_WIDTH = ROW_HANDLE_MAX_WIDTH;
+exports.DEFAULT_COLUMN_WIDTH = DEFAULT_COLUMN_WIDTH;
+exports.COLUMN_MIN_WIDTH = COLUMN_MIN_WIDTH;
+exports.COLUMN_MAX_WIDTH = COLUMN_MAX_WIDTH;
+exports.COLUMN_RESIZE_HANDLE_WIDTH = COLUMN_RESIZE_HANDLE_WIDTH;
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var utils = __webpack_require__(0);
-var normalizeHeaderName = __webpack_require__(25);
+var normalizeHeaderName = __webpack_require__(27);
 
 var DEFAULT_CONTENT_TYPE = {
   'Content-Type': 'application/x-www-form-urlencoded'
@@ -425,10 +514,10 @@ function getDefaultAdapter() {
   var adapter;
   if (typeof XMLHttpRequest !== 'undefined') {
     // For browsers use XHR adapter
-    adapter = __webpack_require__(3);
+    adapter = __webpack_require__(4);
   } else if (typeof process !== 'undefined') {
     // For node use HTTP adapter
-    adapter = __webpack_require__(3);
+    adapter = __webpack_require__(4);
   }
   return adapter;
 }
@@ -499,79 +588,22 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 
 module.exports = defaults;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
 
 /***/ }),
-/* 2 */
-/***/ (function(module, exports) {
-
-// this module is a runtime utility for cleaner component module output and will
-// be included in the final webpack user bundle
-
-module.exports = function normalizeComponent (
-  rawScriptExports,
-  compiledTemplate,
-  scopeId,
-  cssModules
-) {
-  var esModule
-  var scriptExports = rawScriptExports = rawScriptExports || {}
-
-  // ES6 modules interop
-  var type = typeof rawScriptExports.default
-  if (type === 'object' || type === 'function') {
-    esModule = rawScriptExports
-    scriptExports = rawScriptExports.default
-  }
-
-  // Vue.extend constructor export interop
-  var options = typeof scriptExports === 'function'
-    ? scriptExports.options
-    : scriptExports
-
-  // render functions
-  if (compiledTemplate) {
-    options.render = compiledTemplate.render
-    options.staticRenderFns = compiledTemplate.staticRenderFns
-  }
-
-  // scopedId
-  if (scopeId) {
-    options._scopeId = scopeId
-  }
-
-  // inject cssModules
-  if (cssModules) {
-    var computed = Object.create(options.computed || null)
-    Object.keys(cssModules).forEach(function (key) {
-      var module = cssModules[key]
-      computed[key] = function () { return module }
-    })
-    options.computed = computed
-  }
-
-  return {
-    esModule: esModule,
-    exports: scriptExports,
-    options: options
-  }
-}
-
-
-/***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var utils = __webpack_require__(0);
-var settle = __webpack_require__(17);
-var buildURL = __webpack_require__(20);
-var parseHeaders = __webpack_require__(26);
-var isURLSameOrigin = __webpack_require__(24);
-var createError = __webpack_require__(6);
-var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(19);
+var settle = __webpack_require__(19);
+var buildURL = __webpack_require__(22);
+var parseHeaders = __webpack_require__(28);
+var isURLSameOrigin = __webpack_require__(26);
+var createError = __webpack_require__(7);
+var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(21);
 
 module.exports = function xhrAdapter(config) {
   return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -667,7 +699,7 @@ module.exports = function xhrAdapter(config) {
     // This is only done if running in a standard browser environment.
     // Specifically not if we're in a web worker, or react-native.
     if (utils.isStandardBrowserEnv()) {
-      var cookies = __webpack_require__(22);
+      var cookies = __webpack_require__(24);
 
       // Add xsrf header
       var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
@@ -743,10 +775,10 @@ module.exports = function xhrAdapter(config) {
   });
 };
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -772,7 +804,7 @@ module.exports = Cancel;
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -784,13 +816,13 @@ module.exports = function isCancel(value) {
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var enhanceError = __webpack_require__(16);
+var enhanceError = __webpack_require__(18);
 
 /**
  * Create an Error with the specified message, config, error code, and response.
@@ -808,7 +840,7 @@ module.exports = function createError(message, config, code, response) {
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -826,7 +858,7 @@ module.exports = function bind(fn, thisArg) {
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -1012,18 +1044,45 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 9 */
+/* 10 */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1,eval)("this");
+} catch(e) {
+	// This works if the window reference is available
+	if(typeof window === "object")
+		g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
 /* styles */
-__webpack_require__(34)
+__webpack_require__(39)
 
-var Component = __webpack_require__(2)(
+var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(28),
+  __webpack_require__(30),
   /* template */
-  __webpack_require__(39),
+  __webpack_require__(47),
   /* scopeId */
   null,
   /* cssModules */
@@ -1050,22 +1109,22 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 10 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(11);
+module.exports = __webpack_require__(13);
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(0);
-var bind = __webpack_require__(7);
-var Axios = __webpack_require__(13);
-var defaults = __webpack_require__(1);
+var bind = __webpack_require__(8);
+var Axios = __webpack_require__(15);
+var defaults = __webpack_require__(3);
 
 /**
  * Create an instance of Axios
@@ -1098,15 +1157,15 @@ axios.create = function create(instanceConfig) {
 };
 
 // Expose Cancel & CancelToken
-axios.Cancel = __webpack_require__(4);
-axios.CancelToken = __webpack_require__(12);
-axios.isCancel = __webpack_require__(5);
+axios.Cancel = __webpack_require__(5);
+axios.CancelToken = __webpack_require__(14);
+axios.isCancel = __webpack_require__(6);
 
 // Expose all/spread
 axios.all = function all(promises) {
   return Promise.all(promises);
 };
-axios.spread = __webpack_require__(27);
+axios.spread = __webpack_require__(29);
 
 module.exports = axios;
 
@@ -1115,13 +1174,13 @@ module.exports.default = axios;
 
 
 /***/ }),
-/* 12 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Cancel = __webpack_require__(4);
+var Cancel = __webpack_require__(5);
 
 /**
  * A `CancelToken` is an object that can be used to request cancellation of an operation.
@@ -1179,18 +1238,18 @@ module.exports = CancelToken;
 
 
 /***/ }),
-/* 13 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var defaults = __webpack_require__(1);
+var defaults = __webpack_require__(3);
 var utils = __webpack_require__(0);
-var InterceptorManager = __webpack_require__(14);
-var dispatchRequest = __webpack_require__(15);
-var isAbsoluteURL = __webpack_require__(23);
-var combineURLs = __webpack_require__(21);
+var InterceptorManager = __webpack_require__(16);
+var dispatchRequest = __webpack_require__(17);
+var isAbsoluteURL = __webpack_require__(25);
+var combineURLs = __webpack_require__(23);
 
 /**
  * Create a new instance of Axios
@@ -1271,7 +1330,7 @@ module.exports = Axios;
 
 
 /***/ }),
-/* 14 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1330,16 +1389,16 @@ module.exports = InterceptorManager;
 
 
 /***/ }),
-/* 15 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(0);
-var transformData = __webpack_require__(18);
-var isCancel = __webpack_require__(5);
-var defaults = __webpack_require__(1);
+var transformData = __webpack_require__(20);
+var isCancel = __webpack_require__(6);
+var defaults = __webpack_require__(3);
 
 /**
  * Throws a `Cancel` if cancellation has been requested.
@@ -1416,7 +1475,7 @@ module.exports = function dispatchRequest(config) {
 
 
 /***/ }),
-/* 16 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1442,13 +1501,13 @@ module.exports = function enhanceError(error, config, code, response) {
 
 
 /***/ }),
-/* 17 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var createError = __webpack_require__(6);
+var createError = __webpack_require__(7);
 
 /**
  * Resolve or reject a Promise based on response status.
@@ -1474,7 +1533,7 @@ module.exports = function settle(resolve, reject, response) {
 
 
 /***/ }),
-/* 18 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1501,7 +1560,7 @@ module.exports = function transformData(data, headers, fns) {
 
 
 /***/ }),
-/* 19 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1544,7 +1603,7 @@ module.exports = btoa;
 
 
 /***/ }),
-/* 20 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1619,7 +1678,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 
 
 /***/ }),
-/* 21 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1640,7 +1699,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
 
 
 /***/ }),
-/* 22 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1700,7 +1759,7 @@ module.exports = (
 
 
 /***/ }),
-/* 23 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1721,7 +1780,7 @@ module.exports = function isAbsoluteURL(url) {
 
 
 /***/ }),
-/* 24 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1796,7 +1855,7 @@ module.exports = (
 
 
 /***/ }),
-/* 25 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1815,7 +1874,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
 
 
 /***/ }),
-/* 26 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1859,7 +1918,7 @@ module.exports = function parseHeaders(headers) {
 
 
 /***/ }),
-/* 27 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1893,7 +1952,7 @@ module.exports = function spread(callback) {
 
 
 /***/ }),
-/* 28 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1903,24 +1962,25 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _axios = __webpack_require__(10);
+var _constants = __webpack_require__(2);
+
+var _axios = __webpack_require__(12);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _GridHeader = __webpack_require__(37);
+var _vueResizeDirective = __webpack_require__(52);
+
+var _vueResizeDirective2 = _interopRequireDefault(_vueResizeDirective);
+
+var _GridHeader = __webpack_require__(44);
 
 var _GridHeader2 = _interopRequireDefault(_GridHeader);
 
-var _GridRow = __webpack_require__(38);
+var _GridRow = __webpack_require__(46);
 
 var _GridRow2 = _interopRequireDefault(_GridRow);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var DEFAULT_START = 0;
-var DEFAULT_LIMIT = 50;
-var DEFAULT_ROW_HEIGHT = 23;
-var DEFAULT_COLUMN_WIDTH = 130;
 
 exports.default = {
   name: 'vue-grid',
@@ -1937,6 +1997,9 @@ exports.default = {
   components: {
     GridHeader: _GridHeader2.default,
     GridRow: _GridRow2.default
+  },
+  directives: {
+    resize: _vueResizeDirective2.default
   },
   watch: {
     scroll_top: function scroll_top(val, old_val) {
@@ -1966,6 +2029,15 @@ exports.default = {
     visible_row_count: function visible_row_count(val, old_val) {
       this.$emit('visible-row-count-change', val, old_val);
     },
+    first_visible_column: function first_visible_column(val, old_val) {
+      this.$emit('first-visible-column-change', val, old_val);
+    },
+    last_visible_column: function last_visible_column(val, old_val) {
+      this.$emit('last-visible-column-change', val, old_val);
+    },
+    visible_column_count: function visible_column_count(val, old_val) {
+      this.$emit('visible-column-count-change', val, old_val);
+    },
     metrics: function metrics(val, old_val) {
       this.$emit('metrics-change', val, old_val);
     }
@@ -1976,16 +2048,18 @@ exports.default = {
 
       inited: false,
 
-      start: DEFAULT_START,
-      limit: DEFAULT_LIMIT,
+      start: _constants.DEFAULT_START,
+      limit: _constants.DEFAULT_LIMIT,
       total_row_count: 0,
 
       columns: [],
       resize_col: null,
+      resize_row_handle: null,
 
       rows: [],
       cached_rows: {},
-      row_height: DEFAULT_ROW_HEIGHT,
+      row_height: _constants.DEFAULT_ROW_HEIGHT,
+      row_handle_width: _constants.DEFAULT_ROW_HANDLE_WIDTH,
 
       client_height: 0,
       client_width: 0,
@@ -2008,6 +2082,9 @@ exports.default = {
     total_height: function total_height() {
       return this.row_height * this.total_row_count;
     },
+    total_width: function total_width() {
+      return _.sum(_.map(this.columns, 'pixel_width'));
+    },
     rendered_row_count: function rendered_row_count() {
       return _.size(this.rows);
     },
@@ -2022,9 +2099,6 @@ exports.default = {
     },
     visible_row_count: function visible_row_count() {
       return this.last_visible_row - this.first_visible_row;
-    },
-    resize_delta: function resize_delta() {
-      return this.mousedown_x == -1 ? 0 : this.mouse_x - this.mousedown_x;
     },
     rows_in_cache: function rows_in_cache() {
       var missing_rows = false;
@@ -2049,25 +2123,52 @@ exports.default = {
       }
       return rows;
     },
-    metrics: function metrics() {
+    render_cols: function render_cols() {
       var _this = this;
+
+      var left = -1 * this.scroll_left;
+      var cell_padding = 11;
+      return _.filter(this.columns, function (c) {
+        var is_visible = left + cell_padding < _this.client_width - _this.row_handle_width;
+        left += c.pixel_width;
+        return is_visible;
+      });
+    },
+    first_visible_column: function first_visible_column() {
+      return _.first(this.render_cols);
+    },
+    last_visible_column: function last_visible_column() {
+      return _.last(this.render_cols);
+    },
+    visible_column_count: function visible_column_count() {
+      return _.size(this.render_cols);
+    },
+    total_column_count: function total_column_count() {
+      return _.size(this.columns);
+    },
+    resize_delta: function resize_delta() {
+      return this.mousedown_x == -1 ? 0 : this.mouse_x - this.mousedown_x;
+    },
+    metrics: function metrics() {
+      var _this2 = this;
 
       var computed_data = this._computedWatchers;
       computed_data = _.omit(computed_data, ['metrics']);
       computed_data = _.mapValues(computed_data, function (k, v) {
-        return _this[v];
+        return _this2[v];
       });
 
-      var filtered_data = _.pick(this.$data, ['start', 'limit', 'total_row_count', 'columns', 'rows', 'cached_rows', 'row_height', 'client_height', 'client_width', 'scroll_top', 'scroll_left']);
+      var filtered_data = _.pick(this.$data, ['start', 'limit', 'rows', 'total_row_count', 'columns', 'total_column_count', 'cached_rows', 'row_height', 'row_handle_width', 'client_height', 'client_width', 'scroll_top', 'scroll_left']);
 
       return _.assign({}, filtered_data, computed_data);
     }
   },
   mounted: function mounted() {
-    var _this2 = this;
+    var _this3 = this;
 
     this.active_xhr = null;
     this.cancelXhr = null;
+    this.default_col_widths = {};
 
     this.tryFetchDebounced = _.debounce(this.tryFetch, 80);
 
@@ -2077,23 +2178,26 @@ exports.default = {
     this.client_width = this.$el.clientWidth;
 
     this.onDocumentMousedown = function (evt) {
-      _this2.mousedown_x = evt.pageX;
-      _this2.mousedown_y = evt.pageY;
+      _this3.mousedown_x = evt.pageX;
+      _this3.mousedown_y = evt.pageY;
     };
 
     this.onDocumentMouseup = function (evt) {
-      _this2.mousedown_x = -1;
-      _this2.mousedown_y = -1;
-      _this2.resize_col = null;
-      _this2.updateStyle('cursor', '');
-      _this2.updateStyle('noselect', '');
+      _this3.mousedown_x = -1;
+      _this3.mousedown_y = -1;
+      _this3.resize_col = null;
+      _this3.resize_row_handle = null;
+      _this3.updateStyle('cursor', '');
+      _this3.updateStyle('noselect', '');
     };
 
     this.onDocumentMousemove = function (evt) {
-      _this2.mouse_x = evt.pageX;
-      _this2.mouse_y = evt.pageY;
+      _this3.mouse_x = evt.pageX;
+      _this3.mouse_y = evt.pageY;
 
-      if (!_.isNil(_this2.resize_col)) _this2.resizeColumn();
+      if (!_.isNil(_this3.resize_row_handle)) _this3.resizeRowHandle();
+
+      if (!_.isNil(_this3.resize_col)) _this3.resizeColumn();
     };
 
     document.addEventListener('mousedown', this.onDocumentMousedown);
@@ -2108,7 +2212,7 @@ exports.default = {
 
   methods: {
     tryFetch: function tryFetch() {
-      var _this3 = this;
+      var _this4 = this;
 
       var me = this;
 
@@ -2129,41 +2233,50 @@ exports.default = {
       }).then(function (response) {
         var resdata = response.data;
 
-        if (_.isNumber(resdata.total_count)) _this3.total_row_count = resdata.total_count;
+        if (_.isNumber(resdata.total_count)) _this4.total_row_count = resdata.total_count;
 
-        if (!_this3.inited && _.isArray(resdata.columns)) {
+        if (!_this4.inited && _.isArray(resdata.columns)) {
           var temp_cols = _.map(resdata.columns, function (col) {
-            return _.assign({ pixel_width: DEFAULT_COLUMN_WIDTH }, col);
+            return _.assign({ pixel_width: _constants.DEFAULT_COLUMN_WIDTH }, col);
           });
 
-          _this3.columns = [].concat(temp_cols);
+          _this4.columns = [].concat(temp_cols);
         }
 
-        _this3.rows = [].concat(resdata.rows);
+        _this4.rows = [].concat(resdata.rows);
 
-        var start = _this3.start;
-        var limit = _this3.limit;
-        var row_count = _this3.total_row_count;
+        var start = _this4.start;
+        var limit = _this4.limit;
+        var row_count = _this4.total_row_count;
         var temp_cached_rows = {};
         var idx = 0;
 
         for (var r = start; r < start + limit && r < row_count; ++r) {
-          temp_cached_rows[r] = _this3.rows[idx];
+          temp_cached_rows[r] = _this4.rows[idx];
           idx++;
         }
 
-        _this3.cached_rows = _.assign({}, _this3.cached_rows, temp_cached_rows);
+        _this4.cached_rows = _.assign({}, _this4.cached_rows, temp_cached_rows);
 
-        _this3.inited = true;
+        _this4.inited = true;
 
-        _this3.active_xhr = null;
-        _this3.cancelXhr = null;
+        _this4.active_xhr = null;
+        _this4.cancelXhr = null;
       });
+    },
+    onStartRowHandleResize: function onStartRowHandleResize(col) {
+      this.resize_row_handle = { old_width: this.row_handle_width };
+      this.updateStyle('cursor', 'html { cursor: ew-resize !important; }');
+      this.updateStyle('noselect', 'html { user-select: none !important; }');
     },
     onStartColumnResize: function onStartColumnResize(col) {
       this.resize_col = _.cloneDeep(col);
       this.updateStyle('cursor', 'html { cursor: ew-resize !important; }');
       this.updateStyle('noselect', 'html { user-select: none !important; }');
+    },
+    onResize: function onResize(resize_el) {
+      this.client_width = resize_el.clientWidth;
+      this.client_height = resize_el.clientHeight;
     },
     onScroll: function onScroll() {
       var new_scroll_top = this.$refs['tbody'].scrollTop;
@@ -2193,15 +2306,26 @@ exports.default = {
       this.scroll_left = val;
     }, 10),
 
+    resizeRowHandle: _.debounce(function (evt) {
+      var old_width = this.resize_row_handle.old_width;
+      var new_width = old_width + this.resize_delta;
+      new_width = Math.max(_constants.ROW_HANDLE_MIN_WIDTH, new_width);
+      new_width = Math.min(_constants.ROW_HANDLE_MAX_WIDTH, new_width);
+      this.row_handle_width = new_width;
+    }, 5),
+
     resizeColumn: _.debounce(function (evt) {
-      var _this4 = this;
+      var _this5 = this;
 
       var lookup_col = _.find(this.columns, { name: _.get(this.resize_col, 'name') });
       if (!_.isNil(lookup_col)) {
         var temp_cols = _.map(this.columns, function (col) {
           if (_.get(col, 'name') == _.get(lookup_col, 'name')) {
-            var old_width = _.get(_this4.resize_col, 'pixel_width', DEFAULT_COLUMN_WIDTH);
-            return _.assign({}, lookup_col, { pixel_width: old_width + _this4.resize_delta });
+            var old_width = _.get(_this5.resize_col, 'pixel_width', _constants.DEFAULT_COLUMN_WIDTH);
+            var pixel_width = old_width + _this5.resize_delta;
+            pixel_width = Math.max(_constants.COLUMN_MIN_WIDTH, pixel_width);
+            pixel_width = Math.min(_constants.COLUMN_MAX_WIDTH, pixel_width);
+            return _.assign({}, lookup_col, { pixel_width: pixel_width });
           }
 
           return col;
@@ -2211,6 +2335,28 @@ exports.default = {
       }
     }, 5),
 
+    initializeColumnWidths: function initializeColumnWidths(width, col, row_index) {
+      var _this6 = this;
+
+      if (this.default_col_widths == 'done') return;
+
+      var min_width = _.defaultTo(this.default_col_widths[col.name], _constants.COLUMN_MIN_WIDTH);
+      var new_width = Math.max(min_width, width + 20);
+      new_width = Math.min(new_width, _constants.COLUMN_MAX_WIDTH);
+      this.default_col_widths[col.name] = new_width;
+
+      if (row_index == this.rendered_row_count - 1 || row_index == 'header') {
+        var temp_cols = _.map(this.columns, function (col) {
+          var pixel_width = _this6.default_col_widths[col.name];
+          return _.assign({}, col, { pixel_width: pixel_width });
+        });
+
+        this.columns = [].concat(temp_cols);
+        this.$nextTick(function () {
+          _this6.default_col_widths = 'done';
+        });
+      }
+    },
     updateStyle: function updateStyle(id_suffix, style_str) {
       var head_el = document.head || document.getElementsByTagName('head')[0];
       var style_el = document.getElementById(this.uid + '-' + id_suffix);
@@ -2231,7 +2377,43 @@ exports.default = {
 };
 
 /***/ }),
-/* 29 */
+/* 31 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = {
+  props: {
+    'col': {
+      type: Object,
+      required: true
+    },
+    'value': {
+      required: true
+    },
+    'width': {
+      type: Number,
+      required: true
+    }
+  },
+  data: function data() {
+    return {
+      content_width: 0
+    };
+  },
+  mounted: function mounted() {
+    var el = this.$refs['content'];
+    this.content_width = el ? el.offsetWidth : 0;
+    this.$emit('initialize-content-width', this.content_width, this.col);
+  }
+};
+
+/***/ }),
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2241,16 +2423,23 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _constants = __webpack_require__(2);
 
-var DEFAULT_ROW_HEIGHT = 23;
-var DEFAULT_ROW_HANDLE_WIDTH = 70;
-var DEFAULT_COLUMN_RESIZE_HANDLE_WIDTH = 4;
+var _GridHeaderCell = __webpack_require__(45);
+
+var _GridHeaderCell2 = _interopRequireDefault(_GridHeaderCell);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = {
   props: {
     'row-height': {
       type: Number,
-      default: DEFAULT_ROW_HEIGHT
+      default: _constants.DEFAULT_ROW_HEIGHT
+    },
+    'row-handle-width': {
+      type: Number,
+      default: _constants.DEFAULT_ROW_HANDLE_WIDTH
     },
     'columns': {
       type: Array,
@@ -2261,10 +2450,18 @@ exports.default = {
       default: 0
     }
   },
+  components: {
+    GridHeaderCell: _GridHeaderCell2.default
+  },
+  watch: {
+    rowHandleWidth: function rowHandleWidth(val, old_val) {
+      this.row_handle_width = val;
+    }
+  },
   data: function data() {
     return {
-      row_handle_width: DEFAULT_ROW_HANDLE_WIDTH,
-      column_resize_handle_width: DEFAULT_COLUMN_RESIZE_HANDLE_WIDTH
+      row_handle_width: this.rowHandleWidth,
+      column_resize_handle_width: _constants.COLUMN_RESIZE_HANDLE_WIDTH
     };
   },
 
@@ -2283,14 +2480,20 @@ exports.default = {
     getColumnName: function getColumnName(col) {
       return _.get(col, 'name', '');
     },
+    onRowHandleResizerMousedown: function onRowHandleResizerMousedown(col) {
+      this.$emit('start-row-handle-resize', col);
+    },
     onColumnResizerMousedown: function onColumnResizerMousedown(col) {
       this.$emit('start-column-resize', col);
+    },
+    onHeaderCellInitializeContentWidth: function onHeaderCellInitializeContentWidth(width, col) {
+      this.$emit('header-cell-initialize-content-width', width, col, 'header');
     }
   }
 };
 
 /***/ }),
-/* 30 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2300,9 +2503,59 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _constants = __webpack_require__(2);
 
-var DEFAULT_ROW_HEIGHT = 23;
-var DEFAULT_ROW_HANDLE_WIDTH = 70;
+exports.default = {
+  props: {
+    'col': {
+      type: Object,
+      required: true
+    },
+    'value': {
+      required: true
+    },
+    'width': {
+      type: Number,
+      required: true
+    }
+  },
+  data: function data() {
+    return {
+      content_width: 0,
+      column_resize_handle_width: _constants.COLUMN_RESIZE_HANDLE_WIDTH
+    };
+  },
+  mounted: function mounted() {
+    var el = this.$refs['content'];
+    this.content_width = el ? el.offsetWidth : 0;
+    this.$emit('initialize-content-width', this.content_width, this.col, 'header');
+  },
+
+  methods: {
+    onColumnResizerMousedown: function onColumnResizerMousedown() {
+      this.$emit('column-resizer-mousedown', this.col);
+    }
+  }
+};
+
+/***/ }),
+/* 34 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _constants = __webpack_require__(2);
+
+var _GridCell = __webpack_require__(43);
+
+var _GridCell2 = _interopRequireDefault(_GridCell);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = {
   props: {
@@ -2316,7 +2569,11 @@ exports.default = {
     },
     'row-height': {
       type: Number,
-      default: DEFAULT_ROW_HEIGHT
+      default: _constants.DEFAULT_ROW_HEIGHT
+    },
+    'row-handle-width': {
+      type: Number,
+      default: _constants.DEFAULT_ROW_HANDLE_WIDTH
     },
     'columns': {
       type: Array,
@@ -2327,9 +2584,17 @@ exports.default = {
       default: 0
     }
   },
+  components: {
+    GridCell: _GridCell2.default
+  },
+  watch: {
+    rowHandleWidth: function rowHandleWidth(val, old_val) {
+      this.row_handle_width = val;
+    }
+  },
   data: function data() {
     return {
-      row_handle_width: DEFAULT_ROW_HANDLE_WIDTH
+      row_handle_width: this.rowHandleWidth
     };
   },
 
@@ -2347,12 +2612,15 @@ exports.default = {
   methods: {
     getColumnName: function getColumnName(col) {
       return _.get(col, 'name', '');
+    },
+    onCellInitializeContentWidth: function onCellInitializeContentWidth(width, col) {
+      this.$emit('cell-initialize-content-width', width, col, this.rowIndex);
     }
   }
 };
 
 /***/ }),
-/* 31 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2363,7 +2631,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Grid = undefined;
 
-var _Grid = __webpack_require__(9);
+var _Grid = __webpack_require__(11);
 
 var _Grid2 = _interopRequireDefault(_Grid);
 
@@ -2373,7 +2641,7 @@ exports.default = _Grid2.default;
 exports.Grid = _Grid2.default;
 
 /***/ }),
-/* 32 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2494,7 +2762,7 @@ function fromByteArray (uint8) {
 
 
 /***/ }),
-/* 33 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2508,9 +2776,9 @@ function fromByteArray (uint8) {
 
 
 
-var base64 = __webpack_require__(32)
-var ieee754 = __webpack_require__(35)
-var isArray = __webpack_require__(36)
+var base64 = __webpack_require__(36)
+var ieee754 = __webpack_require__(40)
+var isArray = __webpack_require__(41)
 
 exports.Buffer = Buffer
 exports.SlowBuffer = SlowBuffer
@@ -4288,16 +4556,253 @@ function isnan (val) {
   return val !== val // eslint-disable-line no-self-compare
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(42)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
 
 /***/ }),
-/* 34 */
+/* 38 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright Marc J. Schmidt. See the LICENSE file at the top-level
+ * directory of this distribution and at
+ * https://github.com/marcj/css-element-queries/blob/master/LICENSE.
+ */
+;
+(function (root, factory) {
+    if (true) {
+        !(__WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) :
+				__WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+    } else if (typeof exports === "object") {
+        module.exports = factory();
+    } else {
+        root.ResizeSensor = factory();
+    }
+}(this, function () {
+
+    //Make sure it does not throw in a SSR (Server Side Rendering) situation
+    if (typeof window === "undefined") {
+        return null;
+    }
+    // Only used for the dirty checking, so the event callback count is limted to max 1 call per fps per sensor.
+    // In combination with the event based resize sensor this saves cpu time, because the sensor is too fast and
+    // would generate too many unnecessary events.
+    var requestAnimationFrame = window.requestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        function (fn) {
+            return window.setTimeout(fn, 20);
+        };
+
+    /**
+     * Iterate over each of the provided element(s).
+     *
+     * @param {HTMLElement|HTMLElement[]} elements
+     * @param {Function}                  callback
+     */
+    function forEachElement(elements, callback){
+        var elementsType = Object.prototype.toString.call(elements);
+        var isCollectionTyped = ('[object Array]' === elementsType
+            || ('[object NodeList]' === elementsType)
+            || ('[object HTMLCollection]' === elementsType)
+            || ('[object Object]' === elementsType)
+            || ('undefined' !== typeof jQuery && elements instanceof jQuery) //jquery
+            || ('undefined' !== typeof Elements && elements instanceof Elements) //mootools
+        );
+        var i = 0, j = elements.length;
+        if (isCollectionTyped) {
+            for (; i < j; i++) {
+                callback(elements[i]);
+            }
+        } else {
+            callback(elements);
+        }
+    }
+
+    /**
+     * Class for dimension change detection.
+     *
+     * @param {Element|Element[]|Elements|jQuery} element
+     * @param {Function} callback
+     *
+     * @constructor
+     */
+    var ResizeSensor = function(element, callback) {
+        /**
+         *
+         * @constructor
+         */
+        function EventQueue() {
+            var q = [];
+            this.add = function(ev) {
+                q.push(ev);
+            };
+
+            var i, j;
+            this.call = function() {
+                for (i = 0, j = q.length; i < j; i++) {
+                    q[i].call();
+                }
+            };
+
+            this.remove = function(ev) {
+                var newQueue = [];
+                for(i = 0, j = q.length; i < j; i++) {
+                    if(q[i] !== ev) newQueue.push(q[i]);
+                }
+                q = newQueue;
+            }
+
+            this.length = function() {
+                return q.length;
+            }
+        }
+
+        /**
+         * @param {HTMLElement} element
+         * @param {String}      prop
+         * @returns {String|Number}
+         */
+        function getComputedStyle(element, prop) {
+            if (element.currentStyle) {
+                return element.currentStyle[prop];
+            } else if (window.getComputedStyle) {
+                return window.getComputedStyle(element, null).getPropertyValue(prop);
+            } else {
+                return element.style[prop];
+            }
+        }
+
+        /**
+         *
+         * @param {HTMLElement} element
+         * @param {Function}    resized
+         */
+        function attachResizeEvent(element, resized) {
+            if (!element.resizedAttached) {
+                element.resizedAttached = new EventQueue();
+                element.resizedAttached.add(resized);
+            } else if (element.resizedAttached) {
+                element.resizedAttached.add(resized);
+                return;
+            }
+
+            element.resizeSensor = document.createElement('div');
+            element.resizeSensor.className = 'resize-sensor';
+            var style = 'position: absolute; left: 0; top: 0; right: 0; bottom: 0; overflow: hidden; z-index: -1; visibility: hidden;';
+            var styleChild = 'position: absolute; left: 0; top: 0; transition: 0s;';
+
+            element.resizeSensor.style.cssText = style;
+            element.resizeSensor.innerHTML =
+                '<div class="resize-sensor-expand" style="' + style + '">' +
+                    '<div style="' + styleChild + '"></div>' +
+                '</div>' +
+                '<div class="resize-sensor-shrink" style="' + style + '">' +
+                    '<div style="' + styleChild + ' width: 200%; height: 200%"></div>' +
+                '</div>';
+            element.appendChild(element.resizeSensor);
+
+            if (getComputedStyle(element, 'position') == 'static') {
+                element.style.position = 'relative';
+            }
+
+            var expand = element.resizeSensor.childNodes[0];
+            var expandChild = expand.childNodes[0];
+            var shrink = element.resizeSensor.childNodes[1];
+            var dirty, rafId, newWidth, newHeight;
+            var lastWidth = element.offsetWidth;
+            var lastHeight = element.offsetHeight;
+
+            var reset = function() {
+                expandChild.style.width = '100000px';
+                expandChild.style.height = '100000px';
+
+                expand.scrollLeft = 100000;
+                expand.scrollTop = 100000;
+
+                shrink.scrollLeft = 100000;
+                shrink.scrollTop = 100000;
+            };
+
+            reset();
+
+            var onResized = function() {
+                rafId = 0;
+
+                if (!dirty) return;
+
+                lastWidth = newWidth;
+                lastHeight = newHeight;
+
+                if (element.resizedAttached) {
+                    element.resizedAttached.call();
+                }
+            };
+
+            var onScroll = function() {
+                newWidth = element.offsetWidth;
+                newHeight = element.offsetHeight;
+                dirty = newWidth != lastWidth || newHeight != lastHeight;
+
+                if (dirty && !rafId) {
+                    rafId = requestAnimationFrame(onResized);
+                }
+
+                reset();
+            };
+
+            var addEvent = function(el, name, cb) {
+                if (el.attachEvent) {
+                    el.attachEvent('on' + name, cb);
+                } else {
+                    el.addEventListener(name, cb);
+                }
+            };
+
+            addEvent(expand, 'scroll', onScroll);
+            addEvent(shrink, 'scroll', onScroll);
+        }
+
+        forEachElement(element, function(elem){
+            attachResizeEvent(elem, callback);
+        });
+
+        this.detach = function(ev) {
+            ResizeSensor.detach(element, ev);
+        };
+    };
+
+    ResizeSensor.detach = function(element, ev) {
+        forEachElement(element, function(elem){
+            if(elem.resizedAttached && typeof ev == "function"){
+                elem.resizedAttached.remove(ev);
+                if(elem.resizedAttached.length()) return;
+            }
+            if (elem.resizeSensor) {
+                if (elem.contains(elem.resizeSensor)) {
+                    elem.removeChild(elem.resizeSensor);
+                }
+                delete elem.resizeSensor;
+                delete elem.resizedAttached;
+            }
+        });
+    };
+
+    return ResizeSensor;
+
+}));
+
+
+/***/ }),
+/* 39 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 35 */
+/* 40 */
 /***/ (function(module, exports) {
 
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
@@ -4387,7 +4892,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 
 
 /***/ }),
-/* 36 */
+/* 41 */
 /***/ (function(module, exports) {
 
 var toString = {}.toString;
@@ -4398,14 +4903,432 @@ module.exports = Array.isArray || function (arr) {
 
 
 /***/ }),
-/* 37 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Component = __webpack_require__(2)(
+/* WEBPACK VAR INJECTION */(function(global) {/**
+ * lodash (Custom Build) <https://lodash.com/>
+ * Build: `lodash modularize exports="npm" -o ./`
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ */
+
+/** Used as the `TypeError` message for "Functions" methods. */
+var FUNC_ERROR_TEXT = 'Expected a function';
+
+/** Used as references for various `Number` constants. */
+var NAN = 0 / 0;
+
+/** `Object#toString` result references. */
+var symbolTag = '[object Symbol]';
+
+/** Used to match leading and trailing whitespace. */
+var reTrim = /^\s+|\s+$/g;
+
+/** Used to detect bad signed hexadecimal string values. */
+var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
+
+/** Used to detect binary string values. */
+var reIsBinary = /^0b[01]+$/i;
+
+/** Used to detect octal string values. */
+var reIsOctal = /^0o[0-7]+$/i;
+
+/** Built-in method references without a dependency on `root`. */
+var freeParseInt = parseInt;
+
+/** Detect free variable `global` from Node.js. */
+var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
+
+/** Detect free variable `self`. */
+var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
+
+/** Used as a reference to the global object. */
+var root = freeGlobal || freeSelf || Function('return this')();
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var objectToString = objectProto.toString;
+
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeMax = Math.max,
+    nativeMin = Math.min;
+
+/**
+ * Gets the timestamp of the number of milliseconds that have elapsed since
+ * the Unix epoch (1 January 1970 00:00:00 UTC).
+ *
+ * @static
+ * @memberOf _
+ * @since 2.4.0
+ * @category Date
+ * @returns {number} Returns the timestamp.
+ * @example
+ *
+ * _.defer(function(stamp) {
+ *   console.log(_.now() - stamp);
+ * }, _.now());
+ * // => Logs the number of milliseconds it took for the deferred invocation.
+ */
+var now = function() {
+  return root.Date.now();
+};
+
+/**
+ * Creates a debounced function that delays invoking `func` until after `wait`
+ * milliseconds have elapsed since the last time the debounced function was
+ * invoked. The debounced function comes with a `cancel` method to cancel
+ * delayed `func` invocations and a `flush` method to immediately invoke them.
+ * Provide `options` to indicate whether `func` should be invoked on the
+ * leading and/or trailing edge of the `wait` timeout. The `func` is invoked
+ * with the last arguments provided to the debounced function. Subsequent
+ * calls to the debounced function return the result of the last `func`
+ * invocation.
+ *
+ * **Note:** If `leading` and `trailing` options are `true`, `func` is
+ * invoked on the trailing edge of the timeout only if the debounced function
+ * is invoked more than once during the `wait` timeout.
+ *
+ * If `wait` is `0` and `leading` is `false`, `func` invocation is deferred
+ * until to the next tick, similar to `setTimeout` with a timeout of `0`.
+ *
+ * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
+ * for details over the differences between `_.debounce` and `_.throttle`.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Function
+ * @param {Function} func The function to debounce.
+ * @param {number} [wait=0] The number of milliseconds to delay.
+ * @param {Object} [options={}] The options object.
+ * @param {boolean} [options.leading=false]
+ *  Specify invoking on the leading edge of the timeout.
+ * @param {number} [options.maxWait]
+ *  The maximum time `func` is allowed to be delayed before it's invoked.
+ * @param {boolean} [options.trailing=true]
+ *  Specify invoking on the trailing edge of the timeout.
+ * @returns {Function} Returns the new debounced function.
+ * @example
+ *
+ * // Avoid costly calculations while the window size is in flux.
+ * jQuery(window).on('resize', _.debounce(calculateLayout, 150));
+ *
+ * // Invoke `sendMail` when clicked, debouncing subsequent calls.
+ * jQuery(element).on('click', _.debounce(sendMail, 300, {
+ *   'leading': true,
+ *   'trailing': false
+ * }));
+ *
+ * // Ensure `batchLog` is invoked once after 1 second of debounced calls.
+ * var debounced = _.debounce(batchLog, 250, { 'maxWait': 1000 });
+ * var source = new EventSource('/stream');
+ * jQuery(source).on('message', debounced);
+ *
+ * // Cancel the trailing debounced invocation.
+ * jQuery(window).on('popstate', debounced.cancel);
+ */
+function debounce(func, wait, options) {
+  var lastArgs,
+      lastThis,
+      maxWait,
+      result,
+      timerId,
+      lastCallTime,
+      lastInvokeTime = 0,
+      leading = false,
+      maxing = false,
+      trailing = true;
+
+  if (typeof func != 'function') {
+    throw new TypeError(FUNC_ERROR_TEXT);
+  }
+  wait = toNumber(wait) || 0;
+  if (isObject(options)) {
+    leading = !!options.leading;
+    maxing = 'maxWait' in options;
+    maxWait = maxing ? nativeMax(toNumber(options.maxWait) || 0, wait) : maxWait;
+    trailing = 'trailing' in options ? !!options.trailing : trailing;
+  }
+
+  function invokeFunc(time) {
+    var args = lastArgs,
+        thisArg = lastThis;
+
+    lastArgs = lastThis = undefined;
+    lastInvokeTime = time;
+    result = func.apply(thisArg, args);
+    return result;
+  }
+
+  function leadingEdge(time) {
+    // Reset any `maxWait` timer.
+    lastInvokeTime = time;
+    // Start the timer for the trailing edge.
+    timerId = setTimeout(timerExpired, wait);
+    // Invoke the leading edge.
+    return leading ? invokeFunc(time) : result;
+  }
+
+  function remainingWait(time) {
+    var timeSinceLastCall = time - lastCallTime,
+        timeSinceLastInvoke = time - lastInvokeTime,
+        result = wait - timeSinceLastCall;
+
+    return maxing ? nativeMin(result, maxWait - timeSinceLastInvoke) : result;
+  }
+
+  function shouldInvoke(time) {
+    var timeSinceLastCall = time - lastCallTime,
+        timeSinceLastInvoke = time - lastInvokeTime;
+
+    // Either this is the first call, activity has stopped and we're at the
+    // trailing edge, the system time has gone backwards and we're treating
+    // it as the trailing edge, or we've hit the `maxWait` limit.
+    return (lastCallTime === undefined || (timeSinceLastCall >= wait) ||
+      (timeSinceLastCall < 0) || (maxing && timeSinceLastInvoke >= maxWait));
+  }
+
+  function timerExpired() {
+    var time = now();
+    if (shouldInvoke(time)) {
+      return trailingEdge(time);
+    }
+    // Restart the timer.
+    timerId = setTimeout(timerExpired, remainingWait(time));
+  }
+
+  function trailingEdge(time) {
+    timerId = undefined;
+
+    // Only invoke if we have `lastArgs` which means `func` has been
+    // debounced at least once.
+    if (trailing && lastArgs) {
+      return invokeFunc(time);
+    }
+    lastArgs = lastThis = undefined;
+    return result;
+  }
+
+  function cancel() {
+    if (timerId !== undefined) {
+      clearTimeout(timerId);
+    }
+    lastInvokeTime = 0;
+    lastArgs = lastCallTime = lastThis = timerId = undefined;
+  }
+
+  function flush() {
+    return timerId === undefined ? result : trailingEdge(now());
+  }
+
+  function debounced() {
+    var time = now(),
+        isInvoking = shouldInvoke(time);
+
+    lastArgs = arguments;
+    lastThis = this;
+    lastCallTime = time;
+
+    if (isInvoking) {
+      if (timerId === undefined) {
+        return leadingEdge(lastCallTime);
+      }
+      if (maxing) {
+        // Handle invocations in a tight loop.
+        timerId = setTimeout(timerExpired, wait);
+        return invokeFunc(lastCallTime);
+      }
+    }
+    if (timerId === undefined) {
+      timerId = setTimeout(timerExpired, wait);
+    }
+    return result;
+  }
+  debounced.cancel = cancel;
+  debounced.flush = flush;
+  return debounced;
+}
+
+/**
+ * Checks if `value` is the
+ * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
+ * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @example
+ *
+ * _.isObject({});
+ * // => true
+ *
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(_.noop);
+ * // => true
+ *
+ * _.isObject(null);
+ * // => false
+ */
+function isObject(value) {
+  var type = typeof value;
+  return !!value && (type == 'object' || type == 'function');
+}
+
+/**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @example
+ *
+ * _.isObjectLike({});
+ * // => true
+ *
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
+ * // => false
+ *
+ * _.isObjectLike(null);
+ * // => false
+ */
+function isObjectLike(value) {
+  return !!value && typeof value == 'object';
+}
+
+/**
+ * Checks if `value` is classified as a `Symbol` primitive or object.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a symbol, else `false`.
+ * @example
+ *
+ * _.isSymbol(Symbol.iterator);
+ * // => true
+ *
+ * _.isSymbol('abc');
+ * // => false
+ */
+function isSymbol(value) {
+  return typeof value == 'symbol' ||
+    (isObjectLike(value) && objectToString.call(value) == symbolTag);
+}
+
+/**
+ * Converts `value` to a number.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to process.
+ * @returns {number} Returns the number.
+ * @example
+ *
+ * _.toNumber(3.2);
+ * // => 3.2
+ *
+ * _.toNumber(Number.MIN_VALUE);
+ * // => 5e-324
+ *
+ * _.toNumber(Infinity);
+ * // => Infinity
+ *
+ * _.toNumber('3.2');
+ * // => 3.2
+ */
+function toNumber(value) {
+  if (typeof value == 'number') {
+    return value;
+  }
+  if (isSymbol(value)) {
+    return NAN;
+  }
+  if (isObject(value)) {
+    var other = typeof value.valueOf == 'function' ? value.valueOf() : value;
+    value = isObject(other) ? (other + '') : other;
+  }
+  if (typeof value != 'string') {
+    return value === 0 ? value : +value;
+  }
+  value = value.replace(reTrim, '');
+  var isBinary = reIsBinary.test(value);
+  return (isBinary || reIsOctal.test(value))
+    ? freeParseInt(value.slice(2), isBinary ? 2 : 8)
+    : (reIsBadHex.test(value) ? NAN : +value);
+}
+
+module.exports = debounce;
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
+
+/***/ }),
+/* 43 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(29),
+  __webpack_require__(31),
   /* template */
-  __webpack_require__(40),
+  __webpack_require__(50),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+Component.options.__file = "C:\\src\\vue-grid\\src\\components\\GridCell.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] GridCell.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-5592fcc2", Component.options)
+  } else {
+    hotAPI.reload("data-v-5592fcc2", Component.options)
+  }
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 44 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(32),
+  /* template */
+  __webpack_require__(49),
   /* scopeId */
   null,
   /* cssModules */
@@ -4432,14 +5355,48 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 38 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Component = __webpack_require__(2)(
+var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(30),
+  __webpack_require__(33),
   /* template */
-  __webpack_require__(41),
+  __webpack_require__(48),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+Component.options.__file = "C:\\src\\vue-grid\\src\\components\\GridHeaderCell.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] GridHeaderCell.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-257af06f", Component.options)
+  } else {
+    hotAPI.reload("data-v-257af06f", Component.options)
+  }
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 46 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(34),
+  /* template */
+  __webpack_require__(51),
   /* scopeId */
   null,
   /* cssModules */
@@ -4466,7 +5423,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 39 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -4476,13 +5433,22 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "flex-none overflow-hidden bg-near-white vg-thead"
   }, [_c('grid-header', {
     attrs: {
-      "columns": _vm.columns,
+      "row-handle-width": _vm.row_handle_width,
+      "columns": _vm.render_cols,
       "scroll-left": _vm.scroll_left
     },
     on: {
-      "start-column-resize": _vm.onStartColumnResize
+      "start-row-handle-resize": _vm.onStartRowHandleResize,
+      "start-column-resize": _vm.onStartColumnResize,
+      "header-cell-initialize-content-width": _vm.initializeColumnWidths
     }
   })], 1), _vm._v(" "), _c('div', {
+    directives: [{
+      name: "resize",
+      rawName: "v-resize",
+      value: (_vm.onResize),
+      expression: "onResize"
+    }],
     ref: "tbody",
     staticClass: "flex-fill relative overflow-auto vg-tbody",
     on: {
@@ -4490,15 +5456,22 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }, [_c('div', {
     staticClass: "absolute top-0 left-0",
-    style: ('width: 1px; height: ' + _vm.total_height + 'px')
+    style: ('z-index: -1; width: 1px; height: ' + _vm.total_height + 'px')
+  }), _vm._v(" "), _c('div', {
+    staticClass: "absolute top-0 left-0",
+    style: ('z-index: -1; height: 1px; width: ' + _vm.total_width + 'px')
   }), _vm._v(" "), _vm._l((_vm.render_rows), function(row, index) {
     return _c('grid-row', {
       attrs: {
         "row": row,
         "row-index": _vm.start + index,
         "row-height": _vm.row_height,
-        "columns": _vm.columns,
+        "row-handle-width": _vm.row_handle_width,
+        "columns": _vm.render_cols,
         "scroll-left": _vm.scroll_left
+      },
+      on: {
+        "cell-initialize-content-width": _vm.initializeColumnWidths
       }
     })
   })], 2)])
@@ -4512,7 +5485,33 @@ if (false) {
 }
 
 /***/ }),
-/* 40 */
+/* 48 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', [_c('div', {
+    staticClass: "h-100 lh-1 vg-th-inner",
+    style: ('width: ' + _vm.width + 'px')
+  }, [_c('span', {
+    ref: "content"
+  }, [_vm._v(_vm._s(_vm.value))])]), _vm._v(" "), _c('div', {
+    staticClass: "absolute top-0 bottom-0 right-0 cursor-resize-ew",
+    style: ('width: ' + _vm.column_resize_handle_width + 'px'),
+    on: {
+      "mousedown": _vm.onColumnResizerMousedown
+    }
+  })])
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-257af06f", module.exports)
+  }
+}
+
+/***/ }),
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -4520,30 +5519,34 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "relative",
     style: (_vm.header_style)
   }, [_c('div', {
-    staticClass: "overflow-hidden ba absolute z-1 vg-th",
+    staticClass: "overflow-hidden ba absolute bg-near-white z-1 vg-th",
     style: (_vm.row_handle_style)
   }, [_c('div', {
-    staticClass: "h-100 lh-1 light-silver tr bg-near-white vg-th-inner",
+    staticClass: "h-100 lh-1 light-silver tr vg-th-inner",
     style: (_vm.inner_row_handle_style)
+  }), _vm._v(" "), _c('div', {
+    staticClass: "absolute top-0 bottom-0 right-0 cursor-resize-ew",
+    style: ('width: ' + _vm.column_resize_handle_width + 'px'),
+    on: {
+      "mousedown": _vm.onRowHandleResizerMousedown
+    }
   })]), _vm._v(" "), _c('div', {
     staticClass: "flex flex-row nowrap",
     style: ('padding-left: ' + _vm.row_handle_width + 'px')
-  }, _vm._l((_vm.columns), function(col) {
-    return _c('div', {
+  }, _vm._l((_vm.columns), function(col, index) {
+    return _c('grid-header-cell', {
       staticClass: "flex-none overflow-hidden ba bg-near-white tc relative vg-th",
-      style: ('height: ' + (_vm.rowHeight + 1) + 'px')
-    }, [_c('div', {
-      staticClass: "h-100 lh-1 vg-th-inner",
-      style: ('width: ' + col.pixel_width + 'px')
-    }, [_vm._v(_vm._s(_vm.getColumnName(col)))]), _vm._v(" "), _c('div', {
-      staticClass: "absolute top-0 bottom-0 right-0 cursor-resize-ew",
-      style: ('width: ' + _vm.column_resize_handle_width + 'px'),
+      style: ('height: ' + (_vm.rowHeight + 1) + 'px'),
+      attrs: {
+        "col": col,
+        "value": _vm.getColumnName(col),
+        "width": col.pixel_width || 0
+      },
       on: {
-        "mousedown": function($event) {
-          _vm.onColumnResizerMousedown(col)
-        }
+        "column-resizer-mousedown": _vm.onColumnResizerMousedown,
+        "initialize-content-width": _vm.onHeaderCellInitializeContentWidth
       }
-    })])
+    })
   }))])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
@@ -4555,7 +5558,27 @@ if (false) {
 }
 
 /***/ }),
-/* 41 */
+/* 50 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', [_c('div', {
+    staticClass: "h-100 lh-1 vg-td-inner",
+    style: ('width: ' + _vm.width + 'px')
+  }, [_c('span', {
+    ref: "content"
+  }, [_vm._v(_vm._s(_vm.value))])])])
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-5592fcc2", module.exports)
+  }
+}
+
+/***/ }),
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -4563,22 +5586,27 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "absolute",
     style: (_vm.row_style)
   }, [_c('div', {
-    staticClass: "overflow-hidden ba absolute z-1 vg-td",
+    staticClass: "overflow-hidden ba absolute z-1 bg-near-white vg-td",
     style: (_vm.row_handle_style)
   }, [_c('div', {
-    staticClass: "h-100 lh-1 light-silver tr bg-near-white vg-td-inner",
+    staticClass: "h-100 lh-1 light-silver tr vg-td-inner",
     style: (_vm.inner_row_handle_style)
   }, [_vm._v(_vm._s(_vm.rowIndex + 1))])]), _vm._v(" "), _c('div', {
     staticClass: "flex flex-row nowrap",
     style: ('padding-left: ' + _vm.row_handle_width + 'px')
-  }, _vm._l((_vm.columns), function(col) {
-    return _c('div', {
+  }, _vm._l((_vm.columns), function(col, index) {
+    return _c('grid-cell', {
       staticClass: "flex-none overflow-hidden ba vg-td",
-      style: ('height: ' + (_vm.rowHeight + 1) + 'px')
-    }, [_c('div', {
-      staticClass: "h-100 lh-1 vg-td-inner",
-      style: ('width: ' + col.pixel_width + 'px')
-    }, [_vm._v(_vm._s(_vm.row[_vm.getColumnName(col)]))])])
+      style: ('height: ' + (_vm.rowHeight + 1) + 'px'),
+      attrs: {
+        "col": col,
+        "value": _vm.row[_vm.getColumnName(col)],
+        "width": col.pixel_width || 0
+      },
+      on: {
+        "initialize-content-width": _vm.onCellInitializeContentWidth
+      }
+    })
   }))])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
@@ -4590,31 +5618,11 @@ if (false) {
 }
 
 /***/ }),
-/* 42 */
-/***/ (function(module, exports) {
+/* 52 */
+/***/ (function(module, exports, __webpack_require__) {
 
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1,eval)("this");
-} catch(e) {
-	// This works if the window reference is available
-	if(typeof window === "object")
-		g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
+!function(t,n){ true?module.exports=n(__webpack_require__(38),__webpack_require__(42)):"function"==typeof define&&define.amd?define(["css-element-queries/src/ResizeSensor.js","lodash.debounce"],n):"object"==typeof exports?exports.Vueresize=n(require("css-element-queries/src/ResizeSensor.js"),require("lodash.debounce")):t.Vueresize=n(t.ResizeSensor,t._)}(this,function(t,n){return function(t){function n(r){if(e[r])return e[r].exports;var o=e[r]={exports:{},id:r,loaded:!1};return t[r].call(o.exports,o,o.exports,n),o.loaded=!0,o.exports}var e={};return n.m=t,n.c=e,n.p="/",n(0)}([function(t,n,e){var r,o,u;!function(i,c){o=[t,n,e(9),e(36),e(37)],r=c,u="function"==typeof r?r.apply(n,o):r,!(void 0!==u&&(t.exports=u))}(this,function(t,n,e,r,o){"use strict";function u(t){return t&&t.__esModule?t:{default:t}}function i(t){if(!t)return l;var n=(0,c.default)(t);return n.length?Number(n[0]):l}Object.defineProperty(n,"__esModule",{value:!0});var c=u(e),f=u(r),s=u(o),a=s.default.debounce,p=void 0===a?s.default:a,l=150;n.default={inserted:function(t,n){var e=n.value,r=n.arg,o=n.modifiers,u=function(){return e(t)};switch(r){case"debounce":u=p(function(){return e(t)},i(o));break;case"throttle":var c=i(o);u=p(function(){return e(t)},c,{leading:!0,trailing:!0,maxWait:c})}(0,f.default)(t,u)}},t.exports=n.default})},function(t,n){var e=t.exports={version:"2.4.0"};"number"==typeof __e&&(__e=e)},function(t,n,e){t.exports=!e(3)(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},function(t,n){t.exports=function(t){try{return!!t()}catch(t){return!0}}},function(t,n){var e=t.exports="undefined"!=typeof window&&window.Math==Math?window:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")();"number"==typeof __g&&(__g=e)},function(t,n){t.exports=function(t){return"object"==typeof t?null!==t:"function"==typeof t}},function(t,n){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on  "+t);return t}},function(t,n){var e=Math.ceil,r=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?r:e)(t)}},function(t,n,e){var r=e(22),o=e(6);t.exports=function(t){return r(o(t))}},function(t,n,e){t.exports={default:e(10),__esModule:!0}},function(t,n,e){e(35),t.exports=e(1).Object.keys},function(t,n){t.exports=function(t){if("function"!=typeof t)throw TypeError(t+" is not a function!");return t}},function(t,n,e){var r=e(5);t.exports=function(t){if(!r(t))throw TypeError(t+" is not an object!");return t}},function(t,n,e){var r=e(8),o=e(31),u=e(30);t.exports=function(t){return function(n,e,i){var c,f=r(n),s=o(f.length),a=u(i,s);if(t&&e!=e){for(;s>a;)if(c=f[a++],c!=c)return!0}else for(;s>a;a++)if((t||a in f)&&f[a]===e)return t||a||0;return!t&&-1}}},function(t,n){var e={}.toString;t.exports=function(t){return e.call(t).slice(8,-1)}},function(t,n,e){var r=e(11);t.exports=function(t,n,e){if(r(t),void 0===n)return t;switch(e){case 1:return function(e){return t.call(n,e)};case 2:return function(e,r){return t.call(n,e,r)};case 3:return function(e,r,o){return t.call(n,e,r,o)}}return function(){return t.apply(n,arguments)}}},function(t,n,e){var r=e(5),o=e(4).document,u=r(o)&&r(o.createElement);t.exports=function(t){return u?o.createElement(t):{}}},function(t,n){t.exports="constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf".split(",")},function(t,n,e){var r=e(4),o=e(1),u=e(15),i=e(20),c="prototype",f=function(t,n,e){var s,a,p,l=t&f.F,v=t&f.G,d=t&f.S,x=t&f.P,y=t&f.B,h=t&f.W,b=v?o:o[n]||(o[n]={}),m=b[c],j=v?r:d?r[n]:(r[n]||{})[c];v&&(e=n);for(s in e)a=!l&&j&&void 0!==j[s],a&&s in b||(p=a?j[s]:e[s],b[s]=v&&"function"!=typeof j[s]?e[s]:y&&a?u(p,r):h&&j[s]==p?function(t){var n=function(n,e,r){if(this instanceof t){switch(arguments.length){case 0:return new t;case 1:return new t(n);case 2:return new t(n,e)}return new t(n,e,r)}return t.apply(this,arguments)};return n[c]=t[c],n}(p):x&&"function"==typeof p?u(Function.call,p):p,x&&((b.virtual||(b.virtual={}))[s]=p,t&f.R&&m&&!m[s]&&i(m,s,p)))};f.F=1,f.G=2,f.S=4,f.P=8,f.B=16,f.W=32,f.U=64,f.R=128,t.exports=f},function(t,n){var e={}.hasOwnProperty;t.exports=function(t,n){return e.call(t,n)}},function(t,n,e){var r=e(23),o=e(27);t.exports=e(2)?function(t,n,e){return r.f(t,n,o(1,e))}:function(t,n,e){return t[n]=e,t}},function(t,n,e){t.exports=!e(2)&&!e(3)(function(){return 7!=Object.defineProperty(e(16)("div"),"a",{get:function(){return 7}}).a})},function(t,n,e){var r=e(14);t.exports=Object("z").propertyIsEnumerable(0)?Object:function(t){return"String"==r(t)?t.split(""):Object(t)}},function(t,n,e){var r=e(12),o=e(21),u=e(33),i=Object.defineProperty;n.f=e(2)?Object.defineProperty:function(t,n,e){if(r(t),n=u(n,!0),r(e),o)try{return i(t,n,e)}catch(t){}if("get"in e||"set"in e)throw TypeError("Accessors not supported!");return"value"in e&&(t[n]=e.value),t}},function(t,n,e){var r=e(19),o=e(8),u=e(13)(!1),i=e(28)("IE_PROTO");t.exports=function(t,n){var e,c=o(t),f=0,s=[];for(e in c)e!=i&&r(c,e)&&s.push(e);for(;n.length>f;)r(c,e=n[f++])&&(~u(s,e)||s.push(e));return s}},function(t,n,e){var r=e(24),o=e(17);t.exports=Object.keys||function(t){return r(t,o)}},function(t,n,e){var r=e(18),o=e(1),u=e(3);t.exports=function(t,n){var e=(o.Object||{})[t]||Object[t],i={};i[t]=n(e),r(r.S+r.F*u(function(){e(1)}),"Object",i)}},function(t,n){t.exports=function(t,n){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:n}}},function(t,n,e){var r=e(29)("keys"),o=e(34);t.exports=function(t){return r[t]||(r[t]=o(t))}},function(t,n,e){var r=e(4),o="__core-js_shared__",u=r[o]||(r[o]={});t.exports=function(t){return u[t]||(u[t]={})}},function(t,n,e){var r=e(7),o=Math.max,u=Math.min;t.exports=function(t,n){return t=r(t),t<0?o(t+n,0):u(t,n)}},function(t,n,e){var r=e(7),o=Math.min;t.exports=function(t){return t>0?o(r(t),9007199254740991):0}},function(t,n,e){var r=e(6);t.exports=function(t){return Object(r(t))}},function(t,n,e){var r=e(5);t.exports=function(t,n){if(!r(t))return t;var e,o;if(n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;if("function"==typeof(e=t.valueOf)&&!r(o=e.call(t)))return o;if(!n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;throw TypeError("Can't convert object to primitive value")}},function(t,n){var e=0,r=Math.random();t.exports=function(t){return"Symbol(".concat(void 0===t?"":t,")_",(++e+r).toString(36))}},function(t,n,e){var r=e(32),o=e(25);e(26)("keys",function(){return function(t){return o(r(t))}})},function(n,e){n.exports=t},function(t,e){t.exports=n}])});
+//# sourceMappingURL=Vueresize.js.map
 
 /***/ })
 /******/ ]);

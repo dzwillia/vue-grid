@@ -1,5 +1,5 @@
 /*!
- * vue-grid v1.0.3 (https://github.com/dzwillia/vue-grid)
+ * vue-grid v1.0.4 (https://github.com/dzwillia/vue-grid)
  * (c) 2017 David Z. Williams
  * Released under the MIT License.
  */
@@ -16,13 +16,12 @@
 .vg-td {
   margin-top: -1px;
   margin-left: -1px;
+  padding-top: 1px;
   border-color: #ddd;
 }
 .vg-th-inner,
 .vg-td-inner {
-  min-width: 30px;
-  max-width: 1200px;
-  padding: 5px 5px 4px;
+  padding: 4px 5px 4px;
 }
 
 /* misc */
@@ -33,6 +32,9 @@
   /* 1 */
   min-height: 0;
   /* 1 */
+}
+.b--light-moon-gray {
+  border-color: #ddd;
 }
 .lh-1 {
   line-height: 1;
