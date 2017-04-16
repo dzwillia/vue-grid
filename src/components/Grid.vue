@@ -8,6 +8,7 @@
         :scroll-left="scroll_left"
         @start-row-handle-resize="onStartRowHandleResize"
         @start-column-resize="onStartColumnResize"
+        @header-cell-initialize-content-width="initializeColumnWidths"
       >
       </grid-header>
     </div>
@@ -29,7 +30,7 @@
         :row-handle-width="row_handle_width"
         :columns="render_cols"
         :scroll-left="scroll_left"
-        @cell-initialize-content-width="onRowCellInitializeContentWidth"
+        @cell-initialize-content-width="initializeColumnWidths"
       >
       </grid-row>
     </div>
@@ -370,28 +371,6 @@
         })
       },
 
-      // initial auto column resize
-      onRowCellInitializeContentWidth(width, col, row_index) {
-        // once we've initialized our column widths, we're done
-        if (this.default_col_widths == 'done')
-          return
-
-        var min_width = _.defaultTo(this.default_col_widths[col.name], COLUMN_MIN_WIDTH)
-        var new_width = Math.max(min_width, width+20) // make columns a little wider than they need to be
-        new_width = Math.min(new_width, COLUMN_MAX_WIDTH)
-        this.default_col_widths[col.name] = new_width
-
-        if (row_index == this.rendered_row_count-1)
-        {
-          var temp_cols = _.map(this.columns, (col) => {
-            return _.assign({}, col, { pixel_width: this.default_col_widths[col.name] })
-          })
-
-          this.columns = [].concat(temp_cols)
-          this.default_col_widths = 'done'
-        }
-      },
-
       onStartRowHandleResize(col) {
         this.resize_row_handle = { old_width: this.row_handle_width }
         this.updateStyle('cursor', 'html { cursor: ew-resize !important; }')
@@ -460,10 +439,10 @@
             if (_.get(col, 'name') == _.get(lookup_col, 'name'))
             {
               var old_width = _.get(this.resize_col, 'pixel_width', DEFAULT_COLUMN_WIDTH)
-              var new_width = old_width + this.resize_delta
-              new_width = Math.max(COLUMN_MIN_WIDTH, new_width)
-              new_width = Math.min(COLUMN_MAX_WIDTH, new_width)
-              return _.assign({}, lookup_col, { pixel_width: new_width })
+              var pixel_width = old_width + this.resize_delta
+              pixel_width = Math.max(COLUMN_MIN_WIDTH, pixel_width)
+              pixel_width = Math.min(COLUMN_MAX_WIDTH, pixel_width)
+              return _.assign({}, lookup_col, { pixel_width })
             }
 
             return col
@@ -472,6 +451,28 @@
           this.columns = [].concat(temp_cols)
         }
       }, 5),
+
+      initializeColumnWidths(width, col, row_index) {
+        // once we've initialized our column widths, we're done
+        if (this.default_col_widths == 'done')
+          return
+
+        var min_width = _.defaultTo(this.default_col_widths[col.name], COLUMN_MIN_WIDTH)
+        var new_width = Math.max(min_width, width+20) // make columns a little wider than they need to be
+        new_width = Math.min(new_width, COLUMN_MAX_WIDTH)
+        this.default_col_widths[col.name] = new_width
+
+        if (row_index == this.rendered_row_count-1 || row_index == 'header')
+        {
+          var temp_cols = _.map(this.columns, (col) => {
+            var pixel_width = this.default_col_widths[col.name]
+            return _.assign({}, col, { pixel_width })
+          })
+
+          this.columns = [].concat(temp_cols)
+          this.$nextTick(() => { this.default_col_widths = 'done' })
+        }
+      },
 
       updateStyle(id_suffix, style_str) {
         var head_el = document.head || document.getElementsByTagName('head')[0]

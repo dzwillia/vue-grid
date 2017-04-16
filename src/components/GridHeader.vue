@@ -14,23 +14,17 @@
 
     <!-- cells -->
     <div class="flex flex-row nowrap" :style="'padding-left: '+row_handle_width+'px'">
-      <div
+      <grid-header-cell
         class="flex-none overflow-hidden ba bg-near-white tc relative vg-th"
+        v-for="(col, index) in columns"
+        :col="col"
+        :value="getColumnName(col)"
+        :width="col.pixel_width || 0"
         :style="'height: '+(rowHeight+1)+'px'"
-        v-for="col in columns"
+        @column-resizer-mousedown="onColumnResizerMousedown"
+        @initialize-content-width="onHeaderCellInitializeContentWidth"
       >
-        <!-- cell content -->
-        <div class="h-100 lh-1 vg-th-inner" :style="'width: '+col.pixel_width+'px'">
-          <div>{{getColumnName(col)}}</div>
-        </div>
-
-        <!-- column resize handle -->
-        <div
-          class="absolute top-0 bottom-0 right-0 cursor-resize-ew"
-          :style="'width: '+column_resize_handle_width+'px'"
-          @mousedown="onColumnResizerMousedown(col)"
-        ></div>
-      </div>
+      </grid-header-cell>
     </div>
   </div>
 </template>
@@ -41,6 +35,7 @@
     DEFAULT_ROW_HANDLE_WIDTH,
     COLUMN_RESIZE_HANDLE_WIDTH
   } from '../constants'
+  import GridHeaderCell from './GridHeaderCell.vue'
 
   export default {
     props: {
@@ -60,6 +55,9 @@
         type: Number,
         default: 0
       }
+    },
+    components: {
+      GridHeaderCell
     },
     watch: {
       rowHandleWidth(val, old_val) {
@@ -92,6 +90,9 @@
       },
       onColumnResizerMousedown(col) {
         this.$emit('start-column-resize', col)
+      },
+      onHeaderCellInitializeContentWidth(width, col) {
+        this.$emit('header-cell-initialize-content-width', width, col, 'header')
       }
     }
   }
