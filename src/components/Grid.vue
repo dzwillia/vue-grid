@@ -5,6 +5,7 @@
       <grid-header
         :row-handle-width="row_handle_width"
         :columns="render_cols"
+        :left-of-render-cols-width="left_of_render_cols_width"
         :scroll-left="scroll_left"
         @start-row-handle-resize="onStartRowHandleResize"
         @start-column-resize="onStartColumnResize"
@@ -29,6 +30,7 @@
         :row-height="row_height"
         :row-handle-width="row_handle_width"
         :columns="render_cols"
+        :left-of-render-cols-width="left_of_render_cols_width"
         :scroll-left="scroll_left"
         @determine-cell-auto-width="initializeColumnWidths"
       >
@@ -201,6 +203,18 @@
         }
         return rows
       },
+      left_of_render_cols() {
+        var left = (-1 * this.scroll_left)
+        var cell_padding = 11 // horizontal cell padding + left border
+        return _.filter(this.columns, (c) => {
+          var is_offscreen_left = left+c.pixel_width < 0
+          left += c.pixel_width
+          return is_offscreen_left
+        })
+      },
+      left_of_render_cols_width() {
+        return _.sum(_.map(this.left_of_render_cols, 'pixel_width'))
+      },
       render_cols() {
         // if we haven't yet initialized our column widths,
         // we need to return all columns so that the cells
@@ -211,9 +225,10 @@
         var left = (-1 * this.scroll_left)
         var cell_padding = 11 // horizontal cell padding + left border
         return _.filter(this.columns, (c) => {
-          var is_visible = left+cell_padding < this.client_width - this.row_handle_width
+          var is_offscreen_left = left+c.pixel_width < 0
+          var is_offscreen_right = left+cell_padding > this.client_width - this.row_handle_width
           left += c.pixel_width
-          return is_visible
+          return !is_offscreen_left && !is_offscreen_right
         })
       },
       first_visible_column() {

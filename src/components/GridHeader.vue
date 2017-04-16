@@ -13,7 +13,7 @@
     </div>
 
     <!-- cells -->
-    <div class="flex flex-row nowrap" :style="'padding-left: '+row_handle_width+'px'">
+    <div class="flex flex-row nowrap" :style="cell_container_style">
       <grid-header-cell
         class="flex-none overflow-hidden ba bg-near-white tc relative vg-th"
         v-for="(col, index) in columns"
@@ -47,6 +47,10 @@
         type: Number,
         default: DEFAULT_ROW_HANDLE_WIDTH
       },
+      'left-of-render-cols-width': {
+        type: Number,
+        default: 0
+      },
       'columns': {
         type: Array,
         required: true
@@ -62,17 +66,24 @@
     watch: {
       rowHandleWidth(val, old_val) {
         this.row_handle_width = val
+      },
+      leftOfRenderColsWidth(val, old_val) {
+        this.left_of_render_cols_width = val
       }
     },
     data() {
       return {
         row_handle_width: this.rowHandleWidth,
+        left_of_render_cols_width: this.leftOfRenderColsWidth,
         column_resize_handle_width: COLUMN_RESIZE_HANDLE_WIDTH
       }
     },
     computed: {
       header_style() {
         return 'left: -'+this.scrollLeft+'px'
+      },
+      cell_container_style() {
+        return 'padding-left: '+(this.row_handle_width+this.left_of_render_cols_width)+'px'
       },
       row_handle_style() {
         return 'left: '+this.scrollLeft+'px; height: '+(this.rowHeight+1)+'px'
