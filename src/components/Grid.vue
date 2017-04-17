@@ -63,9 +63,15 @@
         type: String,
         default: ''
       },
+      /* show empty cells on vertical scroll */
       'live-scroll': {
         type: Boolean,
         default: false
+      },
+      /* remove off-screen cells from the DOM on horizontal scroll */
+      'virtual-scroll': {
+        type: Boolean,
+        default: true
       }
     },
     components: {
@@ -204,6 +210,9 @@
         return rows
       },
       left_of_render_cols() {
+        if (!this.virtualScroll)
+          return []
+
         var left = (-1 * this.scroll_left)
         var cell_padding = 11 // horizontal cell padding + left border
         return _.filter(this.columns, (c) => {
@@ -216,6 +225,9 @@
         return _.sum(_.map(this.left_of_render_cols, 'pixel_width'))
       },
       render_cols() {
+        if (!this.virtualScroll)
+          return this.columns
+
         // if we haven't yet initialized our column widths,
         // we need to return all columns so that the cells
         // are renderend and the cell contents can be measured
@@ -443,7 +455,7 @@
 
       onHorizontalScroll: _.throttle(function(val, old_val) {
         this.scroll_left = val
-      }, 15),
+      }, 10),
 
       resizeRowHandle: _.debounce(function(evt) {
         var old_width = this.resize_row_handle.old_width
