@@ -1,5 +1,5 @@
 /*!
- * vue-grid v1.0.4 (https://github.com/dzwillia/vue-grid)
+ * vue-grid v1.0.5 (https://github.com/dzwillia/vue-grid)
  * (c) 2017 David Z. Williams
  * Released under the MIT License.
  */
@@ -2047,6 +2047,7 @@ exports.default = {
       uid: _.uniqueId('vue-grid-'),
 
       inited: false,
+      col_widths_inited: false,
 
       start: _constants.DEFAULT_START,
       limit: _constants.DEFAULT_LIMIT,
@@ -2123,15 +2124,30 @@ exports.default = {
       }
       return rows;
     },
+    left_of_render_cols: function left_of_render_cols() {
+      var left = -1 * this.scroll_left;
+      var cell_padding = 11;
+      return _.filter(this.columns, function (c) {
+        var is_offscreen_left = left + c.pixel_width < 0;
+        left += c.pixel_width;
+        return is_offscreen_left;
+      });
+    },
+    left_of_render_cols_width: function left_of_render_cols_width() {
+      return _.sum(_.map(this.left_of_render_cols, 'pixel_width'));
+    },
     render_cols: function render_cols() {
       var _this = this;
+
+      if (!this.col_widths_inited) return this.columns;
 
       var left = -1 * this.scroll_left;
       var cell_padding = 11;
       return _.filter(this.columns, function (c) {
-        var is_visible = left + cell_padding < _this.client_width - _this.row_handle_width;
+        var is_offscreen_left = left + c.pixel_width < 0;
+        var is_offscreen_right = left + cell_padding > _this.client_width - _this.row_handle_width;
         left += c.pixel_width;
-        return is_visible;
+        return !is_offscreen_left && !is_offscreen_right;
       });
     },
     first_visible_column: function first_visible_column() {
@@ -2304,7 +2320,7 @@ exports.default = {
 
     onHorizontalScroll: _.throttle(function (val, old_val) {
       this.scroll_left = val;
-    }, 10),
+    }, 15),
 
     resizeRowHandle: _.debounce(function (evt) {
       var old_width = this.resize_row_handle.old_width;
@@ -2338,7 +2354,7 @@ exports.default = {
     initializeColumnWidths: function initializeColumnWidths(width, col, row_index) {
       var _this6 = this;
 
-      if (this.default_col_widths == 'done') return;
+      if (this.col_widths_inited) return;
 
       var min_width = _.defaultTo(this.default_col_widths[col.name], _constants.COLUMN_MIN_WIDTH);
       var new_width = Math.max(min_width, width + 20);
@@ -2353,7 +2369,7 @@ exports.default = {
 
         this.columns = [].concat(temp_cols);
         this.$nextTick(function () {
-          _this6.default_col_widths = 'done';
+          _this6.col_widths_inited = true;
         });
       }
     },
@@ -2408,7 +2424,7 @@ exports.default = {
   mounted: function mounted() {
     var el = this.$refs['content'];
     this.content_width = el ? el.offsetWidth : 0;
-    this.$emit('initialize-content-width', this.content_width, this.col);
+    this.$emit('determine-auto-width', this.content_width, this.col);
   }
 };
 
@@ -2441,6 +2457,10 @@ exports.default = {
       type: Number,
       default: _constants.DEFAULT_ROW_HANDLE_WIDTH
     },
+    'left-of-render-cols-width': {
+      type: Number,
+      default: 0
+    },
     'columns': {
       type: Array,
       required: true
@@ -2456,11 +2476,15 @@ exports.default = {
   watch: {
     rowHandleWidth: function rowHandleWidth(val, old_val) {
       this.row_handle_width = val;
+    },
+    leftOfRenderColsWidth: function leftOfRenderColsWidth(val, old_val) {
+      this.left_of_render_cols_width = val;
     }
   },
   data: function data() {
     return {
       row_handle_width: this.rowHandleWidth,
+      left_of_render_cols_width: this.leftOfRenderColsWidth,
       column_resize_handle_width: _constants.COLUMN_RESIZE_HANDLE_WIDTH
     };
   },
@@ -2468,6 +2492,9 @@ exports.default = {
   computed: {
     header_style: function header_style() {
       return 'left: -' + this.scrollLeft + 'px';
+    },
+    cell_container_style: function cell_container_style() {
+      return 'padding-left: ' + (this.row_handle_width + this.left_of_render_cols_width) + 'px';
     },
     row_handle_style: function row_handle_style() {
       return 'left: ' + this.scrollLeft + 'px; height: ' + (this.rowHeight + 1) + 'px';
@@ -2486,8 +2513,8 @@ exports.default = {
     onColumnResizerMousedown: function onColumnResizerMousedown(col) {
       this.$emit('start-column-resize', col);
     },
-    onHeaderCellInitializeContentWidth: function onHeaderCellInitializeContentWidth(width, col) {
-      this.$emit('header-cell-initialize-content-width', width, col, 'header');
+    onHeaderCellDetermineWidth: function onHeaderCellDetermineWidth(width, col) {
+      this.$emit('determine-cell-auto-width', width, col, 'header');
     }
   }
 };
@@ -2528,7 +2555,7 @@ exports.default = {
   mounted: function mounted() {
     var el = this.$refs['content'];
     this.content_width = el ? el.offsetWidth : 0;
-    this.$emit('initialize-content-width', this.content_width, this.col, 'header');
+    this.$emit('determine-auto-width', this.content_width, this.col, 'header');
   },
 
   methods: {
@@ -2575,6 +2602,10 @@ exports.default = {
       type: Number,
       default: _constants.DEFAULT_ROW_HANDLE_WIDTH
     },
+    'left-of-render-cols-width': {
+      type: Number,
+      default: 0
+    },
     'columns': {
       type: Array,
       required: true
@@ -2590,17 +2621,24 @@ exports.default = {
   watch: {
     rowHandleWidth: function rowHandleWidth(val, old_val) {
       this.row_handle_width = val;
+    },
+    leftOfRenderColsWidth: function leftOfRenderColsWidth(val, old_val) {
+      this.left_of_render_cols_width = val;
     }
   },
   data: function data() {
     return {
-      row_handle_width: this.rowHandleWidth
+      row_handle_width: this.rowHandleWidth,
+      left_of_render_cols_width: this.leftOfRenderColsWidth
     };
   },
 
   computed: {
     row_style: function row_style() {
       return 'top: ' + this.rowIndex * this.rowHeight + 'px';
+    },
+    cell_container_style: function cell_container_style() {
+      return 'padding-left: ' + (this.row_handle_width + this.left_of_render_cols_width) + 'px';
     },
     row_handle_style: function row_handle_style() {
       return 'left: ' + this.scrollLeft + 'px; height: ' + (this.rowHeight + 1) + 'px';
@@ -2613,8 +2651,8 @@ exports.default = {
     getColumnName: function getColumnName(col) {
       return _.get(col, 'name', '');
     },
-    onCellInitializeContentWidth: function onCellInitializeContentWidth(width, col) {
-      this.$emit('cell-initialize-content-width', width, col, this.rowIndex);
+    onCellDetermineWidth: function onCellDetermineWidth(width, col) {
+      this.$emit('determine-cell-auto-width', width, col, this.rowIndex);
     }
   }
 };
@@ -5435,12 +5473,13 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     attrs: {
       "row-handle-width": _vm.row_handle_width,
       "columns": _vm.render_cols,
+      "left-of-render-cols-width": _vm.left_of_render_cols_width,
       "scroll-left": _vm.scroll_left
     },
     on: {
       "start-row-handle-resize": _vm.onStartRowHandleResize,
       "start-column-resize": _vm.onStartColumnResize,
-      "header-cell-initialize-content-width": _vm.initializeColumnWidths
+      "determine-cell-auto-width": _vm.initializeColumnWidths
     }
   })], 1), _vm._v(" "), _c('div', {
     directives: [{
@@ -5468,10 +5507,11 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         "row-height": _vm.row_height,
         "row-handle-width": _vm.row_handle_width,
         "columns": _vm.render_cols,
+        "left-of-render-cols-width": _vm.left_of_render_cols_width,
         "scroll-left": _vm.scroll_left
       },
       on: {
-        "cell-initialize-content-width": _vm.initializeColumnWidths
+        "determine-cell-auto-width": _vm.initializeColumnWidths
       }
     })
   })], 2)])
@@ -5532,7 +5572,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   })]), _vm._v(" "), _c('div', {
     staticClass: "flex flex-row nowrap",
-    style: ('padding-left: ' + _vm.row_handle_width + 'px')
+    style: (_vm.cell_container_style)
   }, _vm._l((_vm.columns), function(col, index) {
     return _c('grid-header-cell', {
       staticClass: "flex-none overflow-hidden ba bg-near-white tc relative vg-th",
@@ -5544,7 +5584,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       },
       on: {
         "column-resizer-mousedown": _vm.onColumnResizerMousedown,
-        "initialize-content-width": _vm.onHeaderCellInitializeContentWidth
+        "determine-auto-width": _vm.onHeaderCellDetermineWidth
       }
     })
   }))])
@@ -5593,7 +5633,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     style: (_vm.inner_row_handle_style)
   }, [_vm._v(_vm._s(_vm.rowIndex + 1))])]), _vm._v(" "), _c('div', {
     staticClass: "flex flex-row nowrap",
-    style: ('padding-left: ' + _vm.row_handle_width + 'px')
+    style: (_vm.cell_container_style)
   }, _vm._l((_vm.columns), function(col, index) {
     return _c('grid-cell', {
       staticClass: "flex-none overflow-hidden ba vg-td",
@@ -5604,7 +5644,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         "width": col.pixel_width || 0
       },
       on: {
-        "initialize-content-width": _vm.onCellInitializeContentWidth
+        "determine-auto-width": _vm.onCellDetermineWidth
       }
     })
   }))])
