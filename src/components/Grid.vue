@@ -526,7 +526,7 @@
         new_width = Math.max(ROW_HANDLE_MIN_WIDTH, new_width)
         new_width = Math.min(ROW_HANDLE_MAX_WIDTH, new_width)
         this.row_handle_width = new_width
-      }, 4, { leading: false, trailing: true }),
+      }, 4),
 
       resizeColumn: _.debounce(function(evt) {
         var lookup_col = _.find(this.columns, { name: _.get(this.resize_col, 'name') })
@@ -547,7 +547,7 @@
 
           this.columns = [].concat(temp_cols)
         }
-      }, 4, { leading: false, trailing: true }),
+      }, 4),
 
       initializeColumnWidths(row_index, col, width) {
         // once we've initialized our column widths, we're done
