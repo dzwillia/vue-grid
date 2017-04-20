@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-column relative bg-white h-100 vg-container">
+  <div class="flex flex-column relative bg-white h-100 vg-container" ref="container">
     <!-- grid header -->
     <div class="flex-none overflow-hidden bg-near-white vg-thead">
       <grid-header
@@ -276,13 +276,32 @@
       resize_delta() {
         return this.mousedown_x == -1 ? 0 : this.mouse_x - this.mousedown_x
       },
+      vertical_scrollbar_left() {
+        return this.offset_left+this.client_width
+      },
+      vertical_scrollbar_right() {
+        return this.offset_left+this.offset_width
+      },
+      horizontal_scrollbar_top() {
+        return this.offset_top+this.client_height
+      },
+      horizontal_scrollbar_bottom() {
+        return this.offset_top+this.offset_height
+      },
       is_potential_horizontal_scroll() {
         if (this.is_horizontal_scroll_active)
           return true
 
-        if (this.mouse_y >= this.offset_top+this.client_height-100 &&
-            this.mouse_y < this.offset_top+this.offset_height &&
-            this.mouse_x < this.client_width)
+        // handle bottom-right corner: if we're closer to the vertical
+        // scrollbar than we are to the horizontal scrollbar, return 'false'
+        if (this.mouse_x/this.vertical_scrollbar_left >
+            this.mouse_y/this.horizontal_scrollbar_top)
+          return false
+
+        // for the rest of the viewport, return 'true' when we get close
+        // to the horizontal scrollbar
+        if (this.mouse_y >= this.horizontal_scrollbar_top*2/3 &&
+            this.mouse_y < this.horizontal_scrollbar_bottom)
         {
           return true
         }
@@ -458,8 +477,9 @@
       },
 
       onResize(resize_el) {
-        this.offset_top = resize_el.offsetTop
-        this.offset_left = resize_el.offsetLeft
+        var container_el = this.$refs['container']
+        this.offset_top = container_el.offsetTop+resize_el.offsetTop
+        this.offset_left = container_el.offsetLeft+resize_el.offsetLeft
         this.offset_height = resize_el.offsetHeight
         this.offset_width = resize_el.offsetWidth
         this.client_height = resize_el.clientHeight
