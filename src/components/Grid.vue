@@ -222,7 +222,7 @@
 
         // this value should be an empty array since we're showing
         // all columns when scrolling horizontally
-        if (this.is_horizontal_scroll_active)
+        if (this.is_potential_horizontal_scroll)
           return []
 
         var left = (-1 * this.scroll_left)
@@ -243,7 +243,7 @@
         // horizontal scroll operations are far more performant with
         // all columns visible since this is a normal browser scroll event
         // and there are no expensive calculations that need to happen
-        if (this.is_horizontal_scroll_active)
+        if (this.is_potential_horizontal_scroll)
           return this.columns
 
         // if we haven't yet initialized our column widths,
@@ -275,6 +275,23 @@
       },
       resize_delta() {
         return this.mousedown_x == -1 ? 0 : this.mouse_x - this.mousedown_x
+      },
+      is_potential_horizontal_scroll() {
+        if (this.is_horizontal_scroll_active)
+          return true
+
+        if (this.mouse_y >= this.offset_top+this.client_height-100 &&
+            this.mouse_y < this.offset_top+this.offset_height &&
+            this.mouse_x < this.client_width)
+        {
+          return true
+        }
+         else if (this.mousedown_x == -1)
+        {
+          return false
+        }
+
+        return true
       },
       metrics() {
         var computed_data = this._computedWatchers
@@ -340,17 +357,6 @@
       this.onDocumentMousemove = (evt) => {
         this.mouse_x = evt.pageX
         this.mouse_y = evt.pageY
-
-        if (this.mouse_y >= this.offset_top+this.client_height-100 &&
-            this.mouse_y < this.offset_top+this.offset_height &&
-            this.mouse_x < this.client_width)
-        {
-          this.is_horizontal_scroll_active = true
-        }
-         else if (this.mousedown_x == -1)
-        {
-          this.is_horizontal_scroll_active = false
-        }
 
         if (!_.isNil(this.resize_row_handle))
           this.resizeRowHandle()
