@@ -226,15 +226,14 @@
           return []
 
         var left = (-1 * this.scroll_left)
-        var cell_padding = 11 // horizontal cell padding + left border
         return _.filter(this.columns, (c) => {
           var is_offscreen_left = left+c.pixel_width < 0
-          left += c.pixel_width
+          left += c.pixel_width+1
           return is_offscreen_left
         })
       },
       left_of_render_cols_width() {
-        return _.sum(_.map(this.left_of_render_cols, 'pixel_width'))
+        return _.sum(_.map(this.left_of_render_cols, (c) => { return c.pixel_width+1 }))
       },
       render_cols() {
         if (!this.virtualScroll)
@@ -253,11 +252,10 @@
           return this.columns
 
         var left = (-1 * this.scroll_left)
-        var cell_padding = 11 // horizontal cell padding + left border
         return _.filter(this.columns, (c) => {
           var is_offscreen_left = left+c.pixel_width < 0
-          var is_offscreen_right = left+cell_padding > this.client_width - this.row_handle_width
-          left += c.pixel_width
+          var is_offscreen_right = left > this.client_width - this.row_handle_width
+          left += c.pixel_width+1
           return !is_offscreen_left && !is_offscreen_right
         })
       },
