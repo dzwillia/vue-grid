@@ -8,7 +8,7 @@
         @metrics-change="onGridMetricsChange"
       ></grid>
     </div>
-    <div class="flex-none overflow-auto" style="min-width: 290px; margin-top: -1px">
+    <div class="flex-none overflow-auto" style="min-width: 300px; margin-top: -1px">
       <grid-metrics class="w-100" :metrics="metrics"></grid-metrics>
       <grid-events class="w-100"></grid-events>
       <grid-options
