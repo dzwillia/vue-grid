@@ -286,12 +286,8 @@
         {
           return true
         }
-         else if (this.mousedown_x == -1)
-        {
-          return false
-        }
 
-        return true
+        return false
       },
       metrics() {
         var computed_data = this._computedWatchers
