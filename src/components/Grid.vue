@@ -227,7 +227,7 @@
 
         var left = (-1 * this.scroll_left)
         return _.filter(this.columns, (c) => {
-          var is_offscreen_left = left+c.pixel_width < 0
+          var is_offscreen_left = left+c.pixel_width+1 < 0
           left += c.pixel_width+1
           return is_offscreen_left
         })
@@ -253,7 +253,7 @@
 
         var left = (-1 * this.scroll_left)
         return _.filter(this.columns, (c) => {
-          var is_offscreen_left = left+c.pixel_width < 0
+          var is_offscreen_left = left+c.pixel_width+1 < 0
           var is_offscreen_right = left > this.client_width - this.row_handle_width
           left += c.pixel_width+1
           return !is_offscreen_left && !is_offscreen_right
