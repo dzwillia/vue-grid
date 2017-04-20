@@ -94,8 +94,8 @@
       getColumnName(col) {
         return _.get(col, 'name', '')
       },
-      onCellDetermineWidth(width, col) {
-        this.$emit('determine-cell-auto-width', width, col, this.rowIndex)
+      onCellDetermineWidth(col, width) {
+        this.$emit('determine-cell-auto-width', this.rowIndex, col, width)
       }
     }
   }

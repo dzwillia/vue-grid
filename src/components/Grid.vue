@@ -486,7 +486,7 @@
         }
       }, 5),
 
-      initializeColumnWidths(width, col, row_index) {
+      initializeColumnWidths(row_index, col, width) {
         // once we've initialized our column widths, we're done
         if (this.col_widths_inited)
           return
@@ -496,7 +496,10 @@
         new_width = Math.min(new_width, COLUMN_MAX_WIDTH)
         this.default_col_widths[col.name] = new_width
 
-        if (row_index == this.rendered_row_count-1 || row_index == 'header')
+        var is_header = row_index == 'header'
+        var is_last_row = row_index == this.rendered_row_count-1
+
+        if (is_header || is_last_row)
         {
           var temp_cols = _.map(this.columns, (col) => {
             var pixel_width = this.default_col_widths[col.name]

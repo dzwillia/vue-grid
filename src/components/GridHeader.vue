@@ -102,8 +102,8 @@
       onColumnResizerMousedown(col) {
         this.$emit('start-column-resize', col)
       },
-      onHeaderCellDetermineWidth(width, col) {
-        this.$emit('determine-cell-auto-width', width, col, 'header')
+      onHeaderCellDetermineWidth(col, width) {
+        this.$emit('determine-cell-auto-width', 'header', col, width)
       }
     }
   }
