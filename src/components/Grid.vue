@@ -151,7 +151,9 @@
         mousedown_x: 0,
         mousedown_y: 0,
         mouse_x: 0,
-        mouse_y: 0
+        mouse_y: 0,
+
+        is_horizontal_scroll_active: false
       }
     },
     computed: {
@@ -213,6 +215,11 @@
         if (!this.virtualScroll)
           return []
 
+        // this value should be an empty array since we're showing
+        // all columns when scrolling horizontally
+        if (this.is_horizontal_scroll_active)
+          return []
+
         var left = (-1 * this.scroll_left)
         var cell_padding = 11 // horizontal cell padding + left border
         return _.filter(this.columns, (c) => {
@@ -226,6 +233,12 @@
       },
       render_cols() {
         if (!this.virtualScroll)
+          return this.columns
+
+        // horizontal scroll operations are far more performant with
+        // all columns visible since this is a normal browser scroll event
+        // and there are no expensive calculations that need to happen
+        if (this.is_horizontal_scroll_active)
           return this.columns
 
         // if we haven't yet initialized our column widths,
@@ -309,6 +322,7 @@
         this.mousedown_y = -1
         this.resize_col = null
         this.resize_row_handle = null
+        this.is_horizontal_scroll_active = false
         this.updateStyle('cursor', '')
         this.updateStyle('noselect', '')
       }
@@ -407,14 +421,14 @@
 
       onStartRowHandleResize(col) {
         this.resize_row_handle = { old_width: this.row_handle_width }
-        this.updateStyle('cursor', 'html { cursor: ew-resize !important; }')
-        this.updateStyle('noselect', 'html { user-select: none !important; }')
+        this.updateStyle('cursor', 'html, body { cursor: ew-resize !important; }')
+        this.updateStyle('noselect', 'html, body { -moz-user-select: none !important; user-select: none !important }')
       },
 
       onStartColumnResize(col) {
         this.resize_col = _.cloneDeep(col)
-        this.updateStyle('cursor', 'html { cursor: ew-resize !important; }')
-        this.updateStyle('noselect', 'html { user-select: none !important; }')
+        this.updateStyle('cursor', 'html, body { cursor: ew-resize !important; }')
+        this.updateStyle('noselect', 'html, body { -moz-user-select: none !important; user-select: none !important }')
       },
 
       onResize(resize_el) {
@@ -453,9 +467,10 @@
         }
       }, 10),
 
-      onHorizontalScroll: _.throttle(function(val, old_val) {
+      onHorizontalScroll(val, old_val) {
+        this.is_horizontal_scroll_active = true
         this.scroll_left = val
-      }, 10),
+      },
 
       resizeRowHandle: _.debounce(function(evt) {
         var old_width = this.resize_row_handle.old_width
