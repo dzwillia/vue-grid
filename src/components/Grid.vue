@@ -308,14 +308,18 @@
           'cached_rows',
           'row_height',
           'row_handle_width',
+          'mouse_x',
+          'mouse_y',
+          'scroll_top',
+          'scroll_left',
           'offset_top',
           'offset_left',
           'offset_height',
           'offset_width',
           'client_height',
           'client_width',
-          'scroll_top',
-          'scroll_left'
+          'total_height',
+          'total_width'
         ])
 
         return _.assign({}, filtered_data, computed_data)
