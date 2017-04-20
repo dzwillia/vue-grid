@@ -1,7 +1,7 @@
 <template>
   <div class="relative" :style="header_style">
     <!-- row handle -->
-    <div class="overflow-hidden ba absolute bg-near-white z-1 vg-th" :style="row_handle_style">
+    <div class="overflow-hidden ba absolute bg-near-white z-1 vg-th" :style="row_handle_style" v-if="false">
       <div class="h-100 lh-1 light-silver tr vg-th-inner" :style="inner_row_handle_style"></div>
 
       <!-- row handle resize handle -->
@@ -13,12 +13,14 @@
     </div>
 
     <!-- cells -->
-    <div class="flex flex-row nowrap" :style="cell_container_style">
+    <div class="relative nowrap" :style="cell_container_style">
       <grid-header-cell
-        class="flex-none overflow-hidden ba bg-near-white tc relative vg-th"
+        class="absolute overflow-hidden ba bg-near-white tc relative vg-th"
         v-for="(col, index) in columns"
         :col="col"
+        :row-handle-width="rowHandleWidth"
         :value="getColumnName(col)"
+        :left="getColumnLeft(col)"
         :width="col.pixel_width || 0"
         :style="'height: '+(rowHeight+1)+'px'"
         @column-resizer-mousedown="onColumnResizerMousedown"
@@ -80,7 +82,7 @@
     },
     computed: {
       header_style() {
-        return 'left: -'+this.scrollLeft+'px'
+        return 'height: '+this.rowHeight+'px; left: -'+this.scrollLeft+'px'
       },
       cell_container_style() {
         return 'padding-left: '+(this.row_handle_width+this.left_of_render_cols_width)+'px'
@@ -95,6 +97,16 @@
     methods: {
       getColumnName(col) {
         return _.get(col, 'name', '')
+      },
+      getColumnLeft(col) {
+        var done = false
+
+        return _.reduce(this.columns, function(sum, c) {
+          if (_.get(c, 'name') == _.get(col, 'name'))
+            done = true
+
+          return sum + (done ? 0 : _.get(c, 'pixel_width', 0))
+        }, 1)
       },
       onRowHandleResizerMousedown(col) {
         this.$emit('start-row-handle-resize', col)

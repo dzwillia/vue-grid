@@ -210,6 +210,8 @@
         return rows
       },
       left_of_render_cols() {
+        return []
+        /*
         if (!this.virtualScroll)
           return []
 
@@ -220,11 +222,16 @@
           left += c.pixel_width
           return is_offscreen_left
         })
+        */
       },
       left_of_render_cols_width() {
-        return _.sum(_.map(this.left_of_render_cols, 'pixel_width'))
+        return 0
+        //return _.sum(_.map(this.left_of_render_cols, 'pixel_width'))
       },
       render_cols() {
+        return this.columns
+
+        /*
         if (!this.virtualScroll)
           return this.columns
 
@@ -242,6 +249,7 @@
           left += c.pixel_width
           return !is_offscreen_left && !is_offscreen_right
         })
+        */
       },
       first_visible_column() {
         return _.first(this.render_cols)

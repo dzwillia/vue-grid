@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div :style="cell_style">
     <!-- cell content -->
-    <div class="h-100 lh-1 vg-th-inner" :style="'width: '+width+'px'">
+    <div class="h-100 lh-1 vg-th-inner" :style="inner_cell_style">
       <span ref="content">{{value}}</span>
     </div>
 
@@ -25,8 +25,15 @@
         type: Object,
         required: true
       },
+      'row-handle-width': {
+        type: Number
+      },
       'value': {
         required: true
+      },
+      'left': {
+        type: Number,
+        required: false
       },
       'width': {
         type: Number,
@@ -37,6 +44,14 @@
       return {
         content_width: 0,
         column_resize_handle_width: COLUMN_RESIZE_HANDLE_WIDTH
+      }
+    },
+    computed: {
+      cell_style() {
+        return { 'left': (this.rowHandleWidth+this.left)+'px' }
+      },
+      inner_cell_style() {
+        return { 'width': this.width+'px' }
       }
     },
     mounted() {

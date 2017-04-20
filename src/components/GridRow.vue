@@ -1,18 +1,20 @@
 <template>
   <div class="absolute" :style="row_style">
     <!-- row handle -->
-    <div class="overflow-hidden ba absolute z-1 bg-near-white vg-td" :style="row_handle_style">
+    <div class="overflow-hidden ba absolute z-1 bg-near-white vg-td" :style="row_handle_style" v-if="false">
       <div class="h-100 lh-1 light-silver tr vg-td-inner" :style="inner_row_handle_style">{{rowIndex+1}}</div>
     </div>
 
     <!-- cells -->
-    <div class="flex flex-row nowrap" :style="cell_container_style">
+    <div class="relative nowrap" :style="cell_container_style">
       <grid-cell
-        class="flex-none overflow-hidden ba vg-td"
+        class="absolute overflow-hidden ba vg-td"
         v-for="(col, index) in columns"
         :col="col"
+        :row-handle-width="rowHandleWidth"
         :value="row[getColumnName(col)]"
-        :width="col.pixel_width || 0"
+        :left="getColumnLeft(col)"
+        :width="col.pixel_width-1 || 0"
         :style="'height: '+(rowHeight+1)+'px'"
         @determine-auto-width="onCellDetermineWidth"
       >
@@ -93,6 +95,16 @@
     methods: {
       getColumnName(col) {
         return _.get(col, 'name', '')
+      },
+      getColumnLeft(col) {
+        var done = false
+
+        return _.reduce(this.columns, function(sum, c) {
+          if (_.get(c, 'name') == _.get(col, 'name'))
+            done = true
+
+          return sum + (done ? 0 : _.get(c, 'pixel_width', 0))
+        }, 1)
       },
       onCellDetermineWidth(col, width) {
         this.$emit('determine-cell-auto-width', this.rowIndex, col, width)
