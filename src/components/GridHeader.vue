@@ -13,9 +13,9 @@
     </div>
 
     <!-- cells -->
-    <div class="flex flex-row nowrap" :style="cell_container_style">
+    <div class="nowrap" :style="cell_container_style">
       <grid-header-cell
-        class="flex-none overflow-hidden ba bg-near-white tc relative vg-th"
+        class="dib v-top overflow-hidden ba bg-near-white tc relative vg-th"
         v-for="(col, index) in columns"
         :col="col"
         :value="getColumnName(col)"
@@ -80,16 +80,25 @@
     },
     computed: {
       header_style() {
-        return 'left: -'+this.scrollLeft+'px'
+        return {
+          'left': (this.scrollLeft * -1)+'px'
+        }
       },
       cell_container_style() {
-        return 'padding-left: '+(this.row_handle_width+this.left_of_render_cols_width)+'px'
+        return {
+          'padding-left': (this.row_handle_width+this.left_of_render_cols_width)+'px'
+        }
       },
       row_handle_style() {
-        return 'left: '+this.scrollLeft+'px; height: '+(this.rowHeight+1)+'px'
+        return {
+          'left': this.scrollLeft+'px',
+          'height': (this.rowHeight+1)+'px'
+        }
       },
       inner_row_handle_style() {
-        return 'width: '+(this.row_handle_width)+'px'
+        return {
+          'width': this.row_handle_width+'px'
+        }
       }
     },
     methods: {
