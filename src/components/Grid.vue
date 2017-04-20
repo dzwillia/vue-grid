@@ -145,11 +145,16 @@
         client_height: 0,
         client_width: 0,
 
+        offset_top: 0,
+        offset_left: 0,
+        offset_height: 0,
+        offset_width: 0,
+
         scroll_top: 0,
         scroll_left: 0,
 
-        mousedown_x: 0,
-        mousedown_y: 0,
+        mousedown_x: -1,
+        mousedown_y: -1,
         mouse_x: 0,
         mouse_y: 0,
 
@@ -286,6 +291,10 @@
           'cached_rows',
           'row_height',
           'row_handle_width',
+          'offset_top',
+          'offset_left',
+          'offset_height',
+          'offset_width',
           'client_height',
           'client_width',
           'scroll_top',
@@ -331,6 +340,17 @@
       this.onDocumentMousemove = (evt) => {
         this.mouse_x = evt.pageX
         this.mouse_y = evt.pageY
+
+        if (this.mouse_y >= this.offset_top+this.client_height-100 &&
+            this.mouse_y < this.offset_top+this.offset_height &&
+            this.mouse_x < this.client_width)
+        {
+          this.is_horizontal_scroll_active = true
+        }
+         else if (this.mousedown_x == -1)
+        {
+          this.is_horizontal_scroll_active = false
+        }
 
         if (!_.isNil(this.resize_row_handle))
           this.resizeRowHandle()
@@ -432,8 +452,12 @@
       },
 
       onResize(resize_el) {
-        this.client_width = resize_el.clientWidth
+        this.offset_top = resize_el.offsetTop
+        this.offset_left = resize_el.offsetLeft
+        this.offset_height = resize_el.offsetHeight
+        this.offset_width = resize_el.offsetWidth
         this.client_height = resize_el.clientHeight
+        this.client_width = resize_el.clientWidth
       },
 
       onScroll() {
