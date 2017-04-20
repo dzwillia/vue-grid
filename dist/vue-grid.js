@@ -1,5 +1,5 @@
 /*!
- * vue-grid v1.0.5 (https://github.com/dzwillia/vue-grid)
+ * vue-grid v0.1.0 (https://github.com/dzwillia/vue-grid)
  * (c) 2017 David Z. Williams
  * Released under the MIT License.
  */
@@ -1989,9 +1989,15 @@ exports.default = {
       type: String,
       default: ''
     },
+
     'live-scroll': {
       type: Boolean,
       default: false
+    },
+
+    'virtual-scroll': {
+      type: Boolean,
+      default: true
     }
   },
   components: {
@@ -2065,13 +2071,20 @@ exports.default = {
       client_height: 0,
       client_width: 0,
 
+      offset_top: 0,
+      offset_left: 0,
+      offset_height: 0,
+      offset_width: 0,
+
       scroll_top: 0,
       scroll_left: 0,
 
-      mousedown_x: 0,
-      mousedown_y: 0,
+      mousedown_x: -1,
+      mousedown_y: -1,
       mouse_x: 0,
-      mouse_y: 0
+      mouse_y: 0,
+
+      is_horizontal_scroll_active: false
     };
   },
 
@@ -2125,28 +2138,36 @@ exports.default = {
       return rows;
     },
     left_of_render_cols: function left_of_render_cols() {
+      if (!this.virtualScroll) return [];
+
+      if (this.is_potential_horizontal_scroll) return [];
+
       var left = -1 * this.scroll_left;
-      var cell_padding = 11;
       return _.filter(this.columns, function (c) {
-        var is_offscreen_left = left + c.pixel_width < 0;
-        left += c.pixel_width;
+        var is_offscreen_left = left + c.pixel_width + 1 < 0;
+        left += c.pixel_width + 1;
         return is_offscreen_left;
       });
     },
     left_of_render_cols_width: function left_of_render_cols_width() {
-      return _.sum(_.map(this.left_of_render_cols, 'pixel_width'));
+      return _.sum(_.map(this.left_of_render_cols, function (c) {
+        return c.pixel_width + 1;
+      }));
     },
     render_cols: function render_cols() {
       var _this = this;
 
+      if (!this.virtualScroll) return this.columns;
+
+      if (this.is_potential_horizontal_scroll) return this.columns;
+
       if (!this.col_widths_inited) return this.columns;
 
       var left = -1 * this.scroll_left;
-      var cell_padding = 11;
       return _.filter(this.columns, function (c) {
-        var is_offscreen_left = left + c.pixel_width < 0;
-        var is_offscreen_right = left + cell_padding > _this.client_width - _this.row_handle_width;
-        left += c.pixel_width;
+        var is_offscreen_left = left + c.pixel_width + 1 < 0;
+        var is_offscreen_right = left > _this.client_width - _this.row_handle_width;
+        left += c.pixel_width + 1;
         return !is_offscreen_left && !is_offscreen_right;
       });
     },
@@ -2165,6 +2186,29 @@ exports.default = {
     resize_delta: function resize_delta() {
       return this.mousedown_x == -1 ? 0 : this.mouse_x - this.mousedown_x;
     },
+    vertical_scrollbar_left: function vertical_scrollbar_left() {
+      return this.offset_left + this.client_width;
+    },
+    vertical_scrollbar_right: function vertical_scrollbar_right() {
+      return this.offset_left + this.offset_width;
+    },
+    horizontal_scrollbar_top: function horizontal_scrollbar_top() {
+      return this.offset_top + this.client_height;
+    },
+    horizontal_scrollbar_bottom: function horizontal_scrollbar_bottom() {
+      return this.offset_top + this.offset_height;
+    },
+    is_potential_horizontal_scroll: function is_potential_horizontal_scroll() {
+      if (this.is_horizontal_scroll_active) return true;
+
+      if (this.mouse_x / this.vertical_scrollbar_left > this.mouse_y / this.horizontal_scrollbar_top) return false;
+
+      if (this.mouse_y >= this.horizontal_scrollbar_top * 2 / 3 && this.mouse_y < this.horizontal_scrollbar_bottom) {
+        return true;
+      }
+
+      return false;
+    },
     metrics: function metrics() {
       var _this2 = this;
 
@@ -2174,7 +2218,7 @@ exports.default = {
         return _this2[v];
       });
 
-      var filtered_data = _.pick(this.$data, ['start', 'limit', 'rows', 'total_row_count', 'columns', 'total_column_count', 'cached_rows', 'row_height', 'row_handle_width', 'client_height', 'client_width', 'scroll_top', 'scroll_left']);
+      var filtered_data = _.pick(this.$data, ['start', 'limit', 'rows', 'total_row_count', 'columns', 'total_column_count', 'cached_rows', 'row_height', 'row_handle_width', 'mouse_x', 'mouse_y', 'scroll_top', 'scroll_left', 'offset_top', 'offset_left', 'offset_height', 'offset_width', 'client_height', 'client_width', 'total_height', 'total_width']);
 
       return _.assign({}, filtered_data, computed_data);
     }
@@ -2203,6 +2247,7 @@ exports.default = {
       _this3.mousedown_y = -1;
       _this3.resize_col = null;
       _this3.resize_row_handle = null;
+      _this3.is_horizontal_scroll_active = false;
       _this3.updateStyle('cursor', '');
       _this3.updateStyle('noselect', '');
     };
@@ -2282,17 +2327,22 @@ exports.default = {
     },
     onStartRowHandleResize: function onStartRowHandleResize(col) {
       this.resize_row_handle = { old_width: this.row_handle_width };
-      this.updateStyle('cursor', 'html { cursor: ew-resize !important; }');
-      this.updateStyle('noselect', 'html { user-select: none !important; }');
+      this.updateStyle('cursor', 'html, body { cursor: ew-resize !important; }');
+      this.updateStyle('noselect', 'html, body { -moz-user-select: none !important; user-select: none !important }');
     },
     onStartColumnResize: function onStartColumnResize(col) {
       this.resize_col = _.cloneDeep(col);
-      this.updateStyle('cursor', 'html { cursor: ew-resize !important; }');
-      this.updateStyle('noselect', 'html { user-select: none !important; }');
+      this.updateStyle('cursor', 'html, body { cursor: ew-resize !important; }');
+      this.updateStyle('noselect', 'html, body { -moz-user-select: none !important; user-select: none !important }');
     },
     onResize: function onResize(resize_el) {
-      this.client_width = resize_el.clientWidth;
+      var container_el = this.$refs['container'];
+      this.offset_top = container_el.offsetTop + resize_el.offsetTop;
+      this.offset_left = container_el.offsetLeft + resize_el.offsetLeft;
+      this.offset_height = resize_el.offsetHeight;
+      this.offset_width = resize_el.offsetWidth;
       this.client_height = resize_el.clientHeight;
+      this.client_width = resize_el.clientWidth;
     },
     onScroll: function onScroll() {
       var new_scroll_top = this.$refs['tbody'].scrollTop;
@@ -2318,9 +2368,11 @@ exports.default = {
       }
     }, 10),
 
-    onHorizontalScroll: _.throttle(function (val, old_val) {
+    onHorizontalScroll: function onHorizontalScroll(val, old_val) {
+      this.is_horizontal_scroll_active = true;
       this.scroll_left = val;
-    }, 15),
+    },
+
 
     resizeRowHandle: _.debounce(function (evt) {
       var old_width = this.resize_row_handle.old_width;
@@ -2328,7 +2380,7 @@ exports.default = {
       new_width = Math.max(_constants.ROW_HANDLE_MIN_WIDTH, new_width);
       new_width = Math.min(_constants.ROW_HANDLE_MAX_WIDTH, new_width);
       this.row_handle_width = new_width;
-    }, 5),
+    }, 4),
 
     resizeColumn: _.debounce(function (evt) {
       var _this5 = this;
@@ -2349,9 +2401,9 @@ exports.default = {
 
         this.columns = [].concat(temp_cols);
       }
-    }, 5),
+    }, 4),
 
-    initializeColumnWidths: function initializeColumnWidths(width, col, row_index) {
+    initializeColumnWidths: function initializeColumnWidths(row_index, col, width) {
       var _this6 = this;
 
       if (this.col_widths_inited) return;
@@ -2361,7 +2413,10 @@ exports.default = {
       new_width = Math.min(new_width, _constants.COLUMN_MAX_WIDTH);
       this.default_col_widths[col.name] = new_width;
 
-      if (row_index == this.rendered_row_count - 1 || row_index == 'header') {
+      var is_header = row_index == 'header';
+      var is_last_row = row_index == this.rendered_row_count - 1;
+
+      if (is_header || is_last_row) {
         var temp_cols = _.map(this.columns, function (col) {
           var pixel_width = _this6.default_col_widths[col.name];
           return _.assign({}, col, { pixel_width: pixel_width });
@@ -2424,7 +2479,7 @@ exports.default = {
   mounted: function mounted() {
     var el = this.$refs['content'];
     this.content_width = el ? el.offsetWidth : 0;
-    this.$emit('determine-auto-width', this.content_width, this.col);
+    this.$emit('determine-auto-width', this.col, this.content_width);
   }
 };
 
@@ -2491,16 +2546,25 @@ exports.default = {
 
   computed: {
     header_style: function header_style() {
-      return 'left: -' + this.scrollLeft + 'px';
+      return {
+        'left': this.scrollLeft * -1 + 'px'
+      };
     },
     cell_container_style: function cell_container_style() {
-      return 'padding-left: ' + (this.row_handle_width + this.left_of_render_cols_width) + 'px';
+      return {
+        'padding-left': this.row_handle_width + this.left_of_render_cols_width + 'px'
+      };
     },
     row_handle_style: function row_handle_style() {
-      return 'left: ' + this.scrollLeft + 'px; height: ' + (this.rowHeight + 1) + 'px';
+      return {
+        'left': this.scrollLeft + 'px',
+        'height': this.rowHeight + 1 + 'px'
+      };
     },
     inner_row_handle_style: function inner_row_handle_style() {
-      return 'width: ' + this.row_handle_width + 'px';
+      return {
+        'width': this.row_handle_width + 'px'
+      };
     }
   },
   methods: {
@@ -2513,8 +2577,8 @@ exports.default = {
     onColumnResizerMousedown: function onColumnResizerMousedown(col) {
       this.$emit('start-column-resize', col);
     },
-    onHeaderCellDetermineWidth: function onHeaderCellDetermineWidth(width, col) {
-      this.$emit('determine-cell-auto-width', width, col, 'header');
+    onHeaderCellDetermineWidth: function onHeaderCellDetermineWidth(col, width) {
+      this.$emit('determine-cell-auto-width', 'header', col, width);
     }
   }
 };
@@ -2555,7 +2619,7 @@ exports.default = {
   mounted: function mounted() {
     var el = this.$refs['content'];
     this.content_width = el ? el.offsetWidth : 0;
-    this.$emit('determine-auto-width', this.content_width, this.col, 'header');
+    this.$emit('determine-auto-width', this.col, this.content_width);
   },
 
   methods: {
@@ -2635,24 +2699,33 @@ exports.default = {
 
   computed: {
     row_style: function row_style() {
-      return 'top: ' + this.rowIndex * this.rowHeight + 'px';
+      return {
+        'top': this.rowIndex * this.rowHeight + 'px'
+      };
     },
     cell_container_style: function cell_container_style() {
-      return 'padding-left: ' + (this.row_handle_width + this.left_of_render_cols_width) + 'px';
+      return {
+        'padding-left': this.row_handle_width + this.left_of_render_cols_width + 'px'
+      };
     },
     row_handle_style: function row_handle_style() {
-      return 'left: ' + this.scrollLeft + 'px; height: ' + (this.rowHeight + 1) + 'px';
+      return {
+        'left': this.scrollLeft + 'px',
+        'height': this.rowHeight + 1 + 'px'
+      };
     },
     inner_row_handle_style: function inner_row_handle_style() {
-      return 'width: ' + this.row_handle_width + 'px';
+      return {
+        'width': this.row_handle_width + 'px'
+      };
     }
   },
   methods: {
     getColumnName: function getColumnName(col) {
       return _.get(col, 'name', '');
     },
-    onCellDetermineWidth: function onCellDetermineWidth(width, col) {
-      this.$emit('determine-cell-auto-width', width, col, this.rowIndex);
+    onCellDetermineWidth: function onCellDetermineWidth(col, width) {
+      this.$emit('determine-cell-auto-width', this.rowIndex, col, width);
     }
   }
 };
@@ -5466,6 +5539,7 @@ module.exports = Component.exports
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
+    ref: "container",
     staticClass: "flex flex-column relative bg-white h-100 vg-container"
   }, [_c('div', {
     staticClass: "flex-none overflow-hidden bg-near-white vg-thead"
@@ -5558,7 +5632,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   return _c('div', {
     staticClass: "relative",
     style: (_vm.header_style)
-  }, [_c('div', {
+  }, [(false) ? _c('div', {
     staticClass: "overflow-hidden ba absolute bg-near-white z-1 vg-th",
     style: (_vm.row_handle_style)
   }, [_c('div', {
@@ -5570,12 +5644,12 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     on: {
       "mousedown": _vm.onRowHandleResizerMousedown
     }
-  })]), _vm._v(" "), _c('div', {
-    staticClass: "flex flex-row nowrap",
+  })]) : _vm._e(), _vm._v(" "), _c('div', {
+    staticClass: "nowrap",
     style: (_vm.cell_container_style)
   }, _vm._l((_vm.columns), function(col, index) {
     return _c('grid-header-cell', {
-      staticClass: "flex-none overflow-hidden ba bg-near-white tc relative vg-th",
+      staticClass: "dib v-top overflow-hidden ba bg-near-white tc relative vg-th",
       style: ('height: ' + (_vm.rowHeight + 1) + 'px'),
       attrs: {
         "col": col,
@@ -5625,18 +5699,18 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   return _c('div', {
     staticClass: "absolute",
     style: (_vm.row_style)
-  }, [_c('div', {
+  }, [(false) ? _c('div', {
     staticClass: "overflow-hidden ba absolute z-1 bg-near-white vg-td",
     style: (_vm.row_handle_style)
   }, [_c('div', {
     staticClass: "h-100 lh-1 light-silver tr vg-td-inner",
     style: (_vm.inner_row_handle_style)
-  }, [_vm._v(_vm._s(_vm.rowIndex + 1))])]), _vm._v(" "), _c('div', {
-    staticClass: "flex flex-row nowrap",
+  }, [_vm._v(_vm._s(_vm.rowIndex + 1))])]) : _vm._e(), _vm._v(" "), _c('div', {
+    staticClass: "nowrap",
     style: (_vm.cell_container_style)
   }, _vm._l((_vm.columns), function(col, index) {
     return _c('grid-cell', {
-      staticClass: "flex-none overflow-hidden ba vg-td",
+      staticClass: "dib v-top overflow-hidden ba vg-td",
       style: ('height: ' + (_vm.rowHeight + 1) + 'px'),
       attrs: {
         "col": col,
