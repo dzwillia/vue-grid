@@ -1,39 +1,56 @@
 <template>
   <div class="flex flex-column relative bg-white h-100 vg-container" ref="container">
+
+    <!-- grid header row handle -->
+    <grid-header-row-handle class="ba bg-near-white vg-td"
+      :row-height="row_height"
+      :row-handle-width="row_handle_width"
+      @start-row-handle-resize="onStartRowHandleResize"
+      v-if="inited"
+    ></grid-header-row-handle>
+
     <!-- grid header -->
-    <div class="flex-none overflow-hidden bg-near-white vg-thead">
+    <div
+      class="flex-none overflow-hidden bg-near-white vg-thead"
+      :style="'margin-left: '+(this.row_handle_width+this.left_of_render_cols_width-this.scroll_left+1)+'px'"
+    >
       <grid-header
         :row-handle-width="row_handle_width"
         :columns="render_cols"
         :left-of-render-cols-width="left_of_render_cols_width"
         :scroll-left="scroll_left"
-        @start-row-handle-resize="onStartRowHandleResize"
         @start-column-resize="onStartColumnResize"
         @determine-cell-auto-width="initializeColumnWidths"
-      >
-      </grid-header>
+      ></grid-header>
     </div>
 
     <!-- grid body -->
     <div class="flex-fill relative overflow-auto vg-tbody" ref="tbody" @scroll="onScroll" v-resize="onResize">
-      <!-- vertical yardstick -->
+      <!-- yardsticks -->
       <div class="absolute top-0 left-0" :style="'z-index: -1; width: 1px; height: '+total_height+'px'"></div>
-
-      <!-- horizontal yardstick -->
       <div class="absolute top-0 left-0" :style="'z-index: -1; height: 1px; width: '+total_width+'px'"></div>
 
-      <!-- rows -->
-      <grid-row
+      <!-- row handles -->
+      <grid-row-handle class="ba bg-near-white vg-td"
         v-for="(row, index) in render_rows"
-        :row="row"
         :row-index="start+index"
         :row-height="row_height"
         :row-handle-width="row_handle_width"
-        :columns="render_cols"
-        :left-of-render-cols-width="left_of_render_cols_width"
-        :scroll-left="scroll_left"
-        @determine-cell-auto-width="initializeColumnWidths"
-      ></grid-row>
+      ></grid-row-handle>
+
+      <!-- rows -->
+      <div :style="'margin-left: '+(this.row_handle_width+this.left_of_render_cols_width+1)+'px'">
+        <grid-row
+          v-for="(row, index) in render_rows"
+          :row="row"
+          :row-index="start+index"
+          :row-height="row_height"
+          :columns="render_cols"
+          :left-of-render-cols-width="left_of_render_cols_width"
+          :scroll-left="scroll_left"
+          @determine-cell-auto-width="initializeColumnWidths"
+        ></grid-row>
+      </div>
     </div>
   </div>
 </template>
@@ -52,7 +69,9 @@
   } from '../constants'
   import axios from 'axios'
   import resize from 'vue-resize-directive'
+  import GridHeaderRowHandle from './GridHeaderRowHandle.vue'
   import GridHeader from './GridHeader.vue'
+  import GridRowHandle from './GridRowHandle.vue'
   import GridRow from './GridRow.vue'
 
   export default {
@@ -74,7 +93,9 @@
       }
     },
     components: {
+      GridHeaderRowHandle,
       GridHeader,
+      GridRowHandle,
       GridRow
     },
     directives: {
@@ -341,11 +362,10 @@
       // establish our debounced and throttled methods (we need these functions
       // to be members of this component since we've run into reference
       // issues using _.debounce() and _.throttle() directly on the method
-      this.tryFetchDebounced = _.debounce(this.tryFetch, 100)
-      this.resizeRowHandleDebounced = _.debounce(this.resizeRowHandle, 4)
-      this.resizeColumnDebounced = _.debounce(this.resizeColumn, 4)
-
-      this.onVerticalScrollThrottled = _.throttle(this.onVerticalScroll, 200)
+      this.tryFetchDebounced = _.debounce(this.tryFetch, 120)
+      this.resizeRowHandleThrottled = _.throttle(this.resizeRowHandle, 20)
+      this.resizeColumnThrottled = _.throttle(this.resizeColumn, 20)
+      this.onVerticalScrollThrottled = _.throttle(this.onVerticalScroll, 40)
 
       // do our initial fetch
       this.tryFetch()
@@ -377,10 +397,10 @@
         this.mouse_y = evt.pageY
 
         if (!_.isNil(this.resize_row_handle))
-          this.resizeRowHandleDebounced()
+          this.resizeRowHandleThrottled()
 
         if (!_.isNil(this.resize_col))
-          this.resizeColumnDebounced()
+          this.resizeColumnThrottled()
       }
 
       // create document-level event handlers
