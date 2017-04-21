@@ -362,7 +362,7 @@
       // establish our debounced and throttled methods (we need these functions
       // to be members of this component since we've run into reference
       // issues using _.debounce() and _.throttle() directly on the method
-      this.tryFetchDebounced = _.debounce(this.tryFetch, 120)
+      this.tryFetchDebounced = _.debounce(this.tryFetch, 120, { leading: false, trailing: true })
       this.resizeRowHandleThrottled = _.throttle(this.resizeRowHandle, 20)
       this.resizeColumnThrottled = _.throttle(this.resizeColumn, 20)
       this.onVerticalScrollThrottled = _.throttle(this.onVerticalScroll, 40)
