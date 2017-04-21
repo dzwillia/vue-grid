@@ -2,7 +2,7 @@
   <div class="flex flex-column relative bg-white h-100 vg-container" ref="container">
 
     <!-- grid header row handle -->
-    <grid-header-row-handle class="ba bg-near-white vg-td"
+    <grid-header-row-handle class="z-2 ba bg-near-white vg-td"
       :row-height="row_height"
       :row-handle-width="row_handle_width"
       @start-row-handle-resize="onStartRowHandleResize"
@@ -24,33 +24,40 @@
       ></grid-header>
     </div>
 
-    <!-- grid body -->
-    <div class="flex-fill relative overflow-auto vg-tbody" ref="tbody" @scroll="onScroll" v-resize="onResize">
-      <!-- yardsticks -->
-      <div class="absolute top-0 left-0" :style="'z-index: -1; width: 1px; height: '+total_height+'px'"></div>
-      <div class="absolute top-0 left-0" :style="'z-index: -1; height: 1px; width: '+total_width+'px'"></div>
-
-      <!-- row handles -->
-      <grid-row-handle class="ba bg-near-white vg-td"
+    <!-- row handles -->
+    <div class="fixed z-1" :style="'top: '+(this.container_offset_top+this.row_height-this.scroll_top)+'px'">
+      <grid-row-handle
         v-for="(row, index) in render_rows"
+        class="ba bg-near-white vg-td"
         :row-index="start+index"
         :row-height="row_height"
         :row-handle-width="row_handle_width"
       ></grid-row-handle>
+    </div>
+
+    <!-- grid body -->
+    <div
+      class="flex-fill relative overflow-auto vg-tbody"
+      ref="tbody"
+      :style="'margin-left: '+(this.row_handle_width+this.left_of_render_cols_width+1)+'px'"
+      @scroll="onScroll"
+      v-resize="onResize"
+    >
+      <!-- yardsticks -->
+      <div class="absolute top-0 left-0" :style="'z-index: -1; width: 1px; height: '+total_height+'px'"></div>
+      <div class="absolute top-0 left-0" :style="'z-index: -1; height: 1px; width: '+total_width+'px'"></div>
 
       <!-- rows -->
-      <div :style="'margin-left: '+(this.row_handle_width+this.left_of_render_cols_width+1)+'px'">
-        <grid-row
-          v-for="(row, index) in render_rows"
-          :row="row"
-          :row-index="start+index"
-          :row-height="row_height"
-          :columns="render_cols"
-          :left-of-render-cols-width="left_of_render_cols_width"
-          :scroll-left="scroll_left"
-          @determine-cell-auto-width="initializeColumnWidths"
-        ></grid-row>
-      </div>
+      <grid-row
+        v-for="(row, index) in render_rows"
+        :row="row"
+        :row-index="start+index"
+        :row-height="row_height"
+        :columns="render_cols"
+        :left-of-render-cols-width="left_of_render_cols_width"
+        :scroll-left="scroll_left"
+        @determine-cell-auto-width="initializeColumnWidths"
+      ></grid-row>
     </div>
   </div>
 </template>
@@ -73,6 +80,21 @@
   import GridHeader from './GridHeader.vue'
   import GridRowHandle from './GridRowHandle.vue'
   import GridRow from './GridRow.vue'
+
+  var getOffset = function(el) {
+    var top = 0
+    var left = 0
+
+    do {
+      if (!isNaN(el.offsetTop))
+          top += el.offsetTop
+      if (!isNaN(el.offsetLeft))
+          left += el.offsetLeft
+    } while (el = el.offsetParent)
+
+    return { left, top }
+  }
+
 
   export default {
     name: 'vue-grid',
@@ -164,6 +186,9 @@
 
         client_height: 0,
         client_width: 0,
+
+        container_offset_top: 0,
+        container_offset_left: 0,
 
         offset_top: 0,
         offset_left: 0,
@@ -359,20 +384,25 @@
       this.cancelXhr = null
       this.default_col_widths = {}
 
+      // initialize container offset
+      var offset = getOffset(this.$refs['container'])
+      this.container_offset_top = offset.top
+      this.container_offset_left = offset.left
+
+      // initialize the client dimensions
+      this.client_height = this.$el.clientHeight
+      this.client_width = this.$el.clientWidth
+
       // establish our debounced and throttled methods (we need these functions
       // to be members of this component since we've run into reference
       // issues using _.debounce() and _.throttle() directly on the method
       this.tryFetchDebounced = _.debounce(this.tryFetch, 120, { leading: false, trailing: true })
       this.resizeRowHandleThrottled = _.throttle(this.resizeRowHandle, 20)
       this.resizeColumnThrottled = _.throttle(this.resizeColumn, 20)
-      this.onVerticalScrollThrottled = _.throttle(this.onVerticalScroll, 40)
+      this.onVerticalScrollThrottled = _.debounce(this.onVerticalScroll, 5, { leading: false, trailing: true })
 
       // do our initial fetch
       this.tryFetch()
-
-      // initialize the client dimensions
-      this.client_height = this.$el.clientHeight
-      this.client_width = this.$el.clientWidth
 
       // document-level mouse down
       this.onDocumentMousedown = (evt) => {
