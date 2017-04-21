@@ -12,20 +12,18 @@
     <!-- grid header -->
     <div
       class="flex-none overflow-hidden bg-near-white vg-thead"
-      :style="'margin-left: '+(this.row_handle_width+this.left_of_render_cols_width-this.scroll_left+1)+'px'"
+      :style="'margin-left: '+(row_handle_width+left_of_render_cols_width-scroll_left+1)+'px'"
     >
       <grid-header
         :row-handle-width="row_handle_width"
         :columns="render_cols"
-        :left-of-render-cols-width="left_of_render_cols_width"
-        :scroll-left="scroll_left"
         @start-column-resize="onStartColumnResize"
         @determine-cell-auto-width="initializeColumnWidths"
       ></grid-header>
     </div>
 
     <!-- row handles -->
-    <div class="fixed z-1" :style="'top: '+(this.container_offset_top+this.row_height-this.scroll_top)+'px'">
+    <div class="fixed z-1" :style="'top: '+(container_offset_top+row_height-scroll_top)+'px'">
       <grid-row-handle
         v-for="(row, index) in render_rows"
         class="ba bg-near-white vg-td"
@@ -39,7 +37,7 @@
     <div
       class="flex-fill relative overflow-auto vg-tbody"
       ref="tbody"
-      :style="'margin-left: '+(this.row_handle_width+this.left_of_render_cols_width+1)+'px'"
+      :style="'margin-left: '+(row_handle_width+1)+'px'"
       @scroll="onScroll"
       v-resize="onResize"
     >
@@ -54,8 +52,7 @@
         :row-index="start+index"
         :row-height="row_height"
         :columns="render_cols"
-        :left-of-render-cols-width="left_of_render_cols_width"
-        :scroll-left="scroll_left"
+        :style="'padding-left: '+left_of_render_cols_width+'px'"
         @determine-cell-auto-width="initializeColumnWidths"
       ></grid-row>
     </div>
@@ -295,7 +292,7 @@
         var left = (-1 * this.scroll_left)
         return _.filter(this.columns, (c) => {
           var is_offscreen_left = left+c.pixel_width+1 < 0
-          var is_offscreen_right = left > this.client_width - this.row_handle_width
+          var is_offscreen_right = left > this.client_width
           left += c.pixel_width+1
           return !is_offscreen_left && !is_offscreen_right
         })
