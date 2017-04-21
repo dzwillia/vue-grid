@@ -162,10 +162,6 @@
       }
     },
     computed: {
-      fetch_url() {
-        var url = this.dataUrl+'?start='+this.start+'&limit='+this.limit
-        return this.inited ? url : url + '&metadata=true'
-      },
       total_height() {
         return this.row_height * this.total_row_count
       },
@@ -394,8 +390,18 @@
       document.removeEventListener('mousemove', this.onDocumentMousemove)
     },
     methods: {
+      getFetchUrl(start, limit) {
+        var url = this.dataUrl+'?start='+start+'&limit='+limit
+        return this.inited ? url : url + '&metadata=true'
+      },
       tryFetch() {
         var me = this
+
+        // we need to get the start and limit before we do the AJAX call this the grid's
+        // start and limit could potentially have changed by the time the callback resolves
+        var fetch_start = this.start
+        var fetch_limit = this.limit
+        var fetch_url = this.getFetchUrl(fetch_start, fetch_limit)
 
         // if the last XHR is still active, kill it now
         if (!_.isNil(this.active_xhr) && !_.isNil(this.cancelXhr))
@@ -412,7 +418,7 @@
           return
 
         var CancelToken = axios.CancelToken
-        this.active_xhr = axios.get(this.fetch_url, {
+        this.active_xhr = axios.get(fetch_url, {
           cancelToken: new CancelToken(function executor(c) {
             // an executor function receives a cancel function as a parameter
             me.cancelXhr = c
@@ -438,8 +444,8 @@
           this.rows = [].concat(resdata.rows)
 
           // cache the current set of rows
-          var start = this.start
-          var limit = this.limit
+          var start = fetch_start
+          var limit = fetch_limit
           var row_count = this.total_row_count
           var temp_cached_rows = {}
           var idx = 0
