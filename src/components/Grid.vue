@@ -41,7 +41,7 @@
       ref="tbody"
       :style="'margin-left: '+(this.row_handle_width+this.left_of_render_cols_width+1)+'px'"
       @scroll="onScroll"
-      v-resize="resizeBodyDebounced"
+      v-resize="onResize"
     >
       <!-- yardsticks -->
       <div class="absolute top-0 left-0" :style="'z-index: -1; width: 1px; height: '+total_height+'px'"></div>
@@ -399,7 +399,6 @@
       this.tryFetchDebounced = _.debounce(this.tryFetch, 120, { leading: false, trailing: true })
       this.resizeRowHandleThrottled = _.throttle(this.resizeRowHandle, 20)
       this.resizeColumnThrottled = _.throttle(this.resizeColumn, 20)
-      this.resizeBodyDebounced = _.debounce(this.onResize, 10, { leading: false, trailing: true })
       this.scrollVerticalThrottled = _.debounce(this.scrollVertical, 5, { leading: false, trailing: true })
 
       // do our initial fetch
