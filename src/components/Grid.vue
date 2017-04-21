@@ -41,7 +41,7 @@
       ref="tbody"
       :style="'margin-left: '+(this.row_handle_width+this.left_of_render_cols_width+1)+'px'"
       @scroll="onScroll"
-      v-resize="onResize"
+      v-resize="resizeBodyDebounced"
     >
       <!-- yardsticks -->
       <div class="absolute top-0 left-0" :style="'z-index: -1; width: 1px; height: '+total_height+'px'"></div>
@@ -399,7 +399,8 @@
       this.tryFetchDebounced = _.debounce(this.tryFetch, 120, { leading: false, trailing: true })
       this.resizeRowHandleThrottled = _.throttle(this.resizeRowHandle, 20)
       this.resizeColumnThrottled = _.throttle(this.resizeColumn, 20)
-      this.onVerticalScrollThrottled = _.debounce(this.onVerticalScroll, 5, { leading: false, trailing: true })
+      this.resizeBodyDebounced = _.debounce(this.onResize, 10, { leading: false, trailing: true })
+      this.scrollVerticalThrottled = _.debounce(this.scrollVertical, 5, { leading: false, trailing: true })
 
       // do our initial fetch
       this.tryFetch()
@@ -560,14 +561,14 @@
 
         // vertical scrolls
         if (this.scroll_top != new_scroll_top)
-          return this.onVerticalScrollThrottled(new_scroll_top, this.scroll_top)
+          return this.scrollVerticalThrottled(new_scroll_top, this.scroll_top)
 
         // horizontal scrolls
         if (this.scroll_left != new_scroll_left)
-          return this.onHorizontalScroll(new_scroll_left, this.scroll_left)
+          return this.scrollHorizontal(new_scroll_left, this.scroll_left)
       },
 
-      onVerticalScroll(val, old_val) {
+      scrollVertical(val, old_val) {
         this.scroll_top = val
 
         // scrolling down
@@ -585,7 +586,7 @@
         }
       },
 
-      onHorizontalScroll(val, old_val) {
+      scrollHorizontal(val, old_val) {
         this.is_horizontal_scroll_active = true
         this.scroll_left = val
       },
