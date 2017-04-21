@@ -1,7 +1,7 @@
 <template>
   <div class="relative" :style="header_style">
     <!-- row handle -->
-    <div class="overflow-hidden ba absolute bg-near-white z-1 vg-th" :style="row_handle_style" v-if="false">
+    <div class="overflow-hidden ba absolute bg-near-white z-1 vg-th" :style="row_handle_style">
       <div class="h-100 lh-1 light-silver tr vg-th-inner" :style="inner_row_handle_style"></div>
 
       <!-- row handle resize handle -->

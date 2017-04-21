@@ -344,7 +344,7 @@
       this.default_col_widths = {}
 
       // establish our debounced fetch (for vertical scrolling)
-      this.tryFetchDebounced = _.debounce(this.tryFetch, 80)
+      this.tryFetchDebounced = _.debounce(this.tryFetch, 120)
 
       // do our initial fetch
       this.tryFetch()
@@ -513,7 +513,7 @@
           this.start = this.first_visible_row
           this.tryFetchDebounced()
         }
-      }, 10),
+      }, 40),
 
       onHorizontalScroll(val, old_val) {
         this.is_horizontal_scroll_active = true
