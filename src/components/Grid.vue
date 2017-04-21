@@ -33,8 +33,7 @@
         :left-of-render-cols-width="left_of_render_cols_width"
         :scroll-left="scroll_left"
         @determine-cell-auto-width="initializeColumnWidths"
-      >
-      </grid-row>
+      ></grid-row>
     </div>
   </div>
 </template>
@@ -339,8 +338,14 @@
       this.cancelXhr = null
       this.default_col_widths = {}
 
-      // establish our debounced fetch (for vertical scrolling)
-      this.tryFetchDebounced = _.debounce(this.tryFetch, 120)
+      // establish our debounced and throttled methods (we need these functions
+      // to be members of this component since we've run into reference
+      // issues using _.debounce() and _.throttle() directly on the method
+      this.tryFetchDebounced = _.debounce(this.tryFetch, 100)
+      this.resizeRowHandleDebounced = _.debounce(this.resizeRowHandle, 4)
+      this.resizeColumnDebounced = _.debounce(this.resizeColumn, 4)
+
+      this.onVerticalScrollThrottled = _.throttle(this.onVerticalScroll, 200)
 
       // do our initial fetch
       this.tryFetch()
@@ -372,10 +377,10 @@
         this.mouse_y = evt.pageY
 
         if (!_.isNil(this.resize_row_handle))
-          this.resizeRowHandle()
+          this.resizeRowHandleDebounced()
 
         if (!_.isNil(this.resize_col))
-          this.resizeColumn()
+          this.resizeColumnDebounced()
       }
 
       // create document-level event handlers
@@ -496,14 +501,14 @@
 
         // vertical scrolls
         if (this.scroll_top != new_scroll_top)
-          return this.onVerticalScroll(new_scroll_top, this.scroll_top)
+          return this.onVerticalScrollThrottled(new_scroll_top, this.scroll_top)
 
         // horizontal scrolls
         if (this.scroll_left != new_scroll_left)
           return this.onHorizontalScroll(new_scroll_left, this.scroll_left)
       },
 
-      onVerticalScroll: _.throttle(function(val, old_val) {
+      onVerticalScroll(val, old_val) {
         this.scroll_top = val
 
         // scrolling down
@@ -519,22 +524,22 @@
           this.start = this.first_visible_row
           this.tryFetchDebounced()
         }
-      }, 40),
+      },
 
       onHorizontalScroll(val, old_val) {
         this.is_horizontal_scroll_active = true
         this.scroll_left = val
       },
 
-      resizeRowHandle: _.debounce(function(evt) {
+      resizeRowHandle() {
         var old_width = this.resize_row_handle.old_width
         var new_width = old_width + this.resize_delta
         new_width = Math.max(ROW_HANDLE_MIN_WIDTH, new_width)
         new_width = Math.min(ROW_HANDLE_MAX_WIDTH, new_width)
         this.row_handle_width = new_width
-      }, 4),
+      },
 
-      resizeColumn: _.debounce(function(evt) {
+      resizeColumn() {
         var lookup_col = _.find(this.columns, { name: _.get(this.resize_col, 'name') })
         if (!_.isNil(lookup_col))
         {
@@ -553,7 +558,7 @@
 
           this.columns = [].concat(temp_cols)
         }
-      }, 4),
+      },
 
       initializeColumnWidths(row_index, col, width) {
         // once we've initialized our column widths, we're done

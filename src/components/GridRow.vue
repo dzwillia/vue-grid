@@ -15,8 +15,7 @@
         :width="col.pixel_width || 0"
         :style="'height: '+(rowHeight+1)+'px'"
         @determine-auto-width="onCellDetermineWidth"
-      >
-      </grid-cell>
+      ></grid-cell>
     </div>
   </div>
 </template>
