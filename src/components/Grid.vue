@@ -35,8 +35,8 @@
 
     <!-- grid body -->
     <div
-      class="flex-fill relative overflow-auto vg-tbody"
       ref="tbody"
+      class="flex-fill relative overflow-auto vg-tbody"
       :style="'margin-left: '+(row_handle_width+1)+'px'"
       @scroll="onScroll"
       v-resize="onResize"
@@ -91,7 +91,6 @@
 
     return { left, top }
   }
-
 
   export default {
     name: 'vue-grid',
