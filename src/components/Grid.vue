@@ -537,12 +537,21 @@
 
       onResize(resize_el) {
         var container_el = this.$refs['container']
-        this.offset_top = container_el.offsetTop+resize_el.offsetTop
-        this.offset_left = container_el.offsetLeft+resize_el.offsetLeft
+        this.offset_top = this.container_offset_top+resize_el.offsetTop
+        this.offset_left = this.container_offset_left+resize_el.offsetLeft
         this.offset_height = resize_el.offsetHeight
         this.offset_width = resize_el.offsetWidth
         this.client_height = resize_el.clientHeight
         this.client_width = resize_el.clientWidth
+
+        this.$nextTick(() => {
+          // check to see if all of the visible rows have been queried for
+          if (this.last_visible_row >= this.start+this.rendered_row_count)
+          {
+            this.start = this.first_visible_row
+            this.tryFetchDebounced()
+          }
+        })
       },
 
       onScroll() {
