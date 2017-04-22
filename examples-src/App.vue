@@ -1,20 +1,19 @@
 <template>
   <div id="app" class="flex flex-row fixed absolute--fill overflow-hidden">
     <div class="flex-fill br b--black-20">
+      <!--
       <grid
         data-url="https://test.flex.io/api/v1/streams/llj1p7qd77vp/content"
         :live-scroll="live_scroll"
         @metrics-change="onGridMetricsChange"
       ></grid>
-      <!--
+      -->
       <grid
-        data-url="https://www.flex.io/api/v1/streams/n4gz56kdxm7y/content"
-        :custom-headers="{ 'Authorization': 'Bearer kmzdxtzwybzyqrqjbrnm' }"
+        data-url="https://test.flex.io/api/v1/streams/cyq4z52mbkfg/content"
+        :custom-headers="{ 'Authorization': 'Bearer gdrrhdxjmbsdhnwnzrrs' }"
         :live-scroll="live_scroll"
         @metrics-change="onGridMetricsChange"
-        v-if=false
       ></grid>
-      -->
     </div>
     <div class="flex-none overflow-auto" style="min-width: 300px; margin-top: -1px">
       <grid-metrics class="w-100" :metrics="metrics"></grid-metrics>
