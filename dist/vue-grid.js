@@ -1,5 +1,5 @@
 /*!
- * vue-grid v0.1.0 (https://github.com/dzwillia/vue-grid)
+ * vue-grid v0.2.0 (https://github.com/dzwillia/vue-grid)
  * (c) 2017 David Z. Williams
  * Released under the MIT License.
  */
@@ -78,7 +78,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 35);
+/******/ 	return __webpack_require__(__webpack_require__.s = 37);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -399,7 +399,7 @@ module.exports = {
   trim: trim
 };
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(37).Buffer))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(39).Buffer))
 
 /***/ }),
 /* 1 */
@@ -1076,13 +1076,13 @@ module.exports = g;
 
 
 /* styles */
-__webpack_require__(39)
+__webpack_require__(41)
 
 var Component = __webpack_require__(1)(
   /* script */
   __webpack_require__(30),
   /* template */
-  __webpack_require__(47),
+  __webpack_require__(51),
   /* scopeId */
   null,
   /* cssModules */
@@ -1968,19 +1968,39 @@ var _axios = __webpack_require__(12);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _vueResizeDirective = __webpack_require__(52);
+var _vueResizeDirective = __webpack_require__(58);
 
 var _vueResizeDirective2 = _interopRequireDefault(_vueResizeDirective);
 
-var _GridHeader = __webpack_require__(44);
+var _GridHeaderRowHandle = __webpack_require__(48);
+
+var _GridHeaderRowHandle2 = _interopRequireDefault(_GridHeaderRowHandle);
+
+var _GridHeader = __webpack_require__(46);
 
 var _GridHeader2 = _interopRequireDefault(_GridHeader);
 
-var _GridRow = __webpack_require__(46);
+var _GridRowHandle = __webpack_require__(50);
+
+var _GridRowHandle2 = _interopRequireDefault(_GridRowHandle);
+
+var _GridRow = __webpack_require__(49);
 
 var _GridRow2 = _interopRequireDefault(_GridRow);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var getOffset = function getOffset(el) {
+  var top = 0;
+  var left = 0;
+
+  do {
+    if (!isNaN(el.offsetTop)) top += el.offsetTop;
+    if (!isNaN(el.offsetLeft)) left += el.offsetLeft;
+  } while (el = el.offsetParent);
+
+  return { left: left, top: top };
+};
 
 exports.default = {
   name: 'vue-grid',
@@ -2001,7 +2021,9 @@ exports.default = {
     }
   },
   components: {
+    GridHeaderRowHandle: _GridHeaderRowHandle2.default,
     GridHeader: _GridHeader2.default,
+    GridRowHandle: _GridRowHandle2.default,
     GridRow: _GridRow2.default
   },
   directives: {
@@ -2071,6 +2093,9 @@ exports.default = {
       client_height: 0,
       client_width: 0,
 
+      container_offset_top: 0,
+      container_offset_left: 0,
+
       offset_top: 0,
       offset_left: 0,
       offset_height: 0,
@@ -2089,10 +2114,6 @@ exports.default = {
   },
 
   computed: {
-    fetch_url: function fetch_url() {
-      var url = this.dataUrl + '?start=' + this.start + '&limit=' + this.limit;
-      return this.inited ? url : url + '&metadata=true';
-    },
     total_height: function total_height() {
       return this.row_height * this.total_row_count;
     },
@@ -2166,7 +2187,7 @@ exports.default = {
       var left = -1 * this.scroll_left;
       return _.filter(this.columns, function (c) {
         var is_offscreen_left = left + c.pixel_width + 1 < 0;
-        var is_offscreen_right = left > _this.client_width - _this.row_handle_width;
+        var is_offscreen_right = left > _this.client_width;
         left += c.pixel_width + 1;
         return !is_offscreen_left && !is_offscreen_right;
       });
@@ -2230,12 +2251,19 @@ exports.default = {
     this.cancelXhr = null;
     this.default_col_widths = {};
 
-    this.tryFetchDebounced = _.debounce(this.tryFetch, 80);
-
-    this.tryFetch();
+    var offset = getOffset(this.$refs['container']);
+    this.container_offset_top = offset.top;
+    this.container_offset_left = offset.left;
 
     this.client_height = this.$el.clientHeight;
     this.client_width = this.$el.clientWidth;
+
+    this.tryFetchDebounced = _.debounce(this.tryFetch, 120, { leading: false, trailing: true });
+    this.resizeRowHandleThrottled = _.throttle(this.resizeRowHandle, 20);
+    this.resizeColumnThrottled = _.throttle(this.resizeColumn, 20);
+    this.scrollVerticalThrottled = _.debounce(this.scrollVertical, 5, { leading: false, trailing: true });
+
+    this.tryFetch();
 
     this.onDocumentMousedown = function (evt) {
       _this3.mousedown_x = evt.pageX;
@@ -2256,9 +2284,9 @@ exports.default = {
       _this3.mouse_x = evt.pageX;
       _this3.mouse_y = evt.pageY;
 
-      if (!_.isNil(_this3.resize_row_handle)) _this3.resizeRowHandle();
+      if (!_.isNil(_this3.resize_row_handle)) _this3.resizeRowHandleThrottled();
 
-      if (!_.isNil(_this3.resize_col)) _this3.resizeColumn();
+      if (!_.isNil(_this3.resize_col)) _this3.resizeColumnThrottled();
     };
 
     document.addEventListener('mousedown', this.onDocumentMousedown);
@@ -2272,10 +2300,18 @@ exports.default = {
   },
 
   methods: {
+    getFetchUrl: function getFetchUrl(start, limit) {
+      var url = this.dataUrl + '?start=' + start + '&limit=' + limit;
+      return this.inited ? url : url + '&metadata=true';
+    },
     tryFetch: function tryFetch() {
       var _this4 = this;
 
       var me = this;
+
+      var fetch_start = this.start;
+      var fetch_limit = this.limit;
+      var fetch_url = this.getFetchUrl(fetch_start, fetch_limit);
 
       if (!_.isNil(this.active_xhr) && !_.isNil(this.cancelXhr)) {
         this.cancelXhr();
@@ -2287,7 +2323,7 @@ exports.default = {
       if (this.rows_in_cache) return;
 
       var CancelToken = _axios2.default.CancelToken;
-      this.active_xhr = _axios2.default.get(this.fetch_url, {
+      this.active_xhr = _axios2.default.get(fetch_url, {
         cancelToken: new CancelToken(function executor(c) {
           me.cancelXhr = c;
         })
@@ -2306,8 +2342,8 @@ exports.default = {
 
         _this4.rows = [].concat(resdata.rows);
 
-        var start = _this4.start;
-        var limit = _this4.limit;
+        var start = fetch_start;
+        var limit = fetch_limit;
         var row_count = _this4.total_row_count;
         var temp_cached_rows = {};
         var idx = 0;
@@ -2336,25 +2372,32 @@ exports.default = {
       this.updateStyle('noselect', 'html, body { -moz-user-select: none !important; user-select: none !important }');
     },
     onResize: function onResize(resize_el) {
+      var _this5 = this;
+
       var container_el = this.$refs['container'];
-      this.offset_top = container_el.offsetTop + resize_el.offsetTop;
-      this.offset_left = container_el.offsetLeft + resize_el.offsetLeft;
+      this.offset_top = this.container_offset_top + resize_el.offsetTop;
+      this.offset_left = this.container_offset_left + resize_el.offsetLeft;
       this.offset_height = resize_el.offsetHeight;
       this.offset_width = resize_el.offsetWidth;
       this.client_height = resize_el.clientHeight;
       this.client_width = resize_el.clientWidth;
+
+      this.$nextTick(function () {
+        if (_this5.last_visible_row >= _this5.start + _this5.rendered_row_count) {
+          _this5.start = _this5.first_visible_row;
+          _this5.tryFetchDebounced();
+        }
+      });
     },
     onScroll: function onScroll() {
       var new_scroll_top = this.$refs['tbody'].scrollTop;
       var new_scroll_left = this.$refs['tbody'].scrollLeft;
 
-      if (this.scroll_top != new_scroll_top) return this.onVerticalScroll(new_scroll_top, this.scroll_top);
+      if (this.scroll_top != new_scroll_top) return this.scrollVerticalThrottled(new_scroll_top, this.scroll_top);
 
-      if (this.scroll_left != new_scroll_left) return this.onHorizontalScroll(new_scroll_left, this.scroll_left);
+      if (this.scroll_left != new_scroll_left) return this.scrollHorizontal(new_scroll_left, this.scroll_left);
     },
-
-
-    onVerticalScroll: _.throttle(function (val, old_val) {
+    scrollVertical: function scrollVertical(val, old_val) {
       this.scroll_top = val;
 
       if (this.last_visible_row >= this.start + this.rendered_row_count) {
@@ -2366,31 +2409,27 @@ exports.default = {
         this.start = this.first_visible_row;
         this.tryFetchDebounced();
       }
-    }, 10),
-
-    onHorizontalScroll: function onHorizontalScroll(val, old_val) {
+    },
+    scrollHorizontal: function scrollHorizontal(val, old_val) {
       this.is_horizontal_scroll_active = true;
       this.scroll_left = val;
     },
-
-
-    resizeRowHandle: _.debounce(function (evt) {
+    resizeRowHandle: function resizeRowHandle() {
       var old_width = this.resize_row_handle.old_width;
       var new_width = old_width + this.resize_delta;
       new_width = Math.max(_constants.ROW_HANDLE_MIN_WIDTH, new_width);
       new_width = Math.min(_constants.ROW_HANDLE_MAX_WIDTH, new_width);
       this.row_handle_width = new_width;
-    }, 4),
-
-    resizeColumn: _.debounce(function (evt) {
-      var _this5 = this;
+    },
+    resizeColumn: function resizeColumn() {
+      var _this6 = this;
 
       var lookup_col = _.find(this.columns, { name: _.get(this.resize_col, 'name') });
       if (!_.isNil(lookup_col)) {
         var temp_cols = _.map(this.columns, function (col) {
           if (_.get(col, 'name') == _.get(lookup_col, 'name')) {
-            var old_width = _.get(_this5.resize_col, 'pixel_width', _constants.DEFAULT_COLUMN_WIDTH);
-            var pixel_width = old_width + _this5.resize_delta;
+            var old_width = _.get(_this6.resize_col, 'pixel_width', _constants.DEFAULT_COLUMN_WIDTH);
+            var pixel_width = old_width + _this6.resize_delta;
             pixel_width = Math.max(_constants.COLUMN_MIN_WIDTH, pixel_width);
             pixel_width = Math.min(_constants.COLUMN_MAX_WIDTH, pixel_width);
             return _.assign({}, lookup_col, { pixel_width: pixel_width });
@@ -2401,10 +2440,9 @@ exports.default = {
 
         this.columns = [].concat(temp_cols);
       }
-    }, 4),
-
+    },
     initializeColumnWidths: function initializeColumnWidths(row_index, col, width) {
-      var _this6 = this;
+      var _this7 = this;
 
       if (this.col_widths_inited) return;
 
@@ -2418,13 +2456,13 @@ exports.default = {
 
       if (is_header || is_last_row) {
         var temp_cols = _.map(this.columns, function (col) {
-          var pixel_width = _this6.default_col_widths[col.name];
+          var pixel_width = _this7.default_col_widths[col.name];
           return _.assign({}, col, { pixel_width: pixel_width });
         });
 
         this.columns = [].concat(temp_cols);
         this.$nextTick(function () {
-          _this6.col_widths_inited = true;
+          _this7.col_widths_inited = true;
         });
       }
     },
@@ -2496,7 +2534,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _constants = __webpack_require__(2);
 
-var _GridHeaderCell = __webpack_require__(45);
+var _GridHeaderCell = __webpack_require__(47);
 
 var _GridHeaderCell2 = _interopRequireDefault(_GridHeaderCell);
 
@@ -2508,71 +2546,17 @@ exports.default = {
       type: Number,
       default: _constants.DEFAULT_ROW_HEIGHT
     },
-    'row-handle-width': {
-      type: Number,
-      default: _constants.DEFAULT_ROW_HANDLE_WIDTH
-    },
-    'left-of-render-cols-width': {
-      type: Number,
-      default: 0
-    },
     'columns': {
       type: Array,
       required: true
-    },
-    'scroll-left': {
-      type: Number,
-      default: 0
     }
   },
   components: {
     GridHeaderCell: _GridHeaderCell2.default
   },
-  watch: {
-    rowHandleWidth: function rowHandleWidth(val, old_val) {
-      this.row_handle_width = val;
-    },
-    leftOfRenderColsWidth: function leftOfRenderColsWidth(val, old_val) {
-      this.left_of_render_cols_width = val;
-    }
-  },
-  data: function data() {
-    return {
-      row_handle_width: this.rowHandleWidth,
-      left_of_render_cols_width: this.leftOfRenderColsWidth,
-      column_resize_handle_width: _constants.COLUMN_RESIZE_HANDLE_WIDTH
-    };
-  },
-
-  computed: {
-    header_style: function header_style() {
-      return {
-        'left': this.scrollLeft * -1 + 'px'
-      };
-    },
-    cell_container_style: function cell_container_style() {
-      return {
-        'padding-left': this.row_handle_width + this.left_of_render_cols_width + 'px'
-      };
-    },
-    row_handle_style: function row_handle_style() {
-      return {
-        'left': this.scrollLeft + 'px',
-        'height': this.rowHeight + 1 + 'px'
-      };
-    },
-    inner_row_handle_style: function inner_row_handle_style() {
-      return {
-        'width': this.row_handle_width + 'px'
-      };
-    }
-  },
   methods: {
     getColumnName: function getColumnName(col) {
       return _.get(col, 'name', '');
-    },
-    onRowHandleResizerMousedown: function onRowHandleResizerMousedown(col) {
-      this.$emit('start-row-handle-resize', col);
     },
     onColumnResizerMousedown: function onColumnResizerMousedown(col) {
       this.$emit('start-column-resize', col);
@@ -2642,7 +2626,56 @@ Object.defineProperty(exports, "__esModule", {
 
 var _constants = __webpack_require__(2);
 
-var _GridCell = __webpack_require__(43);
+exports.default = {
+  props: {
+    'row-height': {
+      type: Number,
+      default: _constants.DEFAULT_ROW_HEIGHT
+    },
+    'row-handle-width': {
+      type: Number,
+      default: _constants.DEFAULT_ROW_HEIGHT
+    }
+  },
+  data: function data() {
+    return {
+      column_resize_handle_width: _constants.COLUMN_RESIZE_HANDLE_WIDTH
+    };
+  },
+
+  computed: {
+    row_handle_style: function row_handle_style() {
+      return {
+        'height': this.rowHeight + 1 + 'px'
+      };
+    },
+    inner_row_handle_style: function inner_row_handle_style() {
+      return {
+        'width': this.rowHandleWidth + 'px'
+      };
+    }
+  },
+  methods: {
+    onRowHandleResizerMousedown: function onRowHandleResizerMousedown() {
+      this.$emit('start-row-handle-resize');
+    }
+  }
+};
+
+/***/ }),
+/* 35 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _constants = __webpack_require__(2);
+
+var _GridCell = __webpack_require__(45);
 
 var _GridCell2 = _interopRequireDefault(_GridCell);
 
@@ -2662,61 +2695,18 @@ exports.default = {
       type: Number,
       default: _constants.DEFAULT_ROW_HEIGHT
     },
-    'row-handle-width': {
-      type: Number,
-      default: _constants.DEFAULT_ROW_HANDLE_WIDTH
-    },
-    'left-of-render-cols-width': {
-      type: Number,
-      default: 0
-    },
     'columns': {
       type: Array,
       required: true
-    },
-    'scroll-left': {
-      type: Number,
-      default: 0
     }
   },
   components: {
     GridCell: _GridCell2.default
   },
-  watch: {
-    rowHandleWidth: function rowHandleWidth(val, old_val) {
-      this.row_handle_width = val;
-    },
-    leftOfRenderColsWidth: function leftOfRenderColsWidth(val, old_val) {
-      this.left_of_render_cols_width = val;
-    }
-  },
-  data: function data() {
-    return {
-      row_handle_width: this.rowHandleWidth,
-      left_of_render_cols_width: this.leftOfRenderColsWidth
-    };
-  },
-
   computed: {
     row_style: function row_style() {
       return {
         'top': this.rowIndex * this.rowHeight + 'px'
-      };
-    },
-    cell_container_style: function cell_container_style() {
-      return {
-        'padding-left': this.row_handle_width + this.left_of_render_cols_width + 'px'
-      };
-    },
-    row_handle_style: function row_handle_style() {
-      return {
-        'left': this.scrollLeft + 'px',
-        'height': this.rowHeight + 1 + 'px'
-      };
-    },
-    inner_row_handle_style: function inner_row_handle_style() {
-      return {
-        'width': this.row_handle_width + 'px'
       };
     }
   },
@@ -2731,7 +2721,50 @@ exports.default = {
 };
 
 /***/ }),
-/* 35 */
+/* 36 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _constants = __webpack_require__(2);
+
+exports.default = {
+  props: {
+    'row-index': {
+      type: Number,
+      required: true
+    },
+    'row-height': {
+      type: Number,
+      default: _constants.DEFAULT_ROW_HEIGHT
+    },
+    'row-handle-width': {
+      type: Number,
+      default: _constants.DEFAULT_ROW_HEIGHT
+    }
+  },
+  computed: {
+    row_style: function row_style() {
+      return {
+        'top': this.rowIndex * this.rowHeight + 'px',
+        'height': this.rowHeight + 1 + 'px'
+      };
+    },
+    inner_row_handle_style: function inner_row_handle_style() {
+      return {
+        'width': this.rowHandleWidth + 'px'
+      };
+    }
+  }
+};
+
+/***/ }),
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2752,7 +2785,7 @@ exports.default = _Grid2.default;
 exports.Grid = _Grid2.default;
 
 /***/ }),
-/* 36 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2873,7 +2906,7 @@ function fromByteArray (uint8) {
 
 
 /***/ }),
-/* 37 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2887,9 +2920,9 @@ function fromByteArray (uint8) {
 
 
 
-var base64 = __webpack_require__(36)
-var ieee754 = __webpack_require__(40)
-var isArray = __webpack_require__(41)
+var base64 = __webpack_require__(38)
+var ieee754 = __webpack_require__(42)
+var isArray = __webpack_require__(43)
 
 exports.Buffer = Buffer
 exports.SlowBuffer = SlowBuffer
@@ -4670,7 +4703,7 @@ function isnan (val) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
 
 /***/ }),
-/* 38 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -4907,13 +4940,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
 
 /***/ }),
-/* 39 */
+/* 41 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 40 */
+/* 42 */
 /***/ (function(module, exports) {
 
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
@@ -5003,7 +5036,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 
 
 /***/ }),
-/* 41 */
+/* 43 */
 /***/ (function(module, exports) {
 
 var toString = {}.toString;
@@ -5014,7 +5047,7 @@ module.exports = Array.isArray || function (arr) {
 
 
 /***/ }),
-/* 42 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/**
@@ -5398,14 +5431,14 @@ module.exports = debounce;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
 
 /***/ }),
-/* 43 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var Component = __webpack_require__(1)(
   /* script */
   __webpack_require__(31),
   /* template */
-  __webpack_require__(50),
+  __webpack_require__(54),
   /* scopeId */
   null,
   /* cssModules */
@@ -5432,14 +5465,14 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 44 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var Component = __webpack_require__(1)(
   /* script */
   __webpack_require__(32),
   /* template */
-  __webpack_require__(49),
+  __webpack_require__(53),
   /* scopeId */
   null,
   /* cssModules */
@@ -5466,14 +5499,14 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 45 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var Component = __webpack_require__(1)(
   /* script */
   __webpack_require__(33),
   /* template */
-  __webpack_require__(48),
+  __webpack_require__(52),
   /* scopeId */
   null,
   /* cssModules */
@@ -5500,14 +5533,48 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 46 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var Component = __webpack_require__(1)(
   /* script */
   __webpack_require__(34),
   /* template */
-  __webpack_require__(51),
+  __webpack_require__(56),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+Component.options.__file = "C:\\src\\vue-grid\\src\\components\\GridHeaderRowHandle.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] GridHeaderRowHandle.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-ab6d7436", Component.options)
+  } else {
+    hotAPI.reload("data-v-ab6d7436", Component.options)
+  }
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 49 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(35),
+  /* template */
+  __webpack_require__(57),
   /* scopeId */
   null,
   /* cssModules */
@@ -5534,28 +5601,81 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 47 */
+/* 50 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(36),
+  /* template */
+  __webpack_require__(55),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+Component.options.__file = "C:\\src\\vue-grid\\src\\components\\GridRowHandle.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] GridRowHandle.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-5e0a151c", Component.options)
+  } else {
+    hotAPI.reload("data-v-5e0a151c", Component.options)
+  }
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
     ref: "container",
     staticClass: "flex flex-column relative bg-white h-100 vg-container"
-  }, [_c('div', {
-    staticClass: "flex-none overflow-hidden bg-near-white vg-thead"
+  }, [(_vm.inited) ? _c('grid-header-row-handle', {
+    staticClass: "z-2 ba bg-near-white vg-td",
+    attrs: {
+      "row-height": _vm.row_height,
+      "row-handle-width": _vm.row_handle_width
+    },
+    on: {
+      "start-row-handle-resize": _vm.onStartRowHandleResize
+    }
+  }) : _vm._e(), _vm._v(" "), _c('div', {
+    staticClass: "flex-none overflow-hidden bg-near-white vg-thead",
+    style: ('margin-left: ' + (_vm.row_handle_width + _vm.left_of_render_cols_width - _vm.scroll_left + 1) + 'px')
   }, [_c('grid-header', {
     attrs: {
       "row-handle-width": _vm.row_handle_width,
-      "columns": _vm.render_cols,
-      "left-of-render-cols-width": _vm.left_of_render_cols_width,
-      "scroll-left": _vm.scroll_left
+      "columns": _vm.render_cols
     },
     on: {
-      "start-row-handle-resize": _vm.onStartRowHandleResize,
       "start-column-resize": _vm.onStartColumnResize,
       "determine-cell-auto-width": _vm.initializeColumnWidths
     }
   })], 1), _vm._v(" "), _c('div', {
+    staticClass: "fixed z-1",
+    style: ('top: ' + (_vm.container_offset_top + _vm.row_height - _vm.scroll_top) + 'px')
+  }, _vm._l((_vm.render_rows), function(row, index) {
+    return _c('grid-row-handle', {
+      staticClass: "ba bg-near-white vg-td",
+      attrs: {
+        "row-index": _vm.start + index,
+        "row-height": _vm.row_height,
+        "row-handle-width": _vm.row_handle_width
+      }
+    })
+  })), _vm._v(" "), _c('div', {
     directives: [{
       name: "resize",
       rawName: "v-resize",
@@ -5564,6 +5684,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }],
     ref: "tbody",
     staticClass: "flex-fill relative overflow-auto vg-tbody",
+    style: ('margin-left: ' + (_vm.row_handle_width + 1) + 'px'),
     on: {
       "scroll": _vm.onScroll
     }
@@ -5575,20 +5696,18 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     style: ('z-index: -1; height: 1px; width: ' + _vm.total_width + 'px')
   }), _vm._v(" "), _vm._l((_vm.render_rows), function(row, index) {
     return _c('grid-row', {
+      style: ('padding-left: ' + _vm.left_of_render_cols_width + 'px'),
       attrs: {
         "row": row,
         "row-index": _vm.start + index,
         "row-height": _vm.row_height,
-        "row-handle-width": _vm.row_handle_width,
-        "columns": _vm.render_cols,
-        "left-of-render-cols-width": _vm.left_of_render_cols_width,
-        "scroll-left": _vm.scroll_left
+        "columns": _vm.render_cols
       },
       on: {
         "determine-cell-auto-width": _vm.initializeColumnWidths
       }
     })
-  })], 2)])
+  })], 2)], 1)
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
@@ -5599,7 +5718,7 @@ if (false) {
 }
 
 /***/ }),
-/* 48 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -5625,31 +5744,15 @@ if (false) {
 }
 
 /***/ }),
-/* 49 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
-    staticClass: "relative",
-    style: (_vm.header_style)
-  }, [(false) ? _c('div', {
-    staticClass: "overflow-hidden ba absolute bg-near-white z-1 vg-th",
-    style: (_vm.row_handle_style)
-  }, [_c('div', {
-    staticClass: "h-100 lh-1 light-silver tr vg-th-inner",
-    style: (_vm.inner_row_handle_style)
-  }), _vm._v(" "), _c('div', {
-    staticClass: "absolute top-0 bottom-0 right-0 cursor-resize-ew",
-    style: ('width: ' + _vm.column_resize_handle_width + 'px'),
-    on: {
-      "mousedown": _vm.onRowHandleResizerMousedown
-    }
-  })]) : _vm._e(), _vm._v(" "), _c('div', {
-    staticClass: "nowrap",
-    style: (_vm.cell_container_style)
+    staticClass: "relative nowrap"
   }, _vm._l((_vm.columns), function(col, index) {
     return _c('grid-header-cell', {
-      staticClass: "dib v-top overflow-hidden ba bg-near-white tc relative vg-th",
+      staticClass: "dib v-top overflow-hidden ba bg-near-white relative tc vg-th",
       style: ('height: ' + (_vm.rowHeight + 1) + 'px'),
       attrs: {
         "col": col,
@@ -5661,7 +5764,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         "determine-auto-width": _vm.onHeaderCellDetermineWidth
       }
     })
-  }))])
+  }))
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
@@ -5672,7 +5775,7 @@ if (false) {
 }
 
 /***/ }),
-/* 50 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -5692,22 +5795,61 @@ if (false) {
 }
 
 /***/ }),
-/* 51 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
-    staticClass: "absolute",
+    staticClass: "absolute nowrap",
     style: (_vm.row_style)
-  }, [(false) ? _c('div', {
-    staticClass: "overflow-hidden ba absolute z-1 bg-near-white vg-td",
-    style: (_vm.row_handle_style)
   }, [_c('div', {
     staticClass: "h-100 lh-1 light-silver tr vg-td-inner",
     style: (_vm.inner_row_handle_style)
-  }, [_vm._v(_vm._s(_vm.rowIndex + 1))])]) : _vm._e(), _vm._v(" "), _c('div', {
-    staticClass: "nowrap",
-    style: (_vm.cell_container_style)
+  }, [_vm._v(_vm._s(_vm.rowIndex + 1))])])
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-5e0a151c", module.exports)
+  }
+}
+
+/***/ }),
+/* 56 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "overflow-hidden ba absolute bg-near-white z-1 vg-th",
+    style: (_vm.row_handle_style)
+  }, [_c('div', {
+    staticClass: "h-100 lh-1 light-silver tr vg-th-inner",
+    style: (_vm.inner_row_handle_style)
+  }), _vm._v(" "), _c('div', {
+    staticClass: "absolute top-0 bottom-0 right-0 cursor-resize-ew",
+    style: ('width: ' + _vm.column_resize_handle_width + 'px'),
+    on: {
+      "mousedown": _vm.onRowHandleResizerMousedown
+    }
+  })])
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-ab6d7436", module.exports)
+  }
+}
+
+/***/ }),
+/* 57 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "absolute nowrap",
+    style: (_vm.row_style)
   }, _vm._l((_vm.columns), function(col, index) {
     return _c('grid-cell', {
       staticClass: "dib v-top overflow-hidden ba vg-td",
@@ -5721,7 +5863,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         "determine-auto-width": _vm.onCellDetermineWidth
       }
     })
-  }))])
+  }))
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
@@ -5732,10 +5874,10 @@ if (false) {
 }
 
 /***/ }),
-/* 52 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
-!function(t,n){ true?module.exports=n(__webpack_require__(38),__webpack_require__(42)):"function"==typeof define&&define.amd?define(["css-element-queries/src/ResizeSensor.js","lodash.debounce"],n):"object"==typeof exports?exports.Vueresize=n(require("css-element-queries/src/ResizeSensor.js"),require("lodash.debounce")):t.Vueresize=n(t.ResizeSensor,t._)}(this,function(t,n){return function(t){function n(r){if(e[r])return e[r].exports;var o=e[r]={exports:{},id:r,loaded:!1};return t[r].call(o.exports,o,o.exports,n),o.loaded=!0,o.exports}var e={};return n.m=t,n.c=e,n.p="/",n(0)}([function(t,n,e){var r,o,u;!function(i,c){o=[t,n,e(9),e(36),e(37)],r=c,u="function"==typeof r?r.apply(n,o):r,!(void 0!==u&&(t.exports=u))}(this,function(t,n,e,r,o){"use strict";function u(t){return t&&t.__esModule?t:{default:t}}function i(t){if(!t)return l;var n=(0,c.default)(t);return n.length?Number(n[0]):l}Object.defineProperty(n,"__esModule",{value:!0});var c=u(e),f=u(r),s=u(o),a=s.default.debounce,p=void 0===a?s.default:a,l=150;n.default={inserted:function(t,n){var e=n.value,r=n.arg,o=n.modifiers,u=function(){return e(t)};switch(r){case"debounce":u=p(function(){return e(t)},i(o));break;case"throttle":var c=i(o);u=p(function(){return e(t)},c,{leading:!0,trailing:!0,maxWait:c})}(0,f.default)(t,u)}},t.exports=n.default})},function(t,n){var e=t.exports={version:"2.4.0"};"number"==typeof __e&&(__e=e)},function(t,n,e){t.exports=!e(3)(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},function(t,n){t.exports=function(t){try{return!!t()}catch(t){return!0}}},function(t,n){var e=t.exports="undefined"!=typeof window&&window.Math==Math?window:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")();"number"==typeof __g&&(__g=e)},function(t,n){t.exports=function(t){return"object"==typeof t?null!==t:"function"==typeof t}},function(t,n){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on  "+t);return t}},function(t,n){var e=Math.ceil,r=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?r:e)(t)}},function(t,n,e){var r=e(22),o=e(6);t.exports=function(t){return r(o(t))}},function(t,n,e){t.exports={default:e(10),__esModule:!0}},function(t,n,e){e(35),t.exports=e(1).Object.keys},function(t,n){t.exports=function(t){if("function"!=typeof t)throw TypeError(t+" is not a function!");return t}},function(t,n,e){var r=e(5);t.exports=function(t){if(!r(t))throw TypeError(t+" is not an object!");return t}},function(t,n,e){var r=e(8),o=e(31),u=e(30);t.exports=function(t){return function(n,e,i){var c,f=r(n),s=o(f.length),a=u(i,s);if(t&&e!=e){for(;s>a;)if(c=f[a++],c!=c)return!0}else for(;s>a;a++)if((t||a in f)&&f[a]===e)return t||a||0;return!t&&-1}}},function(t,n){var e={}.toString;t.exports=function(t){return e.call(t).slice(8,-1)}},function(t,n,e){var r=e(11);t.exports=function(t,n,e){if(r(t),void 0===n)return t;switch(e){case 1:return function(e){return t.call(n,e)};case 2:return function(e,r){return t.call(n,e,r)};case 3:return function(e,r,o){return t.call(n,e,r,o)}}return function(){return t.apply(n,arguments)}}},function(t,n,e){var r=e(5),o=e(4).document,u=r(o)&&r(o.createElement);t.exports=function(t){return u?o.createElement(t):{}}},function(t,n){t.exports="constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf".split(",")},function(t,n,e){var r=e(4),o=e(1),u=e(15),i=e(20),c="prototype",f=function(t,n,e){var s,a,p,l=t&f.F,v=t&f.G,d=t&f.S,x=t&f.P,y=t&f.B,h=t&f.W,b=v?o:o[n]||(o[n]={}),m=b[c],j=v?r:d?r[n]:(r[n]||{})[c];v&&(e=n);for(s in e)a=!l&&j&&void 0!==j[s],a&&s in b||(p=a?j[s]:e[s],b[s]=v&&"function"!=typeof j[s]?e[s]:y&&a?u(p,r):h&&j[s]==p?function(t){var n=function(n,e,r){if(this instanceof t){switch(arguments.length){case 0:return new t;case 1:return new t(n);case 2:return new t(n,e)}return new t(n,e,r)}return t.apply(this,arguments)};return n[c]=t[c],n}(p):x&&"function"==typeof p?u(Function.call,p):p,x&&((b.virtual||(b.virtual={}))[s]=p,t&f.R&&m&&!m[s]&&i(m,s,p)))};f.F=1,f.G=2,f.S=4,f.P=8,f.B=16,f.W=32,f.U=64,f.R=128,t.exports=f},function(t,n){var e={}.hasOwnProperty;t.exports=function(t,n){return e.call(t,n)}},function(t,n,e){var r=e(23),o=e(27);t.exports=e(2)?function(t,n,e){return r.f(t,n,o(1,e))}:function(t,n,e){return t[n]=e,t}},function(t,n,e){t.exports=!e(2)&&!e(3)(function(){return 7!=Object.defineProperty(e(16)("div"),"a",{get:function(){return 7}}).a})},function(t,n,e){var r=e(14);t.exports=Object("z").propertyIsEnumerable(0)?Object:function(t){return"String"==r(t)?t.split(""):Object(t)}},function(t,n,e){var r=e(12),o=e(21),u=e(33),i=Object.defineProperty;n.f=e(2)?Object.defineProperty:function(t,n,e){if(r(t),n=u(n,!0),r(e),o)try{return i(t,n,e)}catch(t){}if("get"in e||"set"in e)throw TypeError("Accessors not supported!");return"value"in e&&(t[n]=e.value),t}},function(t,n,e){var r=e(19),o=e(8),u=e(13)(!1),i=e(28)("IE_PROTO");t.exports=function(t,n){var e,c=o(t),f=0,s=[];for(e in c)e!=i&&r(c,e)&&s.push(e);for(;n.length>f;)r(c,e=n[f++])&&(~u(s,e)||s.push(e));return s}},function(t,n,e){var r=e(24),o=e(17);t.exports=Object.keys||function(t){return r(t,o)}},function(t,n,e){var r=e(18),o=e(1),u=e(3);t.exports=function(t,n){var e=(o.Object||{})[t]||Object[t],i={};i[t]=n(e),r(r.S+r.F*u(function(){e(1)}),"Object",i)}},function(t,n){t.exports=function(t,n){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:n}}},function(t,n,e){var r=e(29)("keys"),o=e(34);t.exports=function(t){return r[t]||(r[t]=o(t))}},function(t,n,e){var r=e(4),o="__core-js_shared__",u=r[o]||(r[o]={});t.exports=function(t){return u[t]||(u[t]={})}},function(t,n,e){var r=e(7),o=Math.max,u=Math.min;t.exports=function(t,n){return t=r(t),t<0?o(t+n,0):u(t,n)}},function(t,n,e){var r=e(7),o=Math.min;t.exports=function(t){return t>0?o(r(t),9007199254740991):0}},function(t,n,e){var r=e(6);t.exports=function(t){return Object(r(t))}},function(t,n,e){var r=e(5);t.exports=function(t,n){if(!r(t))return t;var e,o;if(n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;if("function"==typeof(e=t.valueOf)&&!r(o=e.call(t)))return o;if(!n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;throw TypeError("Can't convert object to primitive value")}},function(t,n){var e=0,r=Math.random();t.exports=function(t){return"Symbol(".concat(void 0===t?"":t,")_",(++e+r).toString(36))}},function(t,n,e){var r=e(32),o=e(25);e(26)("keys",function(){return function(t){return o(r(t))}})},function(n,e){n.exports=t},function(t,e){t.exports=n}])});
+!function(t,n){ true?module.exports=n(__webpack_require__(40),__webpack_require__(44)):"function"==typeof define&&define.amd?define(["css-element-queries/src/ResizeSensor.js","lodash.debounce"],n):"object"==typeof exports?exports.Vueresize=n(require("css-element-queries/src/ResizeSensor.js"),require("lodash.debounce")):t.Vueresize=n(t.ResizeSensor,t._)}(this,function(t,n){return function(t){function n(r){if(e[r])return e[r].exports;var o=e[r]={exports:{},id:r,loaded:!1};return t[r].call(o.exports,o,o.exports,n),o.loaded=!0,o.exports}var e={};return n.m=t,n.c=e,n.p="/",n(0)}([function(t,n,e){var r,o,u;!function(i,c){o=[t,n,e(9),e(36),e(37)],r=c,u="function"==typeof r?r.apply(n,o):r,!(void 0!==u&&(t.exports=u))}(this,function(t,n,e,r,o){"use strict";function u(t){return t&&t.__esModule?t:{default:t}}function i(t){if(!t)return l;var n=(0,c.default)(t);return n.length?Number(n[0]):l}Object.defineProperty(n,"__esModule",{value:!0});var c=u(e),f=u(r),s=u(o),a=s.default.debounce,p=void 0===a?s.default:a,l=150;n.default={inserted:function(t,n){var e=n.value,r=n.arg,o=n.modifiers,u=function(){return e(t)};switch(r){case"debounce":u=p(function(){return e(t)},i(o));break;case"throttle":var c=i(o);u=p(function(){return e(t)},c,{leading:!0,trailing:!0,maxWait:c})}(0,f.default)(t,u)}},t.exports=n.default})},function(t,n){var e=t.exports={version:"2.4.0"};"number"==typeof __e&&(__e=e)},function(t,n,e){t.exports=!e(3)(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},function(t,n){t.exports=function(t){try{return!!t()}catch(t){return!0}}},function(t,n){var e=t.exports="undefined"!=typeof window&&window.Math==Math?window:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")();"number"==typeof __g&&(__g=e)},function(t,n){t.exports=function(t){return"object"==typeof t?null!==t:"function"==typeof t}},function(t,n){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on  "+t);return t}},function(t,n){var e=Math.ceil,r=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?r:e)(t)}},function(t,n,e){var r=e(22),o=e(6);t.exports=function(t){return r(o(t))}},function(t,n,e){t.exports={default:e(10),__esModule:!0}},function(t,n,e){e(35),t.exports=e(1).Object.keys},function(t,n){t.exports=function(t){if("function"!=typeof t)throw TypeError(t+" is not a function!");return t}},function(t,n,e){var r=e(5);t.exports=function(t){if(!r(t))throw TypeError(t+" is not an object!");return t}},function(t,n,e){var r=e(8),o=e(31),u=e(30);t.exports=function(t){return function(n,e,i){var c,f=r(n),s=o(f.length),a=u(i,s);if(t&&e!=e){for(;s>a;)if(c=f[a++],c!=c)return!0}else for(;s>a;a++)if((t||a in f)&&f[a]===e)return t||a||0;return!t&&-1}}},function(t,n){var e={}.toString;t.exports=function(t){return e.call(t).slice(8,-1)}},function(t,n,e){var r=e(11);t.exports=function(t,n,e){if(r(t),void 0===n)return t;switch(e){case 1:return function(e){return t.call(n,e)};case 2:return function(e,r){return t.call(n,e,r)};case 3:return function(e,r,o){return t.call(n,e,r,o)}}return function(){return t.apply(n,arguments)}}},function(t,n,e){var r=e(5),o=e(4).document,u=r(o)&&r(o.createElement);t.exports=function(t){return u?o.createElement(t):{}}},function(t,n){t.exports="constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf".split(",")},function(t,n,e){var r=e(4),o=e(1),u=e(15),i=e(20),c="prototype",f=function(t,n,e){var s,a,p,l=t&f.F,v=t&f.G,d=t&f.S,x=t&f.P,y=t&f.B,h=t&f.W,b=v?o:o[n]||(o[n]={}),m=b[c],j=v?r:d?r[n]:(r[n]||{})[c];v&&(e=n);for(s in e)a=!l&&j&&void 0!==j[s],a&&s in b||(p=a?j[s]:e[s],b[s]=v&&"function"!=typeof j[s]?e[s]:y&&a?u(p,r):h&&j[s]==p?function(t){var n=function(n,e,r){if(this instanceof t){switch(arguments.length){case 0:return new t;case 1:return new t(n);case 2:return new t(n,e)}return new t(n,e,r)}return t.apply(this,arguments)};return n[c]=t[c],n}(p):x&&"function"==typeof p?u(Function.call,p):p,x&&((b.virtual||(b.virtual={}))[s]=p,t&f.R&&m&&!m[s]&&i(m,s,p)))};f.F=1,f.G=2,f.S=4,f.P=8,f.B=16,f.W=32,f.U=64,f.R=128,t.exports=f},function(t,n){var e={}.hasOwnProperty;t.exports=function(t,n){return e.call(t,n)}},function(t,n,e){var r=e(23),o=e(27);t.exports=e(2)?function(t,n,e){return r.f(t,n,o(1,e))}:function(t,n,e){return t[n]=e,t}},function(t,n,e){t.exports=!e(2)&&!e(3)(function(){return 7!=Object.defineProperty(e(16)("div"),"a",{get:function(){return 7}}).a})},function(t,n,e){var r=e(14);t.exports=Object("z").propertyIsEnumerable(0)?Object:function(t){return"String"==r(t)?t.split(""):Object(t)}},function(t,n,e){var r=e(12),o=e(21),u=e(33),i=Object.defineProperty;n.f=e(2)?Object.defineProperty:function(t,n,e){if(r(t),n=u(n,!0),r(e),o)try{return i(t,n,e)}catch(t){}if("get"in e||"set"in e)throw TypeError("Accessors not supported!");return"value"in e&&(t[n]=e.value),t}},function(t,n,e){var r=e(19),o=e(8),u=e(13)(!1),i=e(28)("IE_PROTO");t.exports=function(t,n){var e,c=o(t),f=0,s=[];for(e in c)e!=i&&r(c,e)&&s.push(e);for(;n.length>f;)r(c,e=n[f++])&&(~u(s,e)||s.push(e));return s}},function(t,n,e){var r=e(24),o=e(17);t.exports=Object.keys||function(t){return r(t,o)}},function(t,n,e){var r=e(18),o=e(1),u=e(3);t.exports=function(t,n){var e=(o.Object||{})[t]||Object[t],i={};i[t]=n(e),r(r.S+r.F*u(function(){e(1)}),"Object",i)}},function(t,n){t.exports=function(t,n){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:n}}},function(t,n,e){var r=e(29)("keys"),o=e(34);t.exports=function(t){return r[t]||(r[t]=o(t))}},function(t,n,e){var r=e(4),o="__core-js_shared__",u=r[o]||(r[o]={});t.exports=function(t){return u[t]||(u[t]={})}},function(t,n,e){var r=e(7),o=Math.max,u=Math.min;t.exports=function(t,n){return t=r(t),t<0?o(t+n,0):u(t,n)}},function(t,n,e){var r=e(7),o=Math.min;t.exports=function(t){return t>0?o(r(t),9007199254740991):0}},function(t,n,e){var r=e(6);t.exports=function(t){return Object(r(t))}},function(t,n,e){var r=e(5);t.exports=function(t,n){if(!r(t))return t;var e,o;if(n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;if("function"==typeof(e=t.valueOf)&&!r(o=e.call(t)))return o;if(!n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;throw TypeError("Can't convert object to primitive value")}},function(t,n){var e=0,r=Math.random();t.exports=function(t){return"Symbol(".concat(void 0===t?"":t,")_",(++e+r).toString(36))}},function(t,n,e){var r=e(32),o=e(25);e(26)("keys",function(){return function(t){return o(r(t))}})},function(n,e){n.exports=t},function(t,e){t.exports=n}])});
 //# sourceMappingURL=Vueresize.js.map
 
 /***/ })
