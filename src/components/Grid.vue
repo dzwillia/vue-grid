@@ -99,6 +99,10 @@
         type: String,
         default: ''
       },
+      'custom-headers': {
+        type: Object,
+        default: () => { return {} }
+      },
       /* show empty cells on vertical scroll */
       'live-scroll': {
         type: Boolean,
@@ -470,6 +474,7 @@
 
         var CancelToken = axios.CancelToken
         this.active_xhr = axios.get(fetch_url, {
+          headers: this.customHeaders,
           cancelToken: new CancelToken(function executor(c) {
             // an executor function receives a cancel function as a parameter
             me.cancelXhr = c
