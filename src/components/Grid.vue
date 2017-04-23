@@ -2,7 +2,7 @@
   <div class="flex flex-column relative bg-white h-100 vg-container" ref="container">
 
     <div class="flex flex-column justify-center h-100" v-if="!inited">
-      <spinner size="big" message="Loading..." :font-size="20"></spinner>
+      <spinner size="large" message="Loading..."></spinner>
     </div>
 
     <div class="flex flex-column relative bg-white h-100" v-else>
