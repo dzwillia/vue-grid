@@ -3961,6 +3961,10 @@ vue-resize-directive@^1.0.0:
     css-element-queries "^0.4.0"
     lodash.debounce "^4.0.8"
 
+vue-simple-spinner@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/vue-simple-spinner/-/vue-simple-spinner-1.0.1.tgz#6b2283b712ad6fa7ce8a109b1a64c468bee5a351"
+
 vue-style-loader@^2.0.0:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/vue-style-loader/-/vue-style-loader-2.0.5.tgz#f0efac992febe3f12e493e334edb13cd235a3d22"

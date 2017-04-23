@@ -1,60 +1,66 @@
 <template>
   <div class="flex flex-column relative bg-white h-100 vg-container" ref="container">
 
-    <!-- grid header row handle -->
-    <grid-header-row-handle class="z-2 ba bg-near-white vg-td"
-      :row-height="row_height"
-      :row-handle-width="row_handle_width"
-      @start-row-handle-resize="onStartRowHandleResize"
-      v-if="inited"
-    ></grid-header-row-handle>
-
-    <!-- grid header -->
-    <div
-      class="flex-none overflow-hidden bg-near-white vg-thead"
-      :style="'margin-left: '+(row_handle_width+left_of_render_cols_width-scroll_left+1)+'px'"
-    >
-      <grid-header
-        :row-handle-width="row_handle_width"
-        :columns="render_cols"
-        @start-column-resize="onStartColumnResize"
-        @determine-cell-auto-width="initializeColumnWidths"
-      ></grid-header>
+    <div class="flex flex-column justify-center h-100" v-if="!inited">
+      <spinner size="big" message="Loading..." :font-size="20"></spinner>
     </div>
 
-    <!-- row handles -->
-    <div class="fixed z-1" :style="'top: '+(container_offset_top+row_height-scroll_top)+'px'">
-      <grid-row-handle
-        v-for="(row, index) in render_rows"
-        class="ba bg-near-white vg-td"
-        :row-index="start+index"
+    <div class="flex flex-column relative bg-white h-100" v-else>
+      <!-- grid header row handle -->
+      <grid-header-row-handle class="z-2 ba bg-near-white vg-td"
         :row-height="row_height"
         :row-handle-width="row_handle_width"
-      ></grid-row-handle>
-    </div>
+        @start-row-handle-resize="onStartRowHandleResize"
+        v-if="inited"
+      ></grid-header-row-handle>
 
-    <!-- grid body -->
-    <div
-      ref="tbody"
-      class="flex-fill relative overflow-auto vg-tbody"
-      :style="'margin-left: '+(row_handle_width+1)+'px'"
-      @scroll="onScroll"
-      v-resize="onResize"
-    >
-      <!-- yardsticks -->
-      <div class="absolute top-0 left-0" :style="'z-index: -1; width: 1px; height: '+total_height+'px'"></div>
-      <div class="absolute top-0 left-0" :style="'z-index: -1; height: 1px; width: '+total_width+'px'"></div>
+      <!-- grid header -->
+      <div
+        class="flex-none overflow-hidden bg-near-white vg-thead"
+        :style="'margin-left: '+(row_handle_width+left_of_render_cols_width-scroll_left+1)+'px'"
+      >
+        <grid-header
+          :row-handle-width="row_handle_width"
+          :columns="render_cols"
+          @start-column-resize="onStartColumnResize"
+          @determine-cell-auto-width="initializeColumnWidths"
+        ></grid-header>
+      </div>
 
-      <!-- rows -->
-      <grid-row
-        v-for="(row, index) in render_rows"
-        :row="row"
-        :row-index="start+index"
-        :row-height="row_height"
-        :columns="render_cols"
-        :style="'padding-left: '+left_of_render_cols_width+'px'"
-        @determine-cell-auto-width="initializeColumnWidths"
-      ></grid-row>
+      <!-- row handles -->
+      <div class="fixed z-1" :style="'top: '+(container_offset_top+row_height-scroll_top)+'px'">
+        <grid-row-handle
+          v-for="(row, index) in render_rows"
+          class="ba bg-near-white vg-td"
+          :row-index="start+index"
+          :row-height="row_height"
+          :row-handle-width="row_handle_width"
+        ></grid-row-handle>
+      </div>
+
+      <!-- grid body -->
+      <div
+        ref="tbody"
+        class="flex-fill relative overflow-auto vg-tbody"
+        :style="'margin-left: '+(row_handle_width+1)+'px'"
+        @scroll="onScroll"
+        v-resize="onResize"
+      >
+        <!-- yardsticks -->
+        <div class="absolute top-0 left-0" :style="'z-index: -1; width: 1px; height: '+total_height+'px'"></div>
+        <div class="absolute top-0 left-0" :style="'z-index: -1; height: 1px; width: '+total_width+'px'"></div>
+
+        <!-- rows -->
+        <grid-row
+          v-for="(row, index) in render_rows"
+          :row="row"
+          :row-index="start+index"
+          :row-height="row_height"
+          :columns="render_cols"
+          :style="'padding-left: '+left_of_render_cols_width+'px'"
+          @determine-cell-auto-width="initializeColumnWidths"
+        ></grid-row>
+      </div>
     </div>
   </div>
 </template>
@@ -77,6 +83,7 @@
   import GridHeader from './GridHeader.vue'
   import GridRowHandle from './GridRowHandle.vue'
   import GridRow from './GridRow.vue'
+  import Spinner from 'vue-simple-spinner'
 
   var getOffset = function(el) {
     var top = 0
@@ -118,7 +125,8 @@
       GridHeaderRowHandle,
       GridHeader,
       GridRowHandle,
-      GridRow
+      GridRow,
+      Spinner
     },
     directives: {
       resize
