@@ -19,10 +19,10 @@
   "keywords": [
     "vue",
     "vuejs",
+    "ui",
     "components",
     "table",
-    "grid",
-    "ui"
+    "grid"
   ],
   "license": "MIT",
   "bugs": {
@@ -34,7 +34,7 @@
     "lodash": "^4.17.4",
     "tachyons": "^4.6.1",
     "vue-resize-directive": "^1.0.0",
-    "vue-simple-spinner": "^1.0.1"
+    "vue-simple-spinner": "^1.2.1"
   },
   "devDependencies": {
     "autoprefixer": "^6.7.7",
