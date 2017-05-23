@@ -1,5 +1,5 @@
 /*!
- * vue-grid v0.2.1 (https://github.com/dzwillia/vue-grid)
+ * vue-grid v0.2.2 (https://github.com/dzwillia/vue-grid)
  * (c) 2017 David Z. Williams
  * Released under the MIT License.
  */
@@ -5663,7 +5663,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "message": "Loading..."
     }
   })], 1) : _c('div', {
-    staticClass: "flex flex-column relative bg-white h-100"
+    staticClass: "flex flex-column relative bg-white h-100 overflow-hidden"
   }, [(_vm.inited) ? _c('grid-header-row-handle', {
     staticClass: "z-2 ba bg-near-white vg-td",
     attrs: {
