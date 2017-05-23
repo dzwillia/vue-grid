@@ -5,7 +5,7 @@
       <spinner size="large" message="Loading..."></spinner>
     </div>
 
-    <div class="flex flex-column relative bg-white h-100" v-else>
+    <div class="flex flex-column relative bg-white h-100 overflow-hidden" v-else>
       <!-- grid header row handle -->
       <grid-header-row-handle class="z-2 ba bg-near-white vg-td"
         :row-height="row_height"
