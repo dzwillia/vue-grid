@@ -28,7 +28,7 @@
       </div>
 
       <!-- row handles -->
-      <div class="fixed z-1" :style="'top: '+(container_offset_top+row_height-scroll_top)+'px'">
+      <div class="absolute z-1" :style="'top: '+(row_height-scroll_top)+'px'">
         <grid-row-handle
           v-for="(row, index) in render_rows"
           class="ba bg-near-white vg-td"
