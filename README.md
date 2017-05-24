@@ -8,7 +8,7 @@ vue-grid is designed to be an advanced [Vue.js](http://vuejs.org) grid component
 
 ## Demo
 
-[https://dzwillia.github.io/vue-grid/examples](https://dzwillia.github.io/vue-grid)
+[https://dzwillia.github.io/vue-grid](https://dzwillia.github.io/vue-grid)
 
 ## Requirements
 * [Vue.js](http://vuejs.org/) (^v2.1.4)
