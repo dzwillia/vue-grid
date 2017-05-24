@@ -1,7 +1,7 @@
 # vue-grid
 > A flexible grid component for Vue.js
 
-**We've moved! The latest version of vue-grid is now located at [vue-grid2](https://www.npmjs.com/package/vue-grid2) on NPM.**
+**We've moved! The latest version of vue-grid is now located on NPM at [vue-grid2](https://www.npmjs.com/package/vue-grid2).**
 
 vue-grid is designed to be an advanced [Vue.js](http://vuejs.org) grid component allowing for fast loading and rendering of tabular data.
 
