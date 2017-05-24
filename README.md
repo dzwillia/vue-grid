@@ -25,6 +25,7 @@ npm install vue2-grid --save
 ```
 
 ### Usage
+> All styling for this component is done using [Tachyons.css](https://github.com/tachyons-css/tachyons/). No external CSS files are required at this time.
 
 ### ES6
 
