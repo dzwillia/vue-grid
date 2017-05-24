@@ -12,6 +12,6 @@ const routes = [
 ]
 
 export default new VueRouter({
-  mode: 'history', // use HTML5 history
+  //mode: 'history', // use HTML5 history
   routes
 })
