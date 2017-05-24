@@ -41,8 +41,7 @@ Please note that for now he JSON payload must be formatted as follows:
   "columns": [
     { "name": "col1" },
     { "name": "col2" },
-    { "name": "col3" },
-    ...
+    { "name": "col3" }
   ],
   "rows": [
     {
@@ -57,8 +56,7 @@ Please note that for now he JSON payload must be formatted as follows:
       "col1": "Column 1 Row 3",
       "col2": "Column 2 Row 3",
       "col3": "Column 3 Row 3"
-    },
-    ...
+    }
   ],
   "total_count": 1000
 }
