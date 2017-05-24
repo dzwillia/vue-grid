@@ -24,6 +24,38 @@ IE 10+ (due to [Flexbox support](https://caniuse.com/#feat=flexbox)).
 npm install vue2-grid --save
 ```
 
+### Usage
+
+### ES6
+
+```js
+<grid
+  data-url="https://enter-your-data/url/endpoint/here"
+></grid>
+```
+
+Please note that for now he JSON payload must be formatted as follows:
+
+```json
+{
+  columns: [
+    { name: "col1" },
+    { name: "col2" },
+    { name: "col3" },
+    ...
+  ],
+  rows: [
+    0: { col1: "Column 1 Value 1", col2: "Column 2 Value 1", col3: "Column 3 Value 1" },
+    0: { col1: "Column 1 Value 2", col2: "Column 2 Value 2", col3: "Column 3 Value 2" },
+    0: { col1: "Column 1 Value 3", col2: "Column 2 Value 3", col3: "Column 3 Value 3" },
+    ...
+  ],
+  total_count: 1000
+}
+```
+
+The columns node only needs to be provided on the first call.
+
 ## License
 vue-grid is open source and released under the [MIT License](LICENSE).
 
