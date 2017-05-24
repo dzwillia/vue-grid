@@ -6,12 +6,12 @@ import GridInteractions from './GridInteractions.vue'
 Vue.use(VueRouter)
 
 const routes = [
+  { path: '*', redirect: '/interactions' }, // catch all route to redirect 404s
   { path: '/', redirect: '/interactions' },
   { path: '/interactions', component: GridInteractions }
 ]
 
 export default new VueRouter({
   mode: 'history', // use HTML5 history
-  base: '/', // serve app from /app base folder
   routes
 })
