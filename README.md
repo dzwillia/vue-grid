@@ -21,7 +21,7 @@ IE 10+ (due to [Flexbox support](https://caniuse.com/#feat=flexbox)).
 ### NPM
 
 ```bash
-npm install vue2-grid --save
+npm install vue-grid2 --save
 ```
 
 ### Usage
