@@ -1,8 +1,6 @@
 # vue-grid
 > A flexible grid component for Vue.js
 
-**We've moved! The latest version of vue-grid is now located at [vue-grid2](https://www.npmjs.com/package/vue-grid2) on NPM.**
-
 vue-grid is designed to be an advanced [Vue.js](http://vuejs.org) grid component allowing for fast loading and rendering of tabular data.
 
 ## Documentation
@@ -23,7 +21,7 @@ IE 10+ (due to [Flexbox support](https://caniuse.com/#feat=flexbox)).
 ### NPM
 
 ```bash
-npm install vue2-grid --save
+npm install vue-grid2 --save
 ```
 
 ### Usage
