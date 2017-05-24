@@ -62,7 +62,7 @@ Please note that for now he JSON payload must be formatted as follows:
 }
 ```
 
-The columns node only needs to be provided on the first call.
+The `columns` node only needs to be provided on the first call.
 
 ## License
 vue-grid is open source and released under the [MIT License](LICENSE).
