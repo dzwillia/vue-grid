@@ -10,47 +10,24 @@
       </div>
     </div>
     <div class="flex-fill flex flex-row">
-      <!-- sidebar -->
-      <div class="flex-none br b--black-20 overflow-auto" style="width: 16rem">
-        <div class="lh-copy f6 ma3">{{description}}.</div>
-        <div class="lh-copy f6 ma3">Created by: <a href="https://www.twitter.com/padredaveo" class="blue">David Z. Williams</a></div>
-        <div class="bb b--black-20 mh3 mb3"></div>
-        <router-link v-for="item in navItems" :to="item.route" class="db no-underline truncate link f5 fw6 pa3">
-          {{item.name}}
-        </router-link>
-      </div>
-      <!-- content -->
+      <sidebar class="flex-none br b--black-20 overflow-auto" style="width: 16rem"></sidebar>
       <router-view class="flex-fill relative"></router-view>
     </div>
   </div>
 </template>
 
 <script>
-  import {
-    version,
-    description
-  } from '../package.json'
-
-  const navItems = [
-    {
-      route: 'interactions',
-      name: 'Interactions'
-    }
-  ]
+  import { version } from '../package.json'
+  import Sidebar from './Sidebar.vue'
 
   export default {
     name: 'app',
-    data () {
-      return {
-        navItems
-      }
+    components: {
+      Sidebar
     },
     computed: {
-      version () {
+      version() {
         return version
-      },
-      description () {
-        return description
       }
     }
   }
@@ -69,18 +46,5 @@
   body {
     min-height: 100%;
     overflow: hidden;
-  }
-
-  .router-link {
-    color: #555;
-
-    &:hover {
-      background-color: rgba(0,0,0,0.05);
-    }
-  }
-
-  .router-link-active {
-    background-color: rgba(0,0,0,0.05);
-    color: #357edd;
   }
 </style>

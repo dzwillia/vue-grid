@@ -12,6 +12,6 @@ const routes = [
 
 export default new VueRouter({
   mode: 'history', // use HTML5 history
-  base: '/examples/', // serve app from /app base folder
+  base: '/', // serve app from /app base folder
   routes
 })

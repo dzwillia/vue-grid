@@ -10,17 +10,17 @@ const config = merge(base, {
   watch: true,
   devtool: '#eval-source-map',
 
-  entry: options.paths.resolve('examples-src/index.js'),
+  entry: options.paths.resolve('docs-src/index.js'),
 
   output: {
-    filename: 'examples.bundle.js',
-    path: options.paths.output.examples
+    filename: 'docs.bundle.js',
+    path: options.paths.output.docs
   },
 
   plugins: [],
 
   devServer: {
-    contentBase: options.paths.output.examples,
+    contentBase: options.paths.output.docs,
     host: 'localhost',
     historyApiFallback: true,
     noInfo: true

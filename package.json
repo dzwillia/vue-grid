@@ -8,7 +8,6 @@
     "dev": "cross-env NODE_ENV=development webpack-dev-server --config ./build/webpack.dev.js --open --inline --hot",
     "build": "webpack --config build/webpack.dist.js",
     "build:docs": "webpack --config build/webpack.docs.js",
-    "build:examples": "webpack --config build/webpack.examples.js",
     "build:all": "npm run build && npm run build:docs && npm run build:examples",
     "clean": "rimraf ./dist ./docs/docs.bundle.css ./docs/docs.bundle.js ./examples/examples.bundle.css ./examples/examples.bundle.js"
   },
