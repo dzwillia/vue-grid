@@ -26,7 +26,7 @@
         content_width: 0
       }
     },
-    computed() {
+    computed {
       cls() {
         switch (_.get(this.col, 'type', 'text'))
         {
