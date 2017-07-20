@@ -35,7 +35,7 @@ npm install vue-grid2 --save
 ></grid>
 ```
 
-Please note that for now he JSON payload must be formatted as follows:
+Please note that for now the JSON payload must be formatted as follows:
 
 ```json
 {
