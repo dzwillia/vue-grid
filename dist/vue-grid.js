@@ -1,5 +1,5 @@
 /*!
- * vue-grid v0.2.7 (https://github.com/dzwillia/vue-grid)
+ * vue-grid v0.2.8 (https://github.com/dzwillia/vue-grid)
  * (c) 2017 David Z. Williams
  * Released under the MIT License.
  */
@@ -2526,6 +2526,25 @@ exports.default = {
     return {
       content_width: 0
     };
+  },
+
+  computed: {
+    cls: function cls() {
+      switch (_.get(this.col, 'type', 'text')) {
+        case 'bool':
+        case 'boolean':
+        case 'date':
+        case 'datetime':
+          return 'tc';
+        case 'integer':
+        case 'float':
+        case 'number':
+        case 'numeric':
+          return 'tr';
+      }
+
+      return '';
+    }
   },
   mounted: function mounted() {
     var el = this.$refs['content'];
@@ -5803,6 +5822,7 @@ if (false) {
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', [_c('div', {
     staticClass: "h-100 lh-1 vg-td-inner",
+    class: _vm.cls,
     style: ('width: ' + _vm.width + 'px')
   }, [_c('span', {
     ref: "content"
