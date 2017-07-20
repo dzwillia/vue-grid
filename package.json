@@ -1,6 +1,6 @@
 {
   "name": "vue-grid2",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "A flexible grid component for Vue.js",
   "author": "David Z. Williams <dave@flex.io>",
   "main": "dist/vue-grid.js",
