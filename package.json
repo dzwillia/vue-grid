@@ -6,10 +6,11 @@
   "main": "dist/vue-grid.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack-dev-server --config ./build/webpack.dev.js --open --inline --hot",
-    "build": "webpack --config build/webpack.dist.js",
+    "build:debug": "cross-env NODE_ENV=debug webpack --config build/webpack.dist.js",
+    "build:release": "cross-env NODE_ENV=production webpack --config build/webpack.dist.js",
     "build:docs": "webpack --config build/webpack.docs.js",
-    "build:all": "npm run build && npm run build:docs && npm run build:examples",
-    "clean": "rimraf ./dist ./docs/docs.bundle.css ./docs/docs.bundle.js ./examples/examples.bundle.css ./examples/examples.bundle.js"
+    "build": "npm run build:debug && npm run build:release && npm run build:docs",
+    "clean": "rimraf ./dist ./docs/docs.bundle.css ./docs/docs.bundle.js"
   },
   "repository": {
     "type": "git",
@@ -39,7 +40,7 @@
   "devDependencies": {
     "autoprefixer": "^6.7.7",
     "babel-core": "^6.0.0",
-    "babel-loader": "^6.0.0",
+    "babel-loader": "^7.1.2",
     "babel-plugin-transform-es2015-destructuring": "^6.19.0",
     "babel-plugin-transform-es2015-parameters": "^6.18.0",
     "babel-plugin-transform-object-rest-spread": "^6.19.0",
@@ -50,16 +51,16 @@
     "cross-env": "^3.0.0",
     "css-loader": "^0.25.0",
     "deep-assign": "^2.0.0",
-    "extract-text-webpack-plugin": "^2.1.0",
+    "extract-text-webpack-plugin": "^3.0.0",
     "node-sass": "^4.5.2",
     "rimraf": "^2.6.1",
-    "sass-loader": "^6.0.3",
+    "sass-loader": "^6.0.6",
     "vue": "^2.2.6",
     "vue-loader": "^11.3.3",
     "vue-style-loader": "^3.0.0",
     "vue-template-compiler": "^2.2.6",
-    "webpack": "^2.4.1",
+    "webpack": "^3.5.6",
     "webpack-bundle-analyzer": "^2.2.1",
-    "webpack-dev-server": "^2.4.2"
+    "webpack-dev-server": "^2.7.1"
   }
 }

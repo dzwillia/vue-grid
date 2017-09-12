@@ -26,6 +26,8 @@ module.exports = {
         options: {
           loaders: {
             // configured in the script specific webpack configs
+            scss: 'vue-style-loader!css-loader!sass-loader', // <style lang="scss">
+            sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax' // <style lang="sass">
           },
           postcss: [
             autoprefixer({

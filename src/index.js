@@ -1,5 +1,10 @@
-import Grid from './components/Grid.vue'
+import VueGrid from './components/Grid.vue'
 
-export default Grid
+// expose component to global scope
+if (typeof window !== 'undefined' && window.Vue) {
+  Vue.component('vue-grid', VueGrid)
+}
 
-export { Grid }
+export { VueGrid }
+
+export default VueGrid

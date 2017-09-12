@@ -1,11 +1,12 @@
 'use strict'
 
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const merge = require('deep-assign')
 const webpack = require('webpack')
 
 const options = require('./options')
 const base = require('./webpack.base.js')
+
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
 
 const config = merge(base, {
   entry: options.paths.resolve('docs-src/index.js'),
@@ -26,9 +27,7 @@ const config = merge(base, {
 
     // Set the production environment
     new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: '"production"'
-      }
+      'process.env.NODE_ENV': JSON.stringify('production')
     }),
 
     // TODO: Figure out how to do singleton includes of Lodash functions
@@ -45,6 +44,7 @@ const config = merge(base, {
   ]
 })
 
+/*
 // First item in module.rules array is Vue
 config.module.rules[0].options.loaders = {
   scss: ExtractTextPlugin.extract({
@@ -52,5 +52,6 @@ config.module.rules[0].options.loaders = {
     fallbackLoader: 'vue-style-loader'
   })
 }
+*/
 
 module.exports = config

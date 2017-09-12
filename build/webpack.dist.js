@@ -1,6 +1,7 @@
 'use strict'
 
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
+
 const merge = require('deep-assign')
 const webpack = require('webpack')
 
@@ -13,7 +14,8 @@ const config = merge(base, {
   output: {
     filename: options.isProduction ? 'vue-grid.min.js' : 'vue-grid.js',
     path: options.paths.output.main,
-    library: 'vue-grid',
+    library: 'VueGrid',
+    libraryExport: 'default',
     libraryTarget: 'umd'
   },
 
@@ -30,6 +32,7 @@ const config = merge(base, {
   ]
 })
 
+/*
 // First item in module.rules array is Vue
 config.module.rules[0].options.loaders = {
   scss: ExtractTextPlugin.extract({
@@ -37,23 +40,25 @@ config.module.rules[0].options.loaders = {
     fallbackLoader: 'vue-style-loader'
   })
 }
+*/
+
+// debug and production
+config.plugins = config.plugins.concat([
+  new webpack.LoaderOptionsPlugin({
+    minimize: true
+  }),
+  // TODO: Figure out how to do singleton includes of Lodash functions
+  new webpack.ProvidePlugin({
+    _: 'lodash'
+  })
+])
 
 if (options.isProduction) {
+  // production only
   config.plugins = config.plugins.concat([
-    new webpack.LoaderOptionsPlugin({
-      minimize: true
-    }),
-
     // Set the production environment
     new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: '"production"'
-      }
-    }),
-
-    // TODO: Figure out how to do singleton includes of Lodash functions
-    new webpack.ProvidePlugin({
-      _: 'lodash'
+      'process.env.NODE_ENV': JSON.stringify('production')
     }),
 
     // Minify with dead-code elimination
