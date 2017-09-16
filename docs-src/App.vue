@@ -17,7 +17,6 @@
 </template>
 
 <script>
-  import { version } from '../package.json'
   import Sidebar from './Sidebar.vue'
 
   export default {
@@ -27,7 +26,7 @@
     },
     computed: {
       version() {
-        return version
+        return VERSION
       }
     }
   }
