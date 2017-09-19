@@ -16,6 +16,7 @@
   import {
     DEFAULT_ROW_HEIGHT
   } from '../constants'
+  import _ from 'lodash'
   import GridCell from './GridCell.vue'
 
   export default {

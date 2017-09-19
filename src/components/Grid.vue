@@ -77,6 +77,7 @@
     COLUMN_MIN_WIDTH,
     COLUMN_MAX_WIDTH
   } from '../constants'
+  import _ from 'lodash'
   import axios from 'axios'
   import resize from 'vue-resize-directive'
   import GridHeaderRowHandle from './GridHeaderRowHandle.vue'

@@ -144,6 +144,7 @@
 </template>
 
 <script>
+  import _ from 'lodash'
   import GridMetricsValue from './GridMetricsValue.vue'
 
   export default {

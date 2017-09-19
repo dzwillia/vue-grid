@@ -49,10 +49,6 @@ config.plugins = config.plugins.concat([
   }),
   new webpack.DefinePlugin({
     VERSION: JSON.stringify(options.version)
-  }),
-  // TODO: Figure out how to do singleton includes of Lodash functions
-  new webpack.ProvidePlugin({
-    _: 'lodash'
   })
 ])
 

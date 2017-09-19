@@ -22,6 +22,7 @@
 </template>
 
 <script>
+  import _ from 'lodash'
   import Grid from '../src/components/Grid.vue'
   import GridMetrics from './GridMetrics.vue'
   import GridEvents from './GridEvents.vue'

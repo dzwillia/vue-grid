@@ -36,11 +36,4 @@ config.module.rules[0].options.loaders = {
   scss: 'vue-style-loader!css-loader!sass-loader'
 }
 
-config.plugins = config.plugins.concat([
-  // TODO: Figure out how to do singleton includes of Lodash functions
-  new webpack.ProvidePlugin({
-    _: 'lodash'
-  })
-])
-
 module.exports = config
