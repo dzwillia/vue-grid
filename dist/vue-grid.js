@@ -1,6 +1,6 @@
 /*!
- * vue-grid v0.2.9 (https://github.com/dzwillia/vue-grid)
- * (c) 2017 David Z. Williams
+ * vue-grid v0.2.10 (https://github.com/dzwillia/vue-grid)
+ * (c) 2018 David Z. Williams
  * Released under the MIT License.
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -3803,7 +3803,7 @@ var content = __webpack_require__(90);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(92)("4fb86d2c", content, true);
+var update = __webpack_require__(92)("21a70cb4", content, true);
 
 /***/ }),
 /* 90 */
