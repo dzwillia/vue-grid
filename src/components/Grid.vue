@@ -683,9 +683,7 @@
   }
 </script>
 
-<style lang="scss">
-  $border-color: #ddd;
-
+<style>
   .vg-container {
     font-family: Arial, sans-serif;
     font-size: 13px;
@@ -693,7 +691,7 @@
   }
 
   .vg-thead {
-    box-shadow: inset 0 -1px 0 $border-color;
+    box-shadow: inset 0 -1px 0 #ddd;
   }
 
   .vg-th,
@@ -701,7 +699,7 @@
     margin-top: -1px;
     margin-left: -1px;
     padding-top: 1px;
-    border-color: $border-color;
+    border-color: #ddd;
   }
 
   .vg-th-inner,
@@ -718,7 +716,7 @@
   }
 
   .b--light-moon-gray {
-    border-color: $border-color;
+    border-color: #ddd;
   }
 
   .lh-1 {

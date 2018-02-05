@@ -49,14 +49,15 @@
   }
 </script>
 
-<style lang="scss">
+<style>
   .sidebar-link,
   .router-link {
     color: #555;
+  }
 
-    &:hover {
-      background-color: rgba(0,0,0,0.05);
-    }
+  .sidebar-link:hover,
+  .router-link:hover {
+    background-color: rgba(0,0,0,0.05);
   }
 
   .router-link-active {

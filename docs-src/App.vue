@@ -32,7 +32,7 @@
   }
 </script>
 
-<style lang="scss">
+<style>
   html, body {
     font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 100%;

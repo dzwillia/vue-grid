@@ -2,8 +2,8 @@
   <div class="flex flex-row overflow-hidden">
     <div class="flex-fill br b--black-20">
       <grid
-        data-url="https://www.flex.io/api/v1/streams/n4gz56kdxm7y/content"
-        :custom-headers="{ 'Authorization': 'Bearer kmzdxtzwybzyqrqjbrnm' }"
+        data-url="https://www.flex.io/api/v1/streams/g7vx903285k3/content"
+        :custom-headers="{ 'Authorization': 'Bearer sfzrnjfdvzjmyqrxnzff' }"
         :live-scroll="live_scroll"
         @metrics-change="onGridMetricsChange"
       ></grid>
