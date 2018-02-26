@@ -101,7 +101,6 @@
   }
 
   export default {
-    name: 'vue-grid',
     props: {
       'data-url': {
         type: String,
