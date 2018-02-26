@@ -1,5 +1,5 @@
 /*!
- * vue-grid v0.2.10 (https://github.com/dzwillia/vue-grid)
+ * vue-grid v0.2.11 (https://github.com/dzwillia/vue-grid)
  * (c) 2018 David Z. Williams
  * Released under the MIT License.
  */
@@ -4269,7 +4269,6 @@ var getOffset = function getOffset(el) {
 };
 
 exports.default = {
-  name: 'vue-grid',
   props: {
     'data-url': {
       type: String,
