@@ -1,5 +1,5 @@
 /*!
- * vue-grid v0.2.11 (https://github.com/dzwillia/vue-grid)
+ * vue-grid v0.2.12 (https://github.com/dzwillia/vue-grid)
  * (c) 2018 David Z. Williams
  * Released under the MIT License.
  */
