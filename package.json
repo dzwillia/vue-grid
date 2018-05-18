@@ -34,7 +34,7 @@
     "tachyons": "^4.6.1",
     "vue-resize-directive": "^1.0.0",
     "vue-router": "^2.5.3",
-    "vue-simple-spinner": "^1.2.1"
+    "vue-simple-spinner": "^1.2.8"
   },
   "devDependencies": {
     "autoprefixer": "^6.7.7",
