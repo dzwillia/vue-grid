@@ -9,6 +9,12 @@ const options = require('./options')
 const base = require('./webpack.base.js')
 
 const config = merge(base, {
+  // without this, webpack throws in a polyfill for node.js's Buffer class
+  node: {
+    Buffer: false,
+    process: false
+  },
+
   entry: options.paths.resolve('src/index.js'),
 
   output: {
