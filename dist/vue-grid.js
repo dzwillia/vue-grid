@@ -4094,7 +4094,7 @@ exports.default = {
 
     'live-scroll': {
       type: Boolean,
-      default: true
+      default: false
     },
 
     'virtual-scroll': {
