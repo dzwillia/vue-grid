@@ -113,7 +113,7 @@
       /* show empty cells on vertical scroll */
       'live-scroll': {
         type: Boolean,
-        default: false
+        default: true
       },
       /* remove off-screen cells from the DOM on horizontal scroll */
       'virtual-scroll': {
