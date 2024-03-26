@@ -18,7 +18,7 @@
     props: {
       'live-scroll': {
         type: Boolean,
-        default: false
+        default: true
       }
     },
     methods: {
