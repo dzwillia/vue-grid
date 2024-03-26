@@ -1,6 +1,6 @@
 /*!
  * vue-grid v0.2.15 (https://github.com/dzwillia/vue-grid)
- * (c) 2018 David Z. Williams
+ * (c) 2024 David Z. Williams
  * Released under the MIT License.
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -4094,7 +4094,7 @@ exports.default = {
 
     'live-scroll': {
       type: Boolean,
-      default: false
+      default: true
     },
 
     'virtual-scroll': {
