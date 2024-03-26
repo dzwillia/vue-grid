@@ -37,7 +37,7 @@
     data() {
       return {
         metrics: {},
-        live_scroll: true
+        live_scroll: false
       }
     },
     methods: {
